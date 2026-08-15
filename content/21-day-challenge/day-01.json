@@ -1,0 +1,82 @@
+{
+  "id": "day-01",
+  "day": 1,
+  "title": "Presentaciones",
+  "topic": "introductions",
+  "goal": "Preséntate: di tu nombre, tu nacionalidad y de dónde eres.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "to be (am/is/are) · ser/estar",
+  "vocabulary": [
+    {
+      "en": "Hello",
+      "es": "Hola"
+    },
+    {
+      "en": "Good morning",
+      "es": "Buenos días"
+    },
+    {
+      "en": "My name is...",
+      "es": "Mi nombre es..."
+    },
+    {
+      "en": "Nice to meet you",
+      "es": "Encantado de conocerte"
+    },
+    {
+      "en": "I am from...",
+      "es": "Soy de..."
+    },
+    {
+      "en": "What is your name?",
+      "es": "¿Cómo te llamas?"
+    },
+    {
+      "en": "How are you?",
+      "es": "¿Cómo estás?"
+    },
+    {
+      "en": "Fine, thanks",
+      "es": "Bien, gracias"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "Hello, my name is Maria.",
+      "es": "Hola, mi nombre es María."
+    },
+    {
+      "en": "I am from Mexico.",
+      "es": "Soy de México."
+    },
+    {
+      "en": "Nice to meet you.",
+      "es": "Encantado de conocerte."
+    },
+    {
+      "en": "What is your name?",
+      "es": "¿Cómo te llamas?"
+    },
+    {
+      "en": "I am a student.",
+      "es": "Soy estudiante."
+    }
+  ],
+  "speak": "Di hola, tu nombre, tu país y una cosa sobre ti. Habla durante 30 segundos.",
+  "challenge": "Graba un audio de 30 segundos como si fuera un video: nombre, país y profesión.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

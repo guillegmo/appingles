@@ -1,0 +1,82 @@
+{
+  "id": "day-05",
+  "day": 5,
+  "title": "Hacer preguntas",
+  "topic": "questions",
+  "goal": "Haz y responde preguntas con WH (what, where, when…).",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "preguntas WH (what, where, when…)",
+  "vocabulary": [
+    {
+      "en": "What",
+      "es": "Qué"
+    },
+    {
+      "en": "Where",
+      "es": "Dónde"
+    },
+    {
+      "en": "When",
+      "es": "Cuándo"
+    },
+    {
+      "en": "Who",
+      "es": "Quién"
+    },
+    {
+      "en": "Why",
+      "es": "Por qué"
+    },
+    {
+      "en": "How",
+      "es": "Cómo"
+    },
+    {
+      "en": "How much",
+      "es": "Cuánto cuesta"
+    },
+    {
+      "en": "How often",
+      "es": "Con qué frecuencia"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "What is your name?",
+      "es": "¿Cuál es tu nombre?"
+    },
+    {
+      "en": "Where do you work?",
+      "es": "¿Dónde trabajas?"
+    },
+    {
+      "en": "When do you finish?",
+      "es": "¿Cuándo terminas?"
+    },
+    {
+      "en": "Who is your friend?",
+      "es": "¿Quién es tu amigo?"
+    },
+    {
+      "en": "How much is this?",
+      "es": "¿Cuánto cuesta esto?"
+    }
+  ],
+  "speak": "Haz 5 preguntas WH diferentes en voz alta. 45 segundos.",
+  "challenge": "Entrevista a alguien (real o IA): 5 preguntas y respuestas.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

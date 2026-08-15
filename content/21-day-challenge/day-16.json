@@ -1,0 +1,82 @@
+{
+  "id": "day-16",
+  "day": 16,
+  "title": "Trabajo",
+  "topic": "work",
+  "goal": "Describe tu trabajo y tu rol.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "present simple + vocabulario de trabajo",
+  "vocabulary": [
+    {
+      "en": "job",
+      "es": "trabajo/empleo"
+    },
+    {
+      "en": "I work as...",
+      "es": "Trabajo como..."
+    },
+    {
+      "en": "colleague",
+      "es": "compañero de trabajo"
+    },
+    {
+      "en": "meeting",
+      "es": "reunión"
+    },
+    {
+      "en": "boss",
+      "es": "jefe"
+    },
+    {
+      "en": "office",
+      "es": "oficina"
+    },
+    {
+      "en": "What do you do?",
+      "es": "¿A qué te dedicas?"
+    },
+    {
+      "en": "I work in...",
+      "es": "Trabajo en..."
+    }
+  ],
+  "phrases": [
+    {
+      "en": "I work as a developer.",
+      "es": "Trabajo como desarrollador."
+    },
+    {
+      "en": "I work in a hospital.",
+      "es": "Trabajo en un hospital."
+    },
+    {
+      "en": "I have a meeting at 10:00.",
+      "es": "Tengo una reunión a las 10:00."
+    },
+    {
+      "en": "My colleagues are very friendly.",
+      "es": "Mis compañeros son muy amables."
+    },
+    {
+      "en": "What do you do for a living?",
+      "es": "¿A qué te dedicas?"
+    }
+  ],
+  "speak": "Describe tu trabajo: rol, empresa y tareas diarias. 60 segundos.",
+  "challenge": "Preséntate en una reunión: nombre, rol y departamento.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

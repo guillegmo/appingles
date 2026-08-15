@@ -1,0 +1,82 @@
+{
+  "id": "day-03",
+  "day": 3,
+  "title": "Gustos y disgustos",
+  "topic": "likes",
+  "goal": "Expresa lo que te gusta y lo que no te gusta.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "like / don't like + sustantivo/verbo-ing",
+  "vocabulary": [
+    {
+      "en": "I like...",
+      "es": "Me gusta..."
+    },
+    {
+      "en": "I don't like...",
+      "es": "No me gusta..."
+    },
+    {
+      "en": "food",
+      "es": "comida"
+    },
+    {
+      "en": "music",
+      "es": "música"
+    },
+    {
+      "en": "movies",
+      "es": "películas"
+    },
+    {
+      "en": "sports",
+      "es": "deportes"
+    },
+    {
+      "en": "Do you like...?",
+      "es": "¿Te gusta...?"
+    },
+    {
+      "en": "I love...",
+      "es": "Me encanta..."
+    }
+  ],
+  "phrases": [
+    {
+      "en": "I like coffee.",
+      "es": "Me gusta el café."
+    },
+    {
+      "en": "I don't like traffic.",
+      "es": "No me gusta el tráfico."
+    },
+    {
+      "en": "Do you like pizza?",
+      "es": "¿Te gusta la pizza?"
+    },
+    {
+      "en": "I love music.",
+      "es": "Me encanta la música."
+    },
+    {
+      "en": "I like to read at night.",
+      "es": "Me gusta leer por la noche."
+    }
+  ],
+  "speak": "Di 3 cosas que te gustan y 2 que no te gustan. 45 segundos.",
+  "challenge": "Responde la pregunta \"¿Te gusta...?\" 5 veces con temas diferentes.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

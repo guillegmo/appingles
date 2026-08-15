@@ -1,0 +1,28 @@
+{
+  "id": "day-06",
+  "day": 6,
+  "title": "Práctica de conversación 1",
+  "topic": "speaking-1",
+  "goal": "Mantén una conversación de 60 segundos sobre ti.",
+  "estimatedTime": 15,
+  "skill": "speaking",
+  "grammarFocus": "repaso de la semana 1",
+  "vocabulary": [],
+  "phrases": [],
+  "speak": "Habla 60 segundos sobre ti: nombre, origen, edad, gustos y rutina.",
+  "challenge": "Presentación de un minuto sin leer. Grábala.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

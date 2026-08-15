@@ -1,0 +1,82 @@
+{
+  "id": "day-19",
+  "day": 19,
+  "title": "Opiniones",
+  "topic": "opinions",
+  "goal": "Da tu opinión y debate.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "I think... / In my opinion...",
+  "vocabulary": [
+    {
+      "en": "I think...",
+      "es": "Creo que..."
+    },
+    {
+      "en": "In my opinion",
+      "es": "En mi opinión"
+    },
+    {
+      "en": "I agree",
+      "es": "Estoy de acuerdo"
+    },
+    {
+      "en": "I disagree",
+      "es": "No estoy de acuerdo"
+    },
+    {
+      "en": "What do you think?",
+      "es": "¿Qué opinas?"
+    },
+    {
+      "en": "Maybe",
+      "es": "Quizás"
+    },
+    {
+      "en": "In my experience",
+      "es": "En mi experiencia"
+    },
+    {
+      "en": "good point",
+      "es": "buen punto"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "I think this movie is great.",
+      "es": "Creo que esta película es genial."
+    },
+    {
+      "en": "In my opinion, English is useful.",
+      "es": "En mi opinión, el inglés es útil."
+    },
+    {
+      "en": "What do you think about it?",
+      "es": "¿Qué opinas al respecto?"
+    },
+    {
+      "en": "I agree with you.",
+      "es": "Estoy de acuerdo contigo."
+    },
+    {
+      "en": "In my experience, practice helps.",
+      "es": "En mi experiencia, la práctica ayuda."
+    }
+  ],
+  "speak": "Da tu opinión sobre tu película o comida favorita. 60 segundos.",
+  "challenge": "Debate un tema simple: muestra acuerdo y desacuerdo con educación.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

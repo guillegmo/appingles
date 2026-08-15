@@ -1,0 +1,456 @@
+import { useEffect, useMemo, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Volume2, Mic, Sparkles } from 'lucide-react';
+import { getDay, completeDay, submitExercise, recordSpeaking, trackAnalyticsEvent } from '../services/api';
+import { speak } from '../utils/speech';
+import { isSpanish } from '../utils/language';
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
+import { useAppStore } from '../store/useAppStore';
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import { ProgressBar } from '../components/ui/ProgressBar';
+import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
+import type { DayContent } from '../types';
+
+const STEP_LABELS: Record<string, string> = {
+  learn: 'Aprender',
+  listen: 'Escuchar',
+  pronounce: 'Pronunciar',
+  practice: 'Practicar',
+  speak: 'Hablar',
+  challenge: 'Reto',
+  complete: 'Completado',
+};
+
+export function DayViewPage() {
+  const { day: dayParam } = useParams();
+  const dayNumber = Number(dayParam);
+  const navigate = useNavigate();
+  const { refreshAll, setError } = useAppStore();
+
+  const [day, setDay] = useState<DayContent | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [stepIdx, setStepIdx] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [error, setErr] = useState<string | null>(null);
+  const [saidCorrect, setSaidCorrect] = useState<Set<string>>(new Set());
+
+  const speech = useSpeechRecognition();
+
+  useEffect(() => {
+    getDay(dayNumber)
+      .then((d) => {
+        setDay(d);
+        setStepIdx(0);
+        setCompletedSteps(d.completed ? d.steps : []);
+        setSaidCorrect(new Set());
+      })
+      .catch((e) => setErr(e.response?.data?.error || e.message))
+      .finally(() => setLoading(false));
+  }, [dayNumber]);
+
+  const steps = day?.steps ?? [];
+  const currentStep = steps[stepIdx] ?? 'learn';
+  const progressPct = useMemo(() => (steps.length ? Math.round((completedSteps.length / steps.length) * 100) : 0), [completedSteps, steps]);
+
+  const markStep = (step: string) => {
+    setCompletedSteps((prev) => (prev.includes(step) ? prev : [...prev, step]));
+  };
+
+  const next = async () => {
+    if (stepIdx < steps.length - 1) {
+      setStepIdx(stepIdx + 1);
+      return;
+    }
+    // Último paso -> completar día
+    try {
+      await completeDay(dayNumber);
+      trackAnalyticsEvent('day_completed', { day: dayNumber }).catch(() => {});
+      await refreshAll();
+      navigate('/home');
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  };
+
+  const handleExercise = async (exerciseId: string, correct: boolean) => {
+    markStep('practice');
+    await submitExercise({ day: dayNumber, exerciseId, type: 'mcq', answer: '', correct });
+    trackAnalyticsEvent('exercise_completed', { day: dayNumber, correct }).catch(() => {});
+    setStepIdx(Math.min(stepIdx + 1, steps.length - 1));
+    await refreshAll();
+  };
+
+  const handleSpeaking = async () => {
+    markStep('speak');
+    await recordSpeaking(dayNumber);
+    trackAnalyticsEvent('speaking_completed', { day: dayNumber }).catch(() => {});
+    await refreshAll();
+    setStepIdx(Math.min(stepIdx + 1, steps.length - 1));
+  };
+
+  // Compara la frase dicha con la frase objetivo (normalizada). 
+  // Devuelve true si coincide razonablemente (web speech suele acortar).
+  const phraseMatches = (target: string, spoken: string) => {
+    const norm = (s: string) =>
+      s.toLowerCase().replace(/[.,!?¡¿'’]/g, '').split(/\s+/).filter(Boolean);
+    const t = norm(target);
+    const sp = norm(spoken);
+    if (!t.length || !sp.length) return false;
+    const set = new Set(t);
+    let hits = 0;
+    for (const w of sp) if (set.has(w)) hits++;
+    const coverage = hits / t.length;
+    return coverage >= 0.8;
+  };
+
+  // Cuando llega una transcripción nueva, marca las frases dichas correctamente.
+  useEffect(() => {
+    if (!speech.transcript || !day) return;
+    const spoken = speech.transcript;
+    setSaidCorrect((prev) => {
+      const next = new Set(prev);
+      day.phrases.slice(0, 3).forEach((p) => {
+        if (!next.has(p.en) && phraseMatches(p.en, spoken)) next.add(p.en);
+      });
+      return next;
+    });
+  }, [speech.transcript, day]);
+
+  const speakPhrases = day?.phrases.slice(0, 3) ?? [];
+  const allSaid = speakPhrases.length > 0 && speakPhrases.every((p) => saidCorrect.has(p.en));
+
+  if (loading) return <div className="p-8 text-center text-slate-500">Cargando día…</div>;
+  if (error) {
+    return (
+      <div className="p-8">
+        <Button variant="ghost" onClick={() => navigate('/home')} className="mb-4">
+          <ArrowLeft className="h-4 w-4" /> Volver
+        </Button>
+        <Card>
+          <p className="font-bold text-rose-600">🔒 Este día requiere Premium</p>
+          <p className="mt-2 text-sm text-slate-600">{error}</p>
+          <Button className="mt-4 w-full" variant="secondary" onClick={() => navigate('/premium')}>
+            PROBAR PREMIUM
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+  if (!day) return <div className="p-8 text-slate-500">Día no encontrado</div>;
+
+  return (
+    <div className="p-5">
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" size="sm" onClick={() => navigate('/home')}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div className="flex-1">
+          <p className="text-xs font-semibold uppercase text-primary-600">Día {day.day}</p>
+          <h1 className="text-lg font-bold">{day.title}</h1>
+        </div>
+      </div>
+
+      <ProgressBar value={progressPct} className="mt-3" />
+
+      <div className="mt-3 flex justify-center">
+        <SpeechSpeedControl compact />
+      </div>
+
+      <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
+        {steps.map((s, i) => (
+          <div
+            key={s}
+            className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
+              completedSteps.includes(s) || i < stepIdx
+                ? 'bg-emerald-100 text-emerald-700'
+                : i === stepIdx
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-slate-100 text-slate-400'
+            }`}
+          >
+            {STEP_LABELS[s]}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4">
+        {currentStep === 'learn' && (
+          <Card>
+            <h2 className="text-lg font-bold">🎯 Objetivo de hoy</h2>
+            <p className="mt-2 text-slate-600">{day.goal}</p>
+            <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm">
+              <p className="font-semibold">Punto de gramática</p>
+              <p className="text-slate-600">{day.grammarFocus}</p>
+            </div>
+            <div className="mt-4">
+              <p className="mb-2 font-semibold">Vocabulario clave</p>
+              {day.vocabulary.map((v, i) => (
+                <button
+                  key={i}
+                  onClick={() => speak(v.en)}
+                  className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-left text-sm hover:bg-slate-50"
+                >
+                  <span>
+                    <span className="font-semibold">{v.en}</span>
+                    <span className="ml-2 text-slate-500">{v.es}</span>
+                  </span>
+                  <Volume2 className="h-4 w-4 text-primary-500" />
+                </button>
+              ))}
+            </div>
+            <Button className="mt-5 w-full" size="lg" onClick={() => { markStep('learn'); setStepIdx(stepIdx + 1); }}>
+              Continuar
+            </Button>
+          </Card>
+        )}
+
+        {currentStep === 'listen' && (
+          <Card>
+            <h2 className="text-lg font-bold">👂 Escuchar</h2>
+            <p className="mt-2 text-sm text-slate-500">Toca una frase para oírla.</p>
+            <div className="mt-3 space-y-2">
+              {day.phrases.map((p, i) => (
+                <button
+                  key={i}
+                  onClick={() => speak(p.en)}
+                  className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left hover:bg-slate-50"
+                >
+                  <div>
+                    <p className="text-sm font-semibold">{p.en}</p>
+                    <p className="text-xs text-slate-500">{p.es}</p>
+                  </div>
+                  <Volume2 className="h-5 w-5 text-primary-500" />
+                </button>
+              ))}
+            </div>
+            <Button className="mt-5 w-full" size="lg" onClick={() => { markStep('listen'); setStepIdx(stepIdx + 1); }}>
+              Continuar
+            </Button>
+          </Card>
+        )}
+
+        {currentStep === 'pronounce' && (
+          <Card>
+            <h2 className="text-lg font-bold">🗣 Pronunciar</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              Repite después del audio para practicar tu pronunciación.
+            </p>
+            <div className="mt-4 space-y-2">
+              {day.phrases.slice(0, 3).map((p, i) => (
+                <div key={i} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2.5">
+                  <div>
+                    <p className="text-sm font-semibold">{p.en}</p>
+                    <p className="text-xs text-slate-500">{p.es}</p>
+                  </div>
+                  <button onClick={() => speak(p.en)} className="rounded-full bg-primary-600 p-2 text-white" aria-label={`Escuchar ${p.en}`}>
+                    <Volume2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-center text-xs text-slate-400">Toca el altavoz y repite la frase en voz alta.</p>
+            <Button className="mt-4 w-full" size="lg" onClick={() => { markStep('pronounce'); setStepIdx(stepIdx + 1); }}>
+              Continuar
+            </Button>
+          </Card>
+        )}
+
+        {currentStep === 'practice' && (
+          <PracticeCard day={day} onAnswer={handleExercise} onNext={() => { markStep('practice'); setStepIdx(stepIdx + 1); }} />
+        )}
+
+        {currentStep === 'speak' && (
+          <Card>
+            <h2 className="text-lg font-bold">🎤 Hablar</h2>
+            <p className="mt-2 text-sm text-slate-600">{day.speak}</p>
+
+            <div className="mt-4 space-y-2">
+              <p className="text-xs font-semibold uppercase text-slate-400">Tarea</p>
+              <p className="text-sm text-slate-600">
+                1️⃣ Escucha cada frase. 2️⃣ Pulsa el botón <span className="font-semibold">rojo</span> y repítela en voz alta. 3️⃣ Cuando la digas bien, verás un ✓.
+              </p>
+            </div>
+
+            {speakPhrases.map((p, i) => {
+              const done = saidCorrect.has(p.en);
+              return (
+                <div
+                  key={i}
+                  className={`mt-2 rounded-xl border p-3 transition-colors ${done ? 'border-emerald-400 bg-emerald-50' : 'border-slate-200'}`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-sm font-semibold">{p.en}</p>
+                      <p className="text-xs text-slate-500">{p.es}</p>
+                    </div>
+                    {done ? (
+                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-1 text-[11px] font-bold text-white">
+                        ✓ ¡Muy bien!
+                      </span>
+                    ) : (
+                      <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-400">
+                        Pendiente
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => speak(p.en)}
+                    className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200"
+                  >
+                    <Volume2 className="h-3.5 w-3.5" /> Escuchar modelo
+                  </button>
+                </div>
+              );
+            })}
+
+            {allSaid && (
+              <div className="mt-3 rounded-xl bg-emerald-100 px-4 py-3 text-center">
+                <p className="text-sm font-bold text-emerald-700">🎉 ¡Perfecto! Has dicho todas las frases correctamente.</p>
+                <p className="mt-0.5 text-xs text-emerald-600">Gran trabajo, {day && 'sigue así'}</p>
+              </div>
+            )}
+
+            <div className="mt-6 flex flex-col items-center">
+              {!speech.supported ? (
+                <p className="text-sm text-slate-400">Tu navegador no soporta voz. Marca completado para continuar.</p>
+              ) : (
+                <>
+                  <button
+                    onClick={speech.listening ? speech.stop : speech.start}
+                    className={`flex h-20 w-20 items-center justify-center rounded-full transition-colors ${
+                      speech.listening ? 'bg-rose-500 animate-pulse' : 'bg-primary-600'
+                    } text-white`}
+                    aria-label={speech.listening ? 'Detener micrófono' : 'Pulsar para hablar'}
+                  >
+                    <Mic className="h-8 w-8" />
+                  </button>
+                  <p className="mt-2 text-xs text-slate-500">
+                    {speech.listening ? 'Escuchando… habla en voz alta' : 'Toca el micrófono y di la frase'}
+                  </p>
+                  {speech.transcript && (
+                    <>
+                      <div className="mt-4 w-full rounded-lg bg-slate-50 p-3 text-center text-sm font-medium">
+                        “{speech.transcript}”
+                      </div>
+                      {isSpanish(speech.transcript) && (
+                        <p className="mt-3 w-full rounded-xl bg-amber-100 px-4 py-3 text-center text-sm font-semibold text-amber-800">
+                          🗣️ Lo dijiste en español. ¡Inténtalo en inglés! Escucha el modelo arriba y repite la frase.
+                        </p>
+                      )}
+                    </>
+                  )}
+                  {!speech.transcript && !speech.listening && (
+                    <p className="mt-3 text-xs text-slate-400">No grabamos audio: solo reconocemos tu voz para que practiques sin miedo.</p>
+                  )}
+                </>
+              )}
+            </div>
+            <Button
+              className="mt-5 w-full"
+              size="lg"
+              onClick={handleSpeaking}
+              disabled={speech.supported ? speech.listening || !allSaid : false}
+            >
+              {speech.supported && !allSaid ? 'Di todas las frases para continuar' : 'Completar práctica de habla'}
+            </Button>
+          </Card>
+        )}
+
+        {currentStep === 'challenge' && (
+          <Card>
+            <h2 className="text-lg font-bold">⚡ Reto de la vida real</h2>
+            <p className="mt-2 text-slate-600">{day.challenge}</p>
+            <div className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+              💡 Reto real: hazlo con tu voz o con un compañero (o el tutor IA cuando esté disponible).
+            </div>
+            <Button className="mt-5 w-full" size="lg" onClick={() => { markStep('challenge'); setStepIdx(stepIdx + 1); }}>
+              Continuar
+            </Button>
+          </Card>
+        )}
+
+        {currentStep === 'complete' && (
+          <Card className="text-center">
+            <Sparkles className="mx-auto h-10 w-10 text-primary-600" />
+            <h2 className="mt-2 text-xl font-bold">¡Día {day.day} completado!</h2>
+            <p className="mt-1 text-sm text-slate-500">+{day.xpReward} XP ganados</p>
+            <Button className="mt-5 w-full" size="lg" onClick={next}>
+              {day.day === 21 ? 'Ver mi próximo plan' : 'Continuar al siguiente día'}
+            </Button>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PracticeCard({
+  day,
+  onAnswer,
+  onNext,
+}: {
+  day: DayContent;
+  onAnswer: (id: string, correct: boolean) => void;
+  onNext: () => void;
+}) {
+  const [selected, setSelected] = useState<string | null>(null);
+  const [answered, setAnswered] = useState(false);
+
+  // Quiz simple: traduce una palabra de vocabulario a su significado.
+  const q = day.vocabulary[0];
+  const options = useMemo(() => {
+    if (!day.vocabulary.length) return [];
+    const correct = day.vocabulary[0].es;
+    const others = day.vocabulary.slice(1).map((v) => v.es).slice(0, 3);
+    return [...new Set([correct, ...others])].sort();
+  }, [day]);
+
+  const check = (opt: string) => {
+    setSelected(opt);
+    setAnswered(true);
+  };
+
+  if (!day.vocabulary.length) {    return (
+      <Card>
+        <h2 className="text-lg font-bold">✏️ Practicar</h2>
+        <Button className="mt-4 w-full" size="lg" onClick={onNext}>
+          Continuar
+        </Button>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <h2 className="text-lg font-bold">✏️ Practicar</h2>
+      <p className="mt-2 text-sm text-slate-500">¿Qué significa “{q?.en}”?</p>
+      <div className="mt-4 space-y-2">
+        {options.map((opt) => {
+          const isCorrect = answered && opt === q.es;
+          const isWrong = answered && opt === selected && opt !== q.es;
+          return (
+            <button
+              key={opt}
+              onClick={() => !answered && check(opt)}
+              className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
+                isCorrect ? 'border-emerald-500 bg-emerald-50 font-semibold' : isWrong ? 'border-rose-500 bg-rose-50' : 'border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+      {answered ? (
+        <Button className="mt-5 w-full" size="lg" onClick={() => { onAnswer('quiz-1', selected === q.es); }}>
+          {selected === q.es ? '¡Correcto! Continuar' : 'Continuar'}
+        </Button>
+      ) : (
+        <Button className="mt-5 w-full" size="lg" disabled>
+          Comprobar respuesta
+        </Button>
+      )}
+    </Card>
+  );
+}

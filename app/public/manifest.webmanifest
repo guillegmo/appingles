@@ -1,0 +1,18 @@
+{
+  "name": "Inglés en 21 Días",
+  "short_name": "Inglés 21",
+  "description": "Tu entrenador de inglés: reto de 21 días, práctica diaria, tutor IA y repetición espaciada.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#4f46e5",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

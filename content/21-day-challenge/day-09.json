@@ -1,0 +1,82 @@
+{
+  "id": "day-09",
+  "day": 9,
+  "title": "Compras",
+  "topic": "shopping",
+  "goal": "Compra y paga en una tienda.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "Can I have...? / How much...?",
+  "vocabulary": [
+    {
+      "en": "How much is this?",
+      "es": "¿Cuánto cuesta esto?"
+    },
+    {
+      "en": "Can I have...?",
+      "es": "¿Me das...?"
+    },
+    {
+      "en": "size",
+      "es": "talla"
+    },
+    {
+      "en": "price",
+      "es": "precio"
+    },
+    {
+      "en": "cheap",
+      "es": "barato"
+    },
+    {
+      "en": "expensive",
+      "es": "caro"
+    },
+    {
+      "en": "a refund",
+      "es": "un reembolso"
+    },
+    {
+      "en": "I am just looking",
+      "es": "Solo estoy mirando"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "How much is this shirt?",
+      "es": "¿Cuánto cuesta esta camisa?"
+    },
+    {
+      "en": "Do you have this in a larger size?",
+      "es": "¿Tienes esto en una talla más grande?"
+    },
+    {
+      "en": "Can I pay by card?",
+      "es": "¿Puedo pagar con tarjeta?"
+    },
+    {
+      "en": "It is too expensive.",
+      "es": "Es demasiado caro."
+    },
+    {
+      "en": "I am just looking, thank you.",
+      "es": "Solo estoy mirando, gracias."
+    }
+  ],
+  "speak": "Simula comprar una camisa: pregunta el precio, la talla y paga. 45 segundos.",
+  "challenge": "Roleplay: tú eres el cliente y el vendedor te ofrece una opción más barata.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

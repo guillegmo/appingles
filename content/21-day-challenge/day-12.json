@@ -1,0 +1,82 @@
+{
+  "id": "day-12",
+  "day": 12,
+  "title": "El pasado",
+  "topic": "past",
+  "goal": "Habla del pasado.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "past simple (was/were + verbos regulares)",
+  "vocabulary": [
+    {
+      "en": "yesterday",
+      "es": "ayer"
+    },
+    {
+      "en": "last week",
+      "es": "la semana pasada"
+    },
+    {
+      "en": "I was...",
+      "es": "Yo estaba/fui..."
+    },
+    {
+      "en": "I went...",
+      "es": "Fui..."
+    },
+    {
+      "en": "I had...",
+      "es": "Tuve..."
+    },
+    {
+      "en": "worked",
+      "es": "trabajé"
+    },
+    {
+      "en": "visited",
+      "es": "visité"
+    },
+    {
+      "en": "I saw...",
+      "es": "Vi..."
+    }
+  ],
+  "phrases": [
+    {
+      "en": "Yesterday I worked from home.",
+      "es": "Ayer trabajé desde casa."
+    },
+    {
+      "en": "I was at the office at 9:00.",
+      "es": "Estaba en la oficina a las 9:00."
+    },
+    {
+      "en": "Last week I visited my family.",
+      "es": "La semana pasada visité a mi familia."
+    },
+    {
+      "en": "I went to the supermarket.",
+      "es": "Fui al supermercado."
+    },
+    {
+      "en": "It was a good day.",
+      "es": "Fue un buen día."
+    }
+  ],
+  "speak": "Describe en 5 oraciones lo que hiciste ayer. 60 segundos.",
+  "challenge": "Cuenta tu \"día perfecto\" del fin de semana pasado en pasado.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "day-13",
+  "day": 13,
+  "title": "Práctica de conversación 2",
+  "topic": "speaking-2",
+  "goal": "Practica roleplay completo: restaurante y calle.",
+  "estimatedTime": 15,
+  "skill": "speaking",
+  "grammarFocus": "repaso de la semana 2",
+  "vocabulary": [],
+  "phrases": [],
+  "speak": "Roleplay: escena de restaurante: pide comida y paga. 90 segundos.",
+  "challenge": "Graba un roleplay de 90 segundos como turista pidiendo indicaciones.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

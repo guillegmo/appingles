@@ -1,0 +1,82 @@
+{
+  "id": "day-11",
+  "day": 11,
+  "title": "Viajes",
+  "topic": "travel",
+  "goal": "Haz el check-in en un hotel.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "I have a reservation / I need...",
+  "vocabulary": [
+    {
+      "en": "reservation",
+      "es": "reservación"
+    },
+    {
+      "en": "hotel",
+      "es": "hotel"
+    },
+    {
+      "en": "airport",
+      "es": "aeropuerto"
+    },
+    {
+      "en": "luggage",
+      "es": "equipaje"
+    },
+    {
+      "en": "flight",
+      "es": "vuelo"
+    },
+    {
+      "en": "boarding pass",
+      "es": "pase de abordar"
+    },
+    {
+      "en": "check-in",
+      "es": "registro"
+    },
+    {
+      "en": "passport",
+      "es": "pasaporte"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "I have a reservation.",
+      "es": "Tengo una reservación."
+    },
+    {
+      "en": "Where is the check-in counter?",
+      "es": "¿Dónde está el mostrador de registro?"
+    },
+    {
+      "en": "I need to go to the airport.",
+      "es": "Necesito ir al aeropuerto."
+    },
+    {
+      "en": "What time is my flight?",
+      "es": "¿A qué hora es mi vuelo?"
+    },
+    {
+      "en": "My luggage is lost.",
+      "es": "Perdí mi equipaje."
+    }
+  ],
+  "speak": "Haz el check-in en el hotel: reserva, nombre y número de noches. 45 segundos.",
+  "challenge": "Roleplay: en el aeropuerto, pregunta dónde está tu puerta de embarque.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

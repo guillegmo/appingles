@@ -1,0 +1,177 @@
+{
+  "id": "21-day-challenge",
+  "title": "Inglés en 21 Días",
+  "generated_content": true,
+  "source": "provisional",
+  "status": "published",
+  "days": [
+    {
+      "day": 1,
+      "id": "day-01",
+      "title": "Presentaciones",
+      "topic": "introductions",
+      "week": 1,
+      "weekLabel": "Fundamentos"
+    },
+    {
+      "day": 2,
+      "id": "day-02",
+      "title": "Información personal",
+      "topic": "personal-info",
+      "week": 1,
+      "weekLabel": "Fundamentos"
+    },
+    {
+      "day": 3,
+      "id": "day-03",
+      "title": "Gustos y disgustos",
+      "topic": "likes",
+      "week": 1,
+      "weekLabel": "Fundamentos"
+    },
+    {
+      "day": 4,
+      "id": "day-04",
+      "title": "Rutinas diarias",
+      "topic": "routines",
+      "week": 1,
+      "weekLabel": "Fundamentos"
+    },
+    {
+      "day": 5,
+      "id": "day-05",
+      "title": "Hacer preguntas",
+      "topic": "questions",
+      "week": 1,
+      "weekLabel": "Fundamentos"
+    },
+    {
+      "day": 6,
+      "id": "day-06",
+      "title": "Práctica de conversación 1",
+      "topic": "speaking-1",
+      "week": 1,
+      "weekLabel": "Fundamentos"
+    },
+    {
+      "day": 7,
+      "id": "day-07",
+      "title": "Repaso y mini-examen",
+      "topic": "review-1",
+      "week": 1,
+      "weekLabel": "Fundamentos"
+    },
+    {
+      "day": 8,
+      "id": "day-08",
+      "title": "Direcciones",
+      "topic": "directions",
+      "week": 2,
+      "weekLabel": "Vida real"
+    },
+    {
+      "day": 9,
+      "id": "day-09",
+      "title": "Compras",
+      "topic": "shopping",
+      "week": 2,
+      "weekLabel": "Vida real"
+    },
+    {
+      "day": 10,
+      "id": "day-10",
+      "title": "En el restaurante",
+      "topic": "restaurant",
+      "week": 2,
+      "weekLabel": "Vida real"
+    },
+    {
+      "day": 11,
+      "id": "day-11",
+      "title": "Viajes",
+      "topic": "travel",
+      "week": 2,
+      "weekLabel": "Vida real"
+    },
+    {
+      "day": 12,
+      "id": "day-12",
+      "title": "El pasado",
+      "topic": "past",
+      "week": 2,
+      "weekLabel": "Vida real"
+    },
+    {
+      "day": 13,
+      "id": "day-13",
+      "title": "Práctica de conversación 2",
+      "topic": "speaking-2",
+      "week": 2,
+      "weekLabel": "Vida real"
+    },
+    {
+      "day": 14,
+      "id": "day-14",
+      "title": "Repaso y mini-examen",
+      "topic": "review-2",
+      "week": 2,
+      "weekLabel": "Vida real"
+    },
+    {
+      "day": 15,
+      "id": "day-15",
+      "title": "El futuro",
+      "topic": "future",
+      "week": 3,
+      "weekLabel": "Comunicación"
+    },
+    {
+      "day": 16,
+      "id": "day-16",
+      "title": "Trabajo",
+      "topic": "work",
+      "week": 3,
+      "weekLabel": "Comunicación"
+    },
+    {
+      "day": 17,
+      "id": "day-17",
+      "title": "Conversaciones",
+      "topic": "conversations",
+      "week": 3,
+      "weekLabel": "Comunicación"
+    },
+    {
+      "day": 18,
+      "id": "day-18",
+      "title": "Problemas",
+      "topic": "problems",
+      "week": 3,
+      "weekLabel": "Comunicación"
+    },
+    {
+      "day": 19,
+      "id": "day-19",
+      "title": "Opiniones",
+      "topic": "opinions",
+      "week": 3,
+      "weekLabel": "Comunicación"
+    },
+    {
+      "day": 20,
+      "id": "day-20",
+      "title": "Práctica de conversación 3",
+      "topic": "speaking-3",
+      "week": 3,
+      "weekLabel": "Comunicación"
+    },
+    {
+      "day": 21,
+      "id": "day-21",
+      "title": "Examen final y transición",
+      "topic": "final",
+      "week": 3,
+      "weekLabel": "Comunicación"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "id": "post21-assessment",
+  "title": "Evaluación post-reto",
+  "description": "Una revisión rápida para identificar tus fortalezas y qué mejorar.",
+  "generated_content": true,
+  "source": "provisional",
+  "status": "published",
+  "sections": [
+    {
+      "key": "vocabulary",
+      "label": "Vocabulario",
+      "items": 5,
+      "type": "multiple-choice"
+    },
+    {
+      "key": "listening",
+      "label": "Escuchar",
+      "items": 4,
+      "type": "listening"
+    },
+    {
+      "key": "grammar",
+      "label": "Fundamentos de gramática",
+      "items": 5,
+      "type": "fill-in"
+    },
+    {
+      "key": "conversation",
+      "label": "Conversación",
+      "items": 3,
+      "type": "dialogue"
+    },
+    {
+      "key": "speaking",
+      "label": "Hablar",
+      "items": 2,
+      "type": "speaking"
+    },
+    {
+      "key": "confidence",
+      "label": "Confianza",
+      "items": 3,
+      "type": "self-report"
+    }
+  ],
+  "scoreFields": [
+    "speakingScore",
+    "listeningScore",
+    "vocabularyScore",
+    "conversationScore",
+    "grammarScore",
+    "confidenceScore"
+  ]
+}

@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: appingles-api
+    runtime: node
+    buildCommand: cd api && npm ci
+    startCommand: cd api && node server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: STORE_MODE
+        value: firebase
+      - key: FIREBASE_PROJECT_ID
+        value: appingles-app
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: CORS_ORIGIN
+        sync: false
+      - key: ADMIN_USER_ID
+        sync: false
+
+  - type: web
+    name: appingles-web
+    runtime: static
+    rootDir: app
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_AUTH_MODE
+        value: firebase
+      - key: VITE_FIREBASE_API_KEY
+        value: AIzaSyAfcQfLkf-ZuugTjtEjvvhsWg6kbmwuG6U
+      - key: VITE_FIREBASE_AUTH_DOMAIN
+        value: appingles-app.firebaseapp.com
+      - key: VITE_FIREBASE_PROJECT_ID
+        value: appingles-app
+      - key: VITE_FIREBASE_STORAGE_BUCKET
+        value: appingles-app.firebasestorage.app
+      - key: VITE_FIREBASE_MESSAGING_SENDER_ID
+        value: "231095268664"
+      - key: VITE_FIREBASE_APP_ID
+        value: 1:231095268664:web:3f2e705bd1b16ce937bdcd
+      - key: VITE_FIREBASE_MEASUREMENT_ID
+        value: G-GS0296HSFK

@@ -1,0 +1,82 @@
+{
+  "id": "day-15",
+  "day": 15,
+  "title": "El futuro",
+  "topic": "future",
+  "goal": "Habla de planes futuros.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "going to / will",
+  "vocabulary": [
+    {
+      "en": "I am going to...",
+      "es": "Voy a..."
+    },
+    {
+      "en": "I will...",
+      "es": "Yo... (futuro)"
+    },
+    {
+      "en": "next month",
+      "es": "el próximo mes"
+    },
+    {
+      "en": "plan",
+      "es": "plan"
+    },
+    {
+      "en": "maybe",
+      "es": "quizás"
+    },
+    {
+      "en": "I am going to travel.",
+      "es": "Voy a viajar."
+    },
+    {
+      "en": "I will call you.",
+      "es": "Te llamaré."
+    },
+    {
+      "en": "soon",
+      "es": "pronto"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "I am going to travel next month.",
+      "es": "Voy a viajar el próximo mes."
+    },
+    {
+      "en": "I will call you tomorrow.",
+      "es": "Te llamaré mañana."
+    },
+    {
+      "en": "What are you going to do this weekend?",
+      "es": "¿Qué vas a hacer este fin de semana?"
+    },
+    {
+      "en": "Maybe I will stay home.",
+      "es": "Quizás me quede en casa."
+    },
+    {
+      "en": "We are going to start soon.",
+      "es": "Vamos a empezar pronto."
+    }
+  ],
+  "speak": "Comparte 3 planes futuros. 45 segundos.",
+  "challenge": "Pregunta a un compañero sus planes de fin de semana y cuenta los tuyos.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

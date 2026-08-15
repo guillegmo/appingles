@@ -1,0 +1,642 @@
+{
+  "id": "post21-curriculum",
+  "title": "Continuous Learning",
+  "description": "Contenido continuo organizado por skills y situaciones reales.",
+  "generated_content": true,
+  "source": "provisional",
+  "status": "published",
+  "skills": [
+    "speaking",
+    "listening",
+    "vocabulary",
+    "grammar",
+    "conversation"
+  ],
+  "situations": [
+    "travel",
+    "work",
+    "social",
+    "shopping",
+    "restaurant",
+    "airport",
+    "hotel",
+    "phone",
+    "meetings",
+    "interviews",
+    "daily-life"
+  ],
+  "lessons": [
+    {
+      "id": "p21-airport-checkin",
+      "title": "Check-in en el aeropuerto",
+      "level": "beginner",
+      "skill": "speaking",
+      "situation": "travel",
+      "topic": "Check-in en el aeropuerto",
+      "estimatedTime": 15,
+      "difficulty": 1,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Haz el check-in en el aeropuerto: pasaporte, equipaje y preguntas sobre la puerta.",
+      "vocabulary": [
+        {
+          "en": "boarding pass",
+          "es": "pase de abordar"
+        },
+        {
+          "en": "window seat",
+          "es": "asiento de ventana"
+        },
+        {
+          "en": "aisle seat",
+          "es": "asiento de pasillo"
+        },
+        {
+          "en": "to check in",
+          "es": "hacer el check-in"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "Here is my passport.",
+          "es": "Aquí está mi pasaporte."
+        },
+        {
+          "en": "I would like a window seat, please.",
+          "es": "Quisiera un asiento de ventana, por favor."
+        },
+        {
+          "en": "Do I need to check this bag?",
+          "es": "¿Necesito facturar esta bolsa?"
+        },
+        {
+          "en": "What time does boarding start?",
+          "es": "¿A qué hora empieza el abordaje?"
+        }
+      ],
+      "speak": "Haz el check-in de tu vuelo: entrega tu pasaporte, pide asiento y pregunta por la puerta.",
+      "challenge": "Roleplay: check-in completo en el aeropuerto con el tutor IA o un compañero."
+    },
+    {
+      "id": "p21-hotel-checkin",
+      "title": "Check-in en el hotel",
+      "level": "beginner",
+      "skill": "speaking",
+      "situation": "travel",
+      "topic": "Check-in en el hotel",
+      "estimatedTime": 15,
+      "difficulty": 1,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Haz el check-in en el hotel: reserva, pasaporte y preguntas sobre el alojamiento.",
+      "vocabulary": [
+        {
+          "en": "reservation",
+          "es": "reservación"
+        },
+        {
+          "en": "room",
+          "es": "habitación"
+        },
+        {
+          "en": "Wi-Fi",
+          "es": "wifi"
+        },
+        {
+          "en": "breakfast",
+          "es": "desayuno"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "I have a reservation under Martinez.",
+          "es": "Tengo una reservación a nombre de Martínez."
+        },
+        {
+          "en": "What time is breakfast?",
+          "es": "¿A qué hora es el desayuno?"
+        },
+        {
+          "en": "Can I have the Wi-Fi password?",
+          "es": "¿Me da la contraseña del wifi?"
+        },
+        {
+          "en": "My room does not work.",
+          "es": "Mi habitación no funciona."
+        }
+      ],
+      "speak": "Llega al hotel, da tu nombre, confirma tu reserva y pregunta por tu habitación.",
+      "challenge": "Roleplay: registrarte en un hotel con el tutor IA o un compañero."
+    },
+    {
+      "id": "p21-order-food",
+      "title": "Pedir comida",
+      "level": "beginner",
+      "skill": "speaking",
+      "situation": "restaurant",
+      "topic": "Pedir comida",
+      "estimatedTime": 15,
+      "difficulty": 1,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Pide comida en un restaurante: plato principal, acompañamiento y bebida.",
+      "vocabulary": [
+        {
+          "en": "appetizer",
+          "es": "entrada"
+        },
+        {
+          "en": "main course",
+          "es": "plato principal"
+        },
+        {
+          "en": "dessert",
+          "es": "postre"
+        },
+        {
+          "en": "the bill",
+          "es": "la cuenta"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "For starters, I would like a salad.",
+          "es": "De entrada, quisiera una ensalada."
+        },
+        {
+          "en": "As a main course, the grilled chicken.",
+          "es": "Como plato principal, el pollo a la parrilla."
+        },
+        {
+          "en": "Could we have the bill, please?",
+          "es": "¿Nos trae la cuenta, por favor?"
+        },
+        {
+          "en": "Is the tip included?",
+          "es": "¿Está incluida la propina?"
+        }
+      ],
+      "speak": "Pide tu comida completa al camarero y pregunta por las opciones del día.",
+      "challenge": "Roleplay: pedir comida en un restaurante con el tutor IA o un compañero."
+    },
+    {
+      "id": "p21-job-interview",
+      "title": "Entrevista de trabajo básica",
+      "level": "elementary",
+      "skill": "speaking",
+      "situation": "interviews",
+      "topic": "Entrevista de trabajo",
+      "estimatedTime": 20,
+      "difficulty": 2,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Responde preguntas típicas de una entrevista de trabajo en inglés.",
+      "vocabulary": [
+        {
+          "en": "experience",
+          "es": "experiencia"
+        },
+        {
+          "en": "strength",
+          "es": "fortaleza"
+        },
+        {
+          "en": "team",
+          "es": "equipo"
+        },
+        {
+          "en": "apply for",
+          "es": "postularse a"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "I have three years of experience in sales.",
+          "es": "Tengo tres años de experiencia en ventas."
+        },
+        {
+          "en": "My main strength is communication.",
+          "es": "Mi principal fortaleza es la comunicación."
+        },
+        {
+          "en": "Why do you want to work here?",
+          "es": "¿Por qué quieres trabajar aquí?"
+        },
+        {
+          "en": "I am a good team player.",
+          "es": "Trabajo bien en equipo."
+        }
+      ],
+      "speak": "Responde las preguntas de la entrevista: experiencia, fortalezas y por qué quieres el puesto.",
+      "challenge": "Simula una entrevista de trabajo con el tutor IA o un compañero."
+    },
+    {
+      "id": "p21-meeting-colleagues",
+      "title": "Conocer a compañeros de trabajo",
+      "level": "beginner",
+      "skill": "conversation",
+      "situation": "work",
+      "topic": "Conocer a compañeros de trabajo",
+      "estimatedTime": 15,
+      "difficulty": 1,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Preséntate y conversa con compañeros de trabajo en una reunión.",
+      "vocabulary": [
+        {
+          "en": "colleague",
+          "es": "compañero de trabajo"
+        },
+        {
+          "en": "department",
+          "es": "departamento"
+        },
+        {
+          "en": "project",
+          "es": "proyecto"
+        },
+        {
+          "en": "deadline",
+          "es": "fecha límite"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "I work in the marketing department.",
+          "es": "Trabajo en el departamento de marketing."
+        },
+        {
+          "en": "What do you do here?",
+          "es": "¿A qué te dedicas aquí?"
+        },
+        {
+          "en": "We are working on a new project.",
+          "es": "Estamos trabajando en un proyecto nuevo."
+        },
+        {
+          "en": "The deadline is next Friday.",
+          "es": "La fecha límite es el próximo viernes."
+        }
+      ],
+      "speak": "Preséntate ante un grupo: nombre, cargo y área en la que trabajas.",
+      "challenge": "Roleplay: reunión de equipo en inglés con el tutor IA o un compañero."
+    },
+    {
+      "id": "p21-small-talk",
+      "title": "Conversación informal",
+      "level": "beginner",
+      "skill": "conversation",
+      "situation": "social",
+      "topic": "Conversación informal",
+      "estimatedTime": 15,
+      "difficulty": 1,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Mantén conversaciones cortas e informales (small talk) sobre temas cotidianos.",
+      "vocabulary": [
+        {
+          "en": "weekend",
+          "es": "fin de semana"
+        },
+        {
+          "en": "weather",
+          "es": "clima"
+        },
+        {
+          "en": "plans",
+          "es": "planes"
+        },
+        {
+          "en": "by the way",
+          "es": "por cierto"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "How was your weekend?",
+          "es": "¿Cómo estuvo tu fin de semana?"
+        },
+        {
+          "en": "The weather is nice today.",
+          "es": "El clima está lindo hoy."
+        },
+        {
+          "en": "Do you have any plans tonight?",
+          "es": "¿Tienes planes esta noche?"
+        },
+        {
+          "en": "By the way, how do you know Maria?",
+          "es": "Por cierto, ¿cómo conoces a María?"
+        }
+      ],
+      "speak": "Inicia una conversación informal sobre el clima, el fin de semana o los pasatiempos.",
+      "challenge": "Haz small talk con el tutor IA o un compañero durante 2 minutos."
+    },
+    {
+      "id": "p21-phone-call",
+      "title": "Hacer una llamada telefónica",
+      "level": "elementary",
+      "skill": "conversation",
+      "situation": "phone",
+      "topic": "Llamadas telefónicas",
+      "estimatedTime": 15,
+      "difficulty": 2,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Mantén una conversación telefónica: saludo, motivo y despedida.",
+      "vocabulary": [
+        {
+          "en": "hold on",
+          "es": "espere un momento"
+        },
+        {
+          "en": "call back",
+          "es": "devolver la llamada"
+        },
+        {
+          "en": "message",
+          "es": "mensaje"
+        },
+        {
+          "en": "extension",
+          "es": "extensión"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "Hello, may I speak to Mr. Perez?",
+          "es": "Hola, ¿podría hablar con el Sr. Pérez?"
+        },
+        {
+          "en": "Can you hold on a moment?",
+          "es": "¿Puede esperar un momento?"
+        },
+        {
+          "en": "Can I leave a message?",
+          "es": "¿Puedo dejar un mensaje?"
+        },
+        {
+          "en": "I will call you back tomorrow.",
+          "es": "Te devolveré la llamada mañana."
+        }
+      ],
+      "speak": "Simula una llamada: saluda, explica el motivo y despídete con educación.",
+      "challenge": "Roleplay: llamada telefónica con el tutor IA o un compañero."
+    },
+    {
+      "id": "p21-listen-directions",
+      "title": "Entender direcciones",
+      "level": "beginner",
+      "skill": "listening",
+      "situation": "daily-life",
+      "topic": "Entender direcciones",
+      "estimatedTime": 15,
+      "difficulty": 1,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Comprende indicaciones para llegar a un lugar.",
+      "vocabulary": [
+        {
+          "en": "turn left",
+          "es": "gira a la izquierda"
+        },
+        {
+          "en": "turn right",
+          "es": "gira a la derecha"
+        },
+        {
+          "en": "straight ahead",
+          "es": "todo recto"
+        },
+        {
+          "en": "intersection",
+          "es": "intersección"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "Turn left at the intersection.",
+          "es": "Gira a la izquierda en la intersección."
+        },
+        {
+          "en": "Go straight ahead for two blocks.",
+          "es": "Sigue todo recto dos cuadras."
+        },
+        {
+          "en": "It is on your right.",
+          "es": "Está a tu derecha."
+        },
+        {
+          "en": "You cannot miss it.",
+          "es": "No puedes perderte."
+        }
+      ],
+      "speak": "Repite las direcciones que escuchaste para confirmar que las entendiste.",
+      "challenge": "Sigue las indicaciones de audio y llega al lugar correcto."
+    },
+    {
+      "id": "p21-listen-airport",
+      "title": "Anuncios en el aeropuerto",
+      "level": "elementary",
+      "skill": "listening",
+      "situation": "travel",
+      "topic": "Anuncios en el aeropuerto",
+      "estimatedTime": 15,
+      "difficulty": 2,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Comprende anuncios típicos de aeropuertos: embarque, retrasos y puertas.",
+      "vocabulary": [
+        {
+          "en": "gate",
+          "es": "puerta de abordaje"
+        },
+        {
+          "en": "delayed",
+          "es": "retrasado"
+        },
+        {
+          "en": "boarding",
+          "es": "abordaje"
+        },
+        {
+          "en": "final call",
+          "es": "última llamada"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "Flight 200 to Madrid is now boarding at gate 12.",
+          "es": "El vuelo 200 a Madrid está abordando en la puerta 12."
+        },
+        {
+          "en": "Your flight is delayed by one hour.",
+          "es": "Su vuelo está retrasado una hora."
+        },
+        {
+          "en": "This is the final call for passengers...",
+          "es": "Esta es la última llamada para los pasajeros..."
+        },
+        {
+          "en": "Please proceed to gate 5.",
+          "es": "Por favor diríjase a la puerta 5."
+        }
+      ],
+      "speak": "Repite la información clave de un anuncio: hora, puerta y vuelo.",
+      "challenge": "Escucha un anuncio y responde preguntas sobre el vuelo."
+    },
+    {
+      "id": "p21-shopping-vocab",
+      "title": "Vocabulario de compras",
+      "level": "beginner",
+      "skill": "vocabulary",
+      "situation": "shopping",
+      "topic": "Palabras de compras",
+      "estimatedTime": 10,
+      "difficulty": 1,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Aprende vocabulario para comprar: precios, tallas y pagos.",
+      "vocabulary": [
+        {
+          "en": "discount",
+          "es": "descuento"
+        },
+        {
+          "en": "receipt",
+          "es": "recibo"
+        },
+        {
+          "en": "fitting room",
+          "es": "probador"
+        },
+        {
+          "en": "change",
+          "es": "cambio (vuelto)"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "Is there a discount?",
+          "es": "¿Hay algún descuento?"
+        },
+        {
+          "en": "Where is the fitting room?",
+          "es": "¿Dónde está el probador?"
+        },
+        {
+          "en": "Can I get a receipt, please?",
+          "es": "¿Me da un recibo, por favor?"
+        },
+        {
+          "en": "Here is your change.",
+          "es": "Aquí está tu cambio."
+        }
+      ],
+      "speak": "Usa el vocabulario de compras en frases completas.",
+      "challenge": "Simula una compra en una tienda con el tutor IA o un compañero."
+    },
+    {
+      "id": "p21-travel-vocab",
+      "title": "Vocabulario de viajes",
+      "level": "beginner",
+      "skill": "vocabulary",
+      "situation": "travel",
+      "topic": "Palabras de viajes",
+      "estimatedTime": 10,
+      "difficulty": 1,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Aprende vocabulario para viajar: transporte, alojamiento y documentos.",
+      "vocabulary": [
+        {
+          "en": "departure",
+          "es": "salida"
+        },
+        {
+          "en": "arrival",
+          "es": "llegada"
+        },
+        {
+          "en": "currency",
+          "es": "moneda"
+        },
+        {
+          "en": "customs",
+          "es": "aduana"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "What is the departure time?",
+          "es": "¿Cuál es la hora de salida?"
+        },
+        {
+          "en": "The arrival is at 6 p.m.",
+          "es": "La llegada es a las 6 de la tarde."
+        },
+        {
+          "en": "Where can I exchange currency?",
+          "es": "¿Dónde puedo cambiar moneda?"
+        },
+        {
+          "en": "I have nothing to declare at customs.",
+          "es": "No tengo nada que declarar en la aduana."
+        }
+      ],
+      "speak": "Usa el vocabulario de viajes en frases completas.",
+      "challenge": "Planifica un viaje corto en inglés con el tutor IA o un compañero."
+    },
+    {
+      "id": "p21-past-review",
+      "title": "Pasado simple en el trabajo",
+      "level": "beginner",
+      "skill": "grammar",
+      "situation": "work",
+      "topic": "Repaso del pasado simple",
+      "estimatedTime": 15,
+      "difficulty": 1,
+      "premium": true,
+      "contentType": "lesson",
+      "goal": "Practica el pasado simple para hablar de tu semana laboral.",
+      "vocabulary": [
+        {
+          "en": "finished",
+          "es": "terminé"
+        },
+        {
+          "en": "started",
+          "es": "empecé"
+        },
+        {
+          "en": "attended",
+          "es": "asistí"
+        },
+        {
+          "en": "sent",
+          "es": "envié"
+        }
+      ],
+      "phrases": [
+        {
+          "en": "I finished the report on Monday.",
+          "es": "Terminé el informe el lunes."
+        },
+        {
+          "en": "I started a new project last week.",
+          "es": "Empecé un proyecto nuevo la semana pasada."
+        },
+        {
+          "en": "I attended a meeting yesterday.",
+          "es": "Asistí a una reunión ayer."
+        },
+        {
+          "en": "I sent an email to the client.",
+          "es": "Envié un correo al cliente."
+        }
+      ],
+      "speak": "Cuenta qué hiciste en el trabajo la semana pasada usando el pasado.",
+      "challenge": "Describe tu semana laboral pasada en 5 oraciones en pasado."
+    }
+  ]
+}

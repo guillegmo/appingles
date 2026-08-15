@@ -1,0 +1,82 @@
+{
+  "id": "day-21",
+  "day": 21,
+  "title": "Examen final y transición",
+  "topic": "final",
+  "goal": "Cierra tu reto y define tu siguiente meta.",
+  "estimatedTime": 10,
+  "skill": "mixed",
+  "grammarFocus": "examen final + repaso",
+  "vocabulary": [
+    {
+      "en": "congratulations",
+      "es": "felicidades"
+    },
+    {
+      "en": "you did it!",
+      "es": "¡lo lograste!"
+    },
+    {
+      "en": "foundation",
+      "es": "fundamento"
+    },
+    {
+      "en": "journey",
+      "es": "viaje/trayecto"
+    },
+    {
+      "en": "continue",
+      "es": "continuar"
+    },
+    {
+      "en": "next step",
+      "es": "siguiente paso"
+    },
+    {
+      "en": "keep going",
+      "es": "sigue adelante"
+    },
+    {
+      "en": "fluency",
+      "es": "fluidez"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "Congratulations! You did it!",
+      "es": "¡Felicidades! ¡Lo lograste!"
+    },
+    {
+      "en": "You built your foundation.",
+      "es": "Construiste tu base."
+    },
+    {
+      "en": "Your English journey is just beginning.",
+      "es": "Tu viaje de inglés apenas comienza."
+    },
+    {
+      "en": "Let's continue to the next step.",
+      "es": "Continuemos al siguiente paso."
+    },
+    {
+      "en": "Keep going!",
+      "es": "¡Sigue adelante!"
+    }
+  ],
+  "speak": "Tarea final de habla: un minuto sobre lo que aprendiste y tu próxima meta.",
+  "challenge": "Completa el examen final y empieza la evaluación del post-reto.",
+  "xpReward": 30,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

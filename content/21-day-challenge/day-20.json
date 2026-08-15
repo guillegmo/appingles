@@ -1,0 +1,28 @@
+{
+  "id": "day-20",
+  "day": 20,
+  "title": "Práctica de conversación 3",
+  "topic": "speaking-3",
+  "goal": "Entrevista final: presenta tu perfil.",
+  "estimatedTime": 15,
+  "skill": "speaking",
+  "grammarFocus": "repaso de la semana 3",
+  "vocabulary": [],
+  "phrases": [],
+  "speak": "Entrevista corta: preséntate, habla de tu trabajo y tus planes futuros. 90 segundos.",
+  "challenge": "Graba una entrevista de 90 segundos respondiendo 4 preguntas.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

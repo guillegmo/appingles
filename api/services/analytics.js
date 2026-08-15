@@ -1,0 +1,93 @@
+// services/analytics.js
+// Eventos de producto y métricas de negocio.
+// - Registro de eventos: colección 'analyticsEvents' (append).
+// - Dashboard: agregados sobre usuarios, suscripciones y uso de IA.
+
+const store = require('../lib/store');
+
+const EVENTS = [
+  'user_registered',
+  'onboarding_completed',
+  'day_started',
+  'day_completed',
+  'exercise_completed',
+  'speaking_started',
+  'speaking_completed',
+  'ai_session_started',
+  'ai_session_completed',
+  'trial_started',
+  'paywall_viewed',
+  'checkout_started',
+  'subscription_started',
+  'subscription_canceled',
+  'subscription_renewed',
+];
+
+// Registra un evento de usuario. at es opcional (permite rejugar en tests).
+async function trackEvent({ userId, event, meta = {}, at = new Date().toISOString() }) {
+  if (!EVENTS.includes(event)) return { ok: false, error: 'evento desconocido' };
+  const id = `${userId}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  await store.setDoc('analyticsEvents', id, { userId, event, meta, at });
+  return { ok: true };
+}
+
+// Punto de entrada simple para rutas autenticadas.
+function eventName(req, res, next) {
+  // usa body.event + body.meta
+  next();
+}
+
+// ---- Métricas de negocio (dashboard) ----
+
+const PRICE_MONTHLY_USD = Number(process.env.PRICE_MONTHLY_USD || 15);
+
+async function businessDashboard() {
+  const subs = await store.listDocs('subscriptions');
+  const active = subs.filter((s) => {
+    const st = s.status;
+    return st === 'active' || st === 'trialing';
+  });
+  const paying = active.filter((s) => s.status === 'active' && s.plan === 'premium');
+  const trialing = active.filter((s) => s.status === 'trialing');
+
+  // Cancelados/vencidos en los últimos 30 días para churn aproximado.
+  const monthAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const canceledRecent = subs.filter((s) => {
+    const t = new Date(s.updatedAt || 0).getTime();
+    return (s.status === 'canceled' || s.status === 'expired') && t >= monthAgo;
+  });
+
+  const mrr = paying.length * PRICE_MONTHLY_USD;
+
+  // Coste de IA acumulado (todas las fechas).
+  const aiUsageDocs = await store.listDocs('aiUsage');
+  let aiCost = 0;
+  for (const d of aiUsageDocs) {
+    for (const feature of ['tutor']) {
+      if (d[feature]) aiCost += d[feature].estimatedCost || 0;
+    }
+  }
+
+  // Usuarios registrados.
+  const events = await store.listDocs('analyticsEvents');
+  const registered = events.filter((e) => e.event === 'user_registered').length;
+  const converted = events.filter((e) => e.event === 'subscription_started').length;
+  const trialConversion = registered > 0 ? Math.round((converted / registered) * 100) : 0;
+
+  // Churn mensual aproximado.
+  const churn = paying.length + canceledRecent.length > 0
+    ? Math.round((canceledRecent.length / (paying.length + canceledRecent.length)) * 100)
+    : 0;
+
+  return {
+    subscriptionCounts: { total: subs.length, active: active.length, paying: paying.length, trialing: trialing.length, canceledRecent: canceledRecent.length },
+    mrr,
+    monthlyPrice: PRICE_MONTHLY_USD,
+    churnPct: churn,
+    aiTotalCost: +aiCost.toFixed(4),
+    aiCostPerUser: paying.length > 0 ? +(aiCost / paying.length).toFixed(4) : 0,
+    funnel: { registered, converted, trialConversionPct: trialConversion },
+  };
+}
+
+module.exports = { EVENTS, trackEvent, businessDashboard, PRICE_MONTHLY_USD };

@@ -1,0 +1,82 @@
+{
+  "id": "day-18",
+  "day": 18,
+  "title": "Problemas",
+  "topic": "problems",
+  "goal": "Explica problemas y pide ayuda.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "I need... / Can you help me...?",
+  "vocabulary": [
+    {
+      "en": "problem",
+      "es": "problema"
+    },
+    {
+      "en": "I need help.",
+      "es": "Necesito ayuda."
+    },
+    {
+      "en": "It doesn't work.",
+      "es": "No funciona."
+    },
+    {
+      "en": "broken",
+      "es": "roto/descompuesto"
+    },
+    {
+      "en": "emergency",
+      "es": "emergencia"
+    },
+    {
+      "en": "Can you help me?",
+      "es": "¿Puedes ayudarme?"
+    },
+    {
+      "en": "I lost my phone.",
+      "es": "Perdí mi teléfono."
+    },
+    {
+      "en": "wait a moment",
+      "es": "espera un momento"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "Excuse me, I need help.",
+      "es": "Disculpe, necesito ayuda."
+    },
+    {
+      "en": "My phone doesn't work.",
+      "es": "Mi teléfono no funciona."
+    },
+    {
+      "en": "Can you help me with this?",
+      "es": "¿Puedes ayudarme con esto?"
+    },
+    {
+      "en": "There is a problem with the internet.",
+      "es": "Hay un problema con el internet."
+    },
+    {
+      "en": "Please, wait a moment.",
+      "es": "Por favor, espera un momento."
+    }
+  ],
+  "speak": "Explica un problema en tu departamento al encargado del edificio. 45 segundos.",
+  "challenge": "Roleplay: tu computadora está rota, pide ayuda para arreglarla.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

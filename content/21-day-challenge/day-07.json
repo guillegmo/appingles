@@ -1,0 +1,82 @@
+{
+  "id": "day-07",
+  "day": 7,
+  "title": "Repaso y mini-examen",
+  "topic": "review-1",
+  "goal": "Repasa y refuerza lo aprendido en la semana 1.",
+  "estimatedTime": 10,
+  "skill": "mixed",
+  "grammarFocus": "repetición de la semana 1",
+  "vocabulary": [
+    {
+      "en": "revision",
+      "es": "revisión"
+    },
+    {
+      "en": "practice",
+      "es": "práctica"
+    },
+    {
+      "en": "remember",
+      "es": "recordar"
+    },
+    {
+      "en": "mistake",
+      "es": "error"
+    },
+    {
+      "en": "again",
+      "es": "otra vez"
+    },
+    {
+      "en": "perfect",
+      "es": "perfecto"
+    },
+    {
+      "en": "improve",
+      "es": "mejorar"
+    },
+    {
+      "en": "progress",
+      "es": "progreso"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "Let's review.",
+      "es": "Repasemos."
+    },
+    {
+      "en": "I want to improve.",
+      "es": "Quiero mejorar."
+    },
+    {
+      "en": "One more time, please.",
+      "es": "Una vez más, por favor."
+    },
+    {
+      "en": "I remember this word.",
+      "es": "Recuerdo esta palabra."
+    },
+    {
+      "en": "Practice makes perfect.",
+      "es": "La práctica hace al maestro."
+    }
+  ],
+  "speak": "Repite 5 frases clave de la semana 1 en voz alta.",
+  "challenge": "Mini-examen: completa el cuestionario de repaso de la semana 1.",
+  "xpReward": 30,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

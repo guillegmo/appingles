@@ -1,0 +1,82 @@
+{
+  "id": "day-17",
+  "day": 17,
+  "title": "Conversaciones",
+  "topic": "conversations",
+  "goal": "Mantén una conversación de 3 preguntas.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "preguntas de seguimiento",
+  "vocabulary": [
+    {
+      "en": "How is your day?",
+      "es": "¿Cómo va tu día?"
+    },
+    {
+      "en": "Really?",
+      "es": "¿En serio?"
+    },
+    {
+      "en": "That is interesting!",
+      "es": "¡Qué interesante!"
+    },
+    {
+      "en": "And you?",
+      "es": "¿Y tú?"
+    },
+    {
+      "en": "I see.",
+      "es": "Ya veo."
+    },
+    {
+      "en": "For example",
+      "es": "por ejemplo"
+    },
+    {
+      "en": "Actually",
+      "es": "en realidad"
+    },
+    {
+      "en": "Good idea!",
+      "es": "¡Buena idea!"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "How was your weekend?",
+      "es": "¿Cómo estuvo tu fin de semana?"
+    },
+    {
+      "en": "Really? That sounds great!",
+      "es": "¿En serio? ¡Suena genial!"
+    },
+    {
+      "en": "What do you do in your free time?",
+      "es": "¿Qué haces en tu tiempo libre?"
+    },
+    {
+      "en": "I like talking to new people.",
+      "es": "Me gusta hablar con gente nueva."
+    },
+    {
+      "en": "Let's keep in touch.",
+      "es": "Mantengamos el contacto."
+    }
+  ],
+  "speak": "Inicia y mantén una conversación de 3 preguntas. 60 segundos.",
+  "challenge": "Small talk: haz 3 preguntas y reacciona con interés.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": "day-02",
+  "day": 2,
+  "title": "Información personal",
+  "topic": "personal-info",
+  "goal": "Usa el verbo to be para presentarte y hablar de ti.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "to be + preguntas",
+  "vocabulary": [
+    {
+      "en": "How old are you?",
+      "es": "¿Cuántos años tienes?"
+    },
+    {
+      "en": "I am 30 years old.",
+      "es": "Tengo 30 años."
+    },
+    {
+      "en": "phone number",
+      "es": "número de teléfono"
+    },
+    {
+      "en": "email address",
+      "es": "dirección de correo"
+    },
+    {
+      "en": "Where are you from?",
+      "es": "¿De dónde eres?"
+    },
+    {
+      "en": "married",
+      "es": "casado(a)"
+    },
+    {
+      "en": "single",
+      "es": "soltero(a)"
+    },
+    {
+      "en": "address",
+      "es": "dirección"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "How old are you?",
+      "es": "¿Cuántos años tienes?"
+    },
+    {
+      "en": "I am 30 years old.",
+      "es": "Tengo 30 años."
+    },
+    {
+      "en": "My phone number is 555-1234.",
+      "es": "Mi número es 555-1234."
+    },
+    {
+      "en": "I am from Colombia.",
+      "es": "Soy de Colombia."
+    },
+    {
+      "en": "Where do you live?",
+      "es": "¿Dónde vives?"
+    }
+  ],
+  "speak": "Responde: edad, número de teléfono y dónde vives. 45 segundos.",
+  "challenge": "Pregunta a un compañero (real o IA) su nombre, edad y origen. Repite sus respuestas.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

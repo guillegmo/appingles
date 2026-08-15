@@ -1,0 +1,96 @@
+{
+  "id": "learning-plan-base",
+  "title": "Mi plan de inglés",
+  "generated_content": true,
+  "source": "provisional",
+  "status": "published",
+  "variants": [
+    {
+      "condition": "weakest: speaking",
+      "weeks": [
+        {
+          "week": 1,
+          "focus": "Confianza al hablar",
+          "skill": "speaking",
+          "dailyMinutes": 15
+        },
+        {
+          "week": 2,
+          "focus": "Escuchar",
+          "skill": "listening",
+          "dailyMinutes": 15
+        },
+        {
+          "week": 3,
+          "focus": "Conversaciones reales",
+          "skill": "conversation",
+          "dailyMinutes": 20
+        },
+        {
+          "week": 4,
+          "focus": "Inglés de viajes",
+          "skill": "travel",
+          "dailyMinutes": 15
+        }
+      ]
+    },
+    {
+      "condition": "weakest: listening",
+      "weeks": [
+        {
+          "week": 1,
+          "focus": "Fundamentos de escucha",
+          "skill": "listening",
+          "dailyMinutes": 15
+        },
+        {
+          "week": 2,
+          "focus": "Confianza al hablar",
+          "skill": "speaking",
+          "dailyMinutes": 15
+        },
+        {
+          "week": 3,
+          "focus": "Conversaciones diarias",
+          "skill": "conversation",
+          "dailyMinutes": 15
+        },
+        {
+          "week": 4,
+          "focus": "Inglés de trabajo",
+          "skill": "work",
+          "dailyMinutes": 15
+        }
+      ]
+    },
+    {
+      "condition": "default",
+      "weeks": [
+        {
+          "week": 1,
+          "focus": "Confianza al hablar",
+          "skill": "speaking",
+          "dailyMinutes": 15
+        },
+        {
+          "week": 2,
+          "focus": "Escuchar",
+          "skill": "listening",
+          "dailyMinutes": 15
+        },
+        {
+          "week": 3,
+          "focus": "Conversaciones reales",
+          "skill": "conversation",
+          "dailyMinutes": 20
+        },
+        {
+          "week": 4,
+          "focus": "Inglés de viajes",
+          "skill": "travel",
+          "dailyMinutes": 15
+        }
+      ]
+    }
+  ]
+}

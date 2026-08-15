@@ -1,0 +1,82 @@
+{
+  "id": "day-14",
+  "day": 14,
+  "title": "Repaso y mini-examen",
+  "topic": "review-2",
+  "goal": "Repasa y refuerza lo aprendido en la semana 2.",
+  "estimatedTime": 10,
+  "skill": "mixed",
+  "grammarFocus": "repetición de la semana 2",
+  "vocabulary": [
+    {
+      "en": "review",
+      "es": "repaso"
+    },
+    {
+      "en": "quiz",
+      "es": "prueba"
+    },
+    {
+      "en": "score",
+      "es": "puntuación"
+    },
+    {
+      "en": "check",
+      "es": "revisar"
+    },
+    {
+      "en": "learn",
+      "es": "aprender"
+    },
+    {
+      "en": "ready",
+      "es": "listo"
+    },
+    {
+      "en": "answer",
+      "es": "respuesta"
+    },
+    {
+      "en": "question",
+      "es": "pregunta"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "I am ready for the quiz.",
+      "es": "Estoy listo para la prueba."
+    },
+    {
+      "en": "Let me check my answers.",
+      "es": "Déjame revisar mis respuestas."
+    },
+    {
+      "en": "I learned a lot this week.",
+      "es": "Aprendí mucho esta semana."
+    },
+    {
+      "en": "What is the correct answer?",
+      "es": "¿Cuál es la respuesta correcta?"
+    },
+    {
+      "en": "Great progress!",
+      "es": "¡Gran progreso!"
+    }
+  ],
+  "speak": "Repite 5 frases clave de la semana 2 en voz alta.",
+  "challenge": "Mini-examen: completa el cuestionario de repaso de la semana 2.",
+  "xpReward": 30,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

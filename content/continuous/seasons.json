@@ -1,0 +1,42 @@
+{
+  "id": "seasons",
+  "description": "Temporadas continuas post-21. Cada temporada dura una semana y propone retos medibles sobre la práctica diaria. Los retos se repiten cada semana (el progreso del usuario se computa por ventana de 7 días).",
+  "season": {
+    "days": 7,
+    "rewardBase": 25,
+    "retos": [
+      {
+        "id": "practice-days",
+        "title": "Práctica diaria",
+        "description": "Practica al menos 4 días esta semana.",
+        "metric": "practiceDays",
+        "target": 4,
+        "reward": 40
+      },
+      {
+        "id": "exercise-accuracy",
+        "title": "Racha de ejercicios",
+        "description": "Completa 30 ejercicios esta semana.",
+        "metric": "exercisesCompleted",
+        "target": 30,
+        "reward": 40
+      },
+      {
+        "id": "speaking-minutes",
+        "title": "Habla en voz alta",
+        "description": "Haz 3 sesiones de habla esta semana.",
+        "metric": "speakingSessions",
+        "target": 3,
+        "reward": 50
+      },
+      {
+        "id": "review-cards",
+        "title": "Repaso inteligente",
+        "description": "Repasa 15 tarjetas esta semana.",
+        "metric": "reviewsCompleted",
+        "target": 15,
+        "reward": 30
+      }
+    ]
+  }
+}

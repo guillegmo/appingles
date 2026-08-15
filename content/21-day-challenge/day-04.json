@@ -1,0 +1,82 @@
+{
+  "id": "day-04",
+  "day": 4,
+  "title": "Rutinas diarias",
+  "topic": "routines",
+  "goal": "Describe tu rutina diaria.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "present simple + hora",
+  "vocabulary": [
+    {
+      "en": "wake up",
+      "es": "despertarse"
+    },
+    {
+      "en": "breakfast",
+      "es": "desayuno"
+    },
+    {
+      "en": "go to work",
+      "es": "ir al trabajo"
+    },
+    {
+      "en": "lunch",
+      "es": "almuerzo"
+    },
+    {
+      "en": "at 7:00",
+      "es": "a las 7:00"
+    },
+    {
+      "en": "every day",
+      "es": "todos los días"
+    },
+    {
+      "en": "usually",
+      "es": "usualmente"
+    },
+    {
+      "en": "go to bed",
+      "es": "acostarse"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "I wake up at 7:00.",
+      "es": "Me despierto a las 7:00."
+    },
+    {
+      "en": "I usually have breakfast at home.",
+      "es": "Usualmente desayuno en casa."
+    },
+    {
+      "en": "I go to work at 8:00.",
+      "es": "Voy al trabajo a las 8:00."
+    },
+    {
+      "en": "I work from Monday to Friday.",
+      "es": "Trabajo de lunes a viernes."
+    },
+    {
+      "en": "I go to bed at 11:00.",
+      "es": "Me acuesto a las 11:00."
+    }
+  ],
+  "speak": "Describe tu rutina desde que te despiertas hasta que te acuestas. 60 segundos.",
+  "challenge": "Explica tu rutina ideal de la mañana en 5 oraciones.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

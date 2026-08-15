@@ -1,0 +1,82 @@
+{
+  "id": "day-10",
+  "day": 10,
+  "title": "En el restaurante",
+  "topic": "restaurant",
+  "goal": "Pide comida en un restaurante.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "I would like... / Can I have...?",
+  "vocabulary": [
+    {
+      "en": "menu",
+      "es": "menú"
+    },
+    {
+      "en": "I would like...",
+      "es": "Quisiera..."
+    },
+    {
+      "en": "water",
+      "es": "agua"
+    },
+    {
+      "en": "the bill",
+      "es": "la cuenta"
+    },
+    {
+      "en": "delicious",
+      "es": "delicioso"
+    },
+    {
+      "en": "Are you ready to order?",
+      "es": "¿Está listo para ordenar?"
+    },
+    {
+      "en": "vegetarian",
+      "es": "vegetariano"
+    },
+    {
+      "en": "anything else?",
+      "es": "¿algo más?"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "Could I see the menu, please?",
+      "es": "¿Me muestra el menú, por favor?"
+    },
+    {
+      "en": "I would like a coffee, please.",
+      "es": "Quisiera un café, por favor."
+    },
+    {
+      "en": "Is this dish vegetarian?",
+      "es": "¿Este platillo es vegetariano?"
+    },
+    {
+      "en": "Can I have the bill, please?",
+      "es": "¿Me trae la cuenta, por favor?"
+    },
+    {
+      "en": "The food was delicious.",
+      "es": "La comida estaba deliciosa."
+    }
+  ],
+  "speak": "Pide una comida completa: entrada, plato principal y bebida. 45 segundos.",
+  "challenge": "Roleplay: tú eres el cliente en un restaurante (el camarero es IA o un compañero).",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

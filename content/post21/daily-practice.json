@@ -1,0 +1,24 @@
+{
+  "id": "daily-practice-base",
+  "title": "Today's Practice",
+  "generated_content": true,
+  "source": "provisional",
+  "status": "published",
+  "structure": [
+    {
+      "block": "Vocabulary",
+      "minutes": 5,
+      "contentType": "flashcards"
+    },
+    {
+      "block": "Listening",
+      "minutes": 5,
+      "contentType": "audio"
+    },
+    {
+      "block": "Speaking",
+      "minutes": 5,
+      "contentType": "speaking"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": "day-08",
+  "day": 8,
+  "title": "Direcciones",
+  "topic": "directions",
+  "goal": "Da y pide direcciones.",
+  "estimatedTime": 15,
+  "skill": "mixed",
+  "grammarFocus": "imperativos + preposiciones de lugar",
+  "vocabulary": [
+    {
+      "en": "turn left",
+      "es": "gira a la izquierda"
+    },
+    {
+      "en": "turn right",
+      "es": "gira a la derecha"
+    },
+    {
+      "en": "go straight",
+      "es": "sigue recto"
+    },
+    {
+      "en": "next to",
+      "es": "al lado de"
+    },
+    {
+      "en": "near",
+      "es": "cerca de"
+    },
+    {
+      "en": "far",
+      "es": "lejos"
+    },
+    {
+      "en": "Where is...?",
+      "es": "¿Dónde está...?"
+    },
+    {
+      "en": "the bank",
+      "es": "el banco"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "Where is the bank?",
+      "es": "¿Dónde está el banco?"
+    },
+    {
+      "en": "Turn left at the corner.",
+      "es": "Gira a la izquierda en la esquina."
+    },
+    {
+      "en": "Go straight for two blocks.",
+      "es": "Sigue recto dos cuadras."
+    },
+    {
+      "en": "It is next to the supermarket.",
+      "es": "Está al lado del supermercado."
+    },
+    {
+      "en": "Excuse me, how do I get to...?",
+      "es": "Disculpe, ¿cómo llego a...?"
+    }
+  ],
+  "speak": "Da indicaciones para llegar a tu casa desde un punto conocido. 60 segundos.",
+  "challenge": "Roleplay: pregúntale a un extraño cómo llegar a la estación de tren.",
+  "xpReward": 40,
+  "premium": false,
+  "source": "provisional",
+  "generated_content": true,
+  "status": "published",
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
+}

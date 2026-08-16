@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Volume2, Mic, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowLeft, Volume2, Mic, Sparkles, Check, Loader2 } from 'lucide-react';
 import { getDay, completeDay, submitExercise, recordSpeaking, trackAnalyticsEvent } from '../services/api';
 import { speak } from '../utils/speech';
 import { isSpanish } from '../utils/language';
@@ -136,7 +136,9 @@ export function DayViewPage() {
   }, [speech.transcript, day]);
 
   const speakPhrases = day?.phrases.slice(0, 3) ?? [];
-  const allSaid = speakPhrases.length > 0 && speakPhrases.every((p) => saidCorrect.has(p.en));
+  const hasSpeakPhrases = speakPhrases.length > 0;
+  const allSaid = hasSpeakPhrases && speakPhrases.every((p) => saidCorrect.has(p.en));
+  const speakBlocked = hasSpeakPhrases && !allSaid;
 
   if (loading) return <LoadingScreen label="Cargando día…" />;
   if (error) {
@@ -160,12 +162,12 @@ export function DayViewPage() {
   return (
     <div className="p-5">
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/home')}>
+        <Button variant="ghost" size="sm" onClick={() => navigate('/home')} aria-label="Volver">
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1">
-          <p className="text-xs font-semibold uppercase text-primary-600">Día {day.day}</p>
-          <h1 className="text-lg font-bold">{day.title}</h1>
+          <p className="station-label text-primary-600">Estación {day.day} de 21</p>
+          <h1 className="text-xl font-bold tracking-tight">{day.title}</h1>
         </div>
       </div>
 
@@ -175,21 +177,34 @@ export function DayViewPage() {
         <SpeechSpeedControl compact />
       </div>
 
-      <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
-        {steps.map((s, i) => (
-          <div
-            key={s}
-            className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
-              completedSteps.includes(s) || i < stepIdx
-                ? 'bg-emerald-100 text-emerald-700'
-                : i === stepIdx
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-slate-100 text-slate-400'
-            }`}
-          >
-            {STEP_LABELS[s]}
-          </div>
-        ))}
+      <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1">
+        {steps.map((s, i) => {
+          const done = completedSteps.includes(s) || i < stepIdx;
+          const current = i === stepIdx;
+          return (
+            <div key={s} className="flex shrink-0 items-center gap-1.5">
+              <div
+                className={`flex h-8 w-8 items-center justify-center rounded-full border text-[11px] font-bold ${
+                  done
+                    ? 'border-emerald-500 bg-emerald-500 text-white'
+                    : current
+                      ? 'border-primary-600 bg-primary-600 text-white shadow-glow'
+                      : 'border-slate-300 bg-white text-slate-400'
+                }`}
+              >
+                {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <span className="num">{i + 1}</span>}
+              </div>
+              <span
+                className={`whitespace-nowrap text-[11px] font-semibold ${
+                  current ? 'text-primary-700' : done ? 'text-slate-500' : 'text-slate-400'
+                }`}
+              >
+                {STEP_LABELS[s]}
+              </span>
+              {i < steps.length - 1 && <span className="mx-1 h-px w-2 bg-slate-300" />}
+            </div>
+          );
+        })}
       </div>
 
       <div className="mt-4">
@@ -285,9 +300,15 @@ export function DayViewPage() {
 
             <div className="mt-4 space-y-2">
               <p className="text-xs font-semibold uppercase text-slate-400">Tarea</p>
-              <p className="text-sm text-slate-600">
-                1️⃣ Escucha cada frase. 2️⃣ Pulsa el botón <span className="font-semibold">rojo</span> y repítela en voz alta. 3️⃣ Cuando la digas bien, verás un ✓.
-              </p>
+              {hasSpeakPhrases ? (
+                <p className="text-sm text-slate-600">
+                  1️⃣ Escucha cada frase. 2️⃣ Pulsa el botón <span className="font-semibold">rojo</span> y repítela en voz alta. 3️⃣ Cuando la digas bien, verás un ✓.
+                </p>
+              ) : (
+                <p className="text-sm text-slate-600">
+                  Toca el micrófono y habla en inglés sin leer. Intenta mantenerlo un minuto.
+                </p>
+              )}
             </div>
 
             {speakPhrases.map((p, i) => {
@@ -334,17 +355,17 @@ export function DayViewPage() {
                 <p className="text-sm text-slate-400">Tu navegador no soporta voz. Marca completado para continuar.</p>
               ) : (
                 <>
-                  <button
-                    onClick={speech.listening ? speech.stop : speech.start}
-                    className={`flex h-20 w-20 items-center justify-center rounded-full transition-colors ${
-                      speech.listening ? 'bg-rose-500 animate-pulse' : 'bg-primary-600'
-                    } text-white`}
-                    aria-label={speech.listening ? 'Detener micrófono' : 'Pulsar para hablar'}
-                  >
+<button
+            onClick={speech.listening ? speech.stop : speech.start}
+            className={`flex h-20 w-20 items-center justify-center rounded-full transition-colors ${
+              speech.listening ? 'bg-orange-500 animate-pulse' : 'bg-primary-600 shadow-glow'
+            } text-white`}
+            aria-label={speech.listening ? 'Detener micrófono' : 'Pulsar para hablar'}
+          >
                     <Mic className="h-8 w-8" />
                   </button>
                   <p className="mt-2 text-xs text-slate-500">
-                    {speech.listening ? 'Escuchando… habla en voz alta' : 'Toca el micrófono y di la frase'}
+                    {speech.listening ? 'Escuchando… habla en voz alta' : hasSpeakPhrases ? 'Toca el micrófono y di la frase' : 'Toca el micrófono y habla libremente'}
                   </p>
                   {speech.transcript && (
                     <>
@@ -368,11 +389,11 @@ export function DayViewPage() {
               className="mt-5 w-full"
               size="lg"
               onClick={handleSpeaking}
-              disabled={busy || (speech.supported ? speech.listening || !allSaid : false)}
+              disabled={busy || (speech.supported ? speech.listening || speakBlocked : false)}
             >
               {busy ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</>
-              ) : speech.supported && !allSaid ? 'Di todas las frases para continuar' : 'Completar práctica de habla'}
+              ) : speech.supported && speakBlocked ? 'Di todas las frases para continuar' : 'Completar práctica de habla'}
             </Button>
           </Card>
         )}
@@ -393,8 +414,8 @@ export function DayViewPage() {
         {currentStep === 'complete' && (
           <Card className="text-center">
             <Sparkles className="mx-auto h-10 w-10 text-primary-600" />
-            <h2 className="mt-2 text-xl font-bold">¡Día {day.day} completado!</h2>
-            <p className="mt-1 text-sm text-slate-500">+{day.xpReward} XP ganados</p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight">¡Día {day.day} completado!</h2>
+            <p className="num mt-1 text-sm text-amber-600">+{day.xpReward} XP</p>
             <Button className="mt-5 w-full" size="lg" onClick={next} disabled={busy}>
               {busy ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</>

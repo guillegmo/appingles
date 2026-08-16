@@ -7,8 +7,62 @@
   "estimatedTime": 15,
   "skill": "speaking",
   "grammarFocus": "repaso de la semana 1",
-  "vocabulary": [],
-  "phrases": [],
+  "vocabulary": [
+    {
+      "en": "name",
+      "es": "nombre"
+    },
+    {
+      "en": "country",
+      "es": "país"
+    },
+    {
+      "en": "age",
+      "es": "edad"
+    },
+    {
+      "en": "job",
+      "es": "trabajo"
+    },
+    {
+      "en": "hobby",
+      "es": "pasatiempo"
+    },
+    {
+      "en": "routine",
+      "es": "rutina"
+    },
+    {
+      "en": "family",
+      "es": "familia"
+    },
+    {
+      "en": "free time",
+      "es": "tiempo libre"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "My name is Ana.",
+      "es": "Mi nombre es Ana."
+    },
+    {
+      "en": "I am from Mexico.",
+      "es": "Soy de México."
+    },
+    {
+      "en": "I am twenty-five years old.",
+      "es": "Tengo veinticinco años."
+    },
+    {
+      "en": "I work as a teacher.",
+      "es": "Trabajo como profesor."
+    },
+    {
+      "en": "I like listening to music.",
+      "es": "Me gusta escuchar música."
+    }
+  ],
   "speak": "Habla 60 segundos sobre ti: nombre, origen, edad, gustos y rutina.",
   "challenge": "Presentación de un minuto sin leer. Grábala.",
   "xpReward": 40,

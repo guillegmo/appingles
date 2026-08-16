@@ -7,8 +7,62 @@
   "estimatedTime": 15,
   "skill": "speaking",
   "grammarFocus": "repaso de la semana 2",
-  "vocabulary": [],
-  "phrases": [],
+  "vocabulary": [
+    {
+      "en": "menu",
+      "es": "menú"
+    },
+    {
+      "en": "bill",
+      "es": "la cuenta"
+    },
+    {
+      "en": "water",
+      "es": "agua"
+    },
+    {
+      "en": "restaurant",
+      "es": "restaurante"
+    },
+    {
+      "en": "street",
+      "es": "calle"
+    },
+    {
+      "en": "left",
+      "es": "izquierda"
+    },
+    {
+      "en": "right",
+      "es": "derecha"
+    },
+    {
+      "en": "straight ahead",
+      "es": "todo recto"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "A table for two, please.",
+      "es": "Una mesa para dos, por favor."
+    },
+    {
+      "en": "Can I have the menu, please?",
+      "es": "¿Me trae el menú, por favor?"
+    },
+    {
+      "en": "The bill, please.",
+      "es": "La cuenta, por favor."
+    },
+    {
+      "en": "Where is the nearest restaurant?",
+      "es": "¿Dónde está el restaurante más cercano?"
+    },
+    {
+      "en": "Turn left at the corner.",
+      "es": "Gira a la izquierda en la esquina."
+    }
+  ],
   "speak": "Roleplay: escena de restaurante: pide comida y paga. 90 segundos.",
   "challenge": "Graba un roleplay de 90 segundos como turista pidiendo indicaciones.",
   "xpReward": 40,

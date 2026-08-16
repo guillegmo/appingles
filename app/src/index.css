@@ -1,16 +1,162 @@
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/jetbrains-mono";
 @import "tailwindcss";
 
 @theme {
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-500: #6366f1;
-  --color-primary-600: #4f46e5;
-  --color-primary-700: #4338ca;
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b;
+  /* Neutros: escala "ink" verde-teal (ni slate azul, ni crema) */
+  --color-slate-50: #f2f6f4;
+  --color-slate-100: #e6eeeb;
+  --color-slate-200: #d7e2dd;
+  --color-slate-300: #b9c9c3;
+  --color-slate-400: #8ba19a;
+  --color-slate-500: #6b857d;
+  --color-slate-600: #4c645c;
+  --color-slate-700: #35504a;
+  --color-slate-800: #233c36;
+  --color-slate-900: #162b26;
+  --color-slate-950: #0c1d19;
+
+  /* Primario: teal ruta */
+  --color-primary-50: #e4f3ee;
+  --color-primary-100: #c9e7dd;
+  --color-primary-200: #9cd4c3;
+  --color-primary-300: #5fbda3;
+  --color-primary-400: #2ea584;
+  --color-primary-500: #138c6d;
+  --color-primary-600: #0e7c66;
+  --color-primary-700: #0a6654;
+  --color-primary-800: #075043;
+  --color-primary-900: #063d33;
+
+  /* Oro: XP, insignias */
+  --color-amber-50: #fdf4e2;
+  --color-amber-100: #f9e7c2;
+  --color-amber-200: #f3d68c;
+  --color-amber-300: #ecc25a;
+  --color-amber-400: #e9a62d;
+  --color-amber-500: #d08c16;
+  --color-amber-600: #a86f0e;
+  --color-amber-700: #85580a;
+  --color-amber-800: #684608;
+  --color-amber-900: #4d3305;
+
+  /* Flama: racha y energía */
+  --color-orange-50: #fdeee9;
+  --color-orange-100: #fadcd2;
+  --color-orange-200: #f5b99e;
+  --color-orange-300: #ee9167;
+  --color-orange-400: #ee8a66;
+  --color-orange-500: #e2603c;
+  --color-orange-600: #c04a2a;
+  --color-orange-700: #9c3a22;
+  --color-orange-800: #7c2d1b;
+
+  /* Fern: éxito / completado */
+  --color-emerald-50: #e7f6ee;
+  --color-emerald-100: #cfeddc;
+  --color-emerald-200: #a8dcc0;
+  --color-emerald-300: #74c49d;
+  --color-emerald-400: #47b080;
+  --color-emerald-500: #2f9e6e;
+  --color-emerald-600: #22804f;
+  --color-emerald-700: #1c6541;
+
+  /* Rose: error */
+  --color-rose-50: #fdecec;
+  --color-rose-100: #fbdada;
+  --color-rose-200: #f5b5b5;
+  --color-rose-400: #e06565;
+  --color-rose-500: #d64545;
+  --color-rose-600: #b93434;
+  --color-rose-700: #9a2a2a;
+
+  /* Tipografía */
+  --font-sans: "Manrope Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Manrope Variable", ui-sans-serif, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Sombras */
+  --shadow-soft: 0 1px 2px rgb(12 29 25 / 0.05), 0 4px 16px rgb(12 29 25 / 0.05);
+  --shadow-lift: 0 2px 4px rgb(12 29 25 / 0.06), 0 12px 28px rgb(12 29 25 / 0.1);
+  --shadow-glow: 0 0 0 1px rgb(14 124 102 / 0.14), 0 8px 24px rgb(14 124 102 / 0.2);
+
+  /* Movimiento de la estación actual */
+  --animate-station: station 2.4s ease-in-out infinite;
+
+  @keyframes station {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(14 124 102 / 0.35);
+    }
+    50% {
+      box-shadow: 0 0 0 9px rgb(14 124 102 / 0);
+    }
+  }
 }
 
-body {
-  @apply bg-slate-50 text-slate-900 antialiased;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+
+  h1 {
+    letter-spacing: -0.02em;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  ::selection {
+    background: var(--color-primary-100);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary-600;
+  }
+
+  .num {
+    @apply font-mono tabular-nums;
+  }
+
+  .station-label {
+    @apply flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em];
+  }
 }

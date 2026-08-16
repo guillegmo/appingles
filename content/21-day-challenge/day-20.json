@@ -7,8 +7,62 @@
   "estimatedTime": 15,
   "skill": "speaking",
   "grammarFocus": "repaso de la semana 3",
-  "vocabulary": [],
-  "phrases": [],
+  "vocabulary": [
+    {
+      "en": "experience",
+      "es": "experiencia"
+    },
+    {
+      "en": "goal",
+      "es": "meta"
+    },
+    {
+      "en": "future",
+      "es": "futuro"
+    },
+    {
+      "en": "plans",
+      "es": "planes"
+    },
+    {
+      "en": "work",
+      "es": "trabajo"
+    },
+    {
+      "en": "skills",
+      "es": "habilidades"
+    },
+    {
+      "en": "team",
+      "es": "equipo"
+    },
+    {
+      "en": "company",
+      "es": "empresa"
+    }
+  ],
+  "phrases": [
+    {
+      "en": "I have five years of experience.",
+      "es": "Tengo cinco años de experiencia."
+    },
+    {
+      "en": "My goal is to improve my English.",
+      "es": "Mi meta es mejorar mi inglés."
+    },
+    {
+      "en": "I work in customer service.",
+      "es": "Trabajo en atención al cliente."
+    },
+    {
+      "en": "In the future, I want to travel.",
+      "es": "En el futuro, quiero viajar."
+    },
+    {
+      "en": "I enjoy working with my team.",
+      "es": "Disfruto trabajar con mi equipo."
+    }
+  ],
   "speak": "Entrevista corta: preséntate, habla de tu trabajo y tus planes futuros. 90 segundos.",
   "challenge": "Graba una entrevista de 90 segundos respondiendo 4 preguntas.",
   "xpReward": 40,

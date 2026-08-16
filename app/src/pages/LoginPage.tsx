@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AlertCircle } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { signInEmail, signUpEmail, signInGoogle, getToken } from '../services/firebase';
 import { trackAnalyticsEvent, registerSession } from '../services/api';
+import { friendlyErrorMessage } from '../utils/errors';
 import { Button } from '../components/ui/Button';
 
 export function LoginPage() {
@@ -17,7 +19,12 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   const finish = async (user: { uid: string; email: string | null; displayName: string | null }) => {
-    const token = await getToken();
+    let token: string | null = null;
+    try {
+      token = await getToken();
+    } catch {
+      token = null;
+    }
     if (token) localStorage.setItem('appingles_token', token);
     localStorage.setItem('appingles_user', user.uid);
     const displayName = user.displayName || user.email?.split('@')[0] || 'Student';
@@ -35,7 +42,7 @@ export function LoginPage() {
       const user = mode === 'login' ? await signInEmail(email, password) : await signUpEmail(email, password, name);
       await finish(user);
     } catch (err) {
-      setError((err as Error).message);
+      setError(friendlyErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -48,7 +55,7 @@ export function LoginPage() {
       const user = await signInGoogle();
       await finish(user);
     } catch (err) {
-      setError((err as Error).message);
+      setError(friendlyErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -57,11 +64,11 @@ export function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-6">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600 text-3xl font-black text-white">
-          21
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-glow">
+          <span className="font-display text-3xl font-black leading-none">21</span>
         </div>
         <h1 className="text-2xl font-bold">Inglés en 21 Días</h1>
-        <p className="mt-1 text-sm text-slate-500">Tu entrenador de inglés con IA</p>
+        <p className="mt-1 text-sm text-slate-500">Una ruta de 21 estaciones hacia el inglés. Con tu entrenador IA.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-3">
@@ -70,7 +77,7 @@ export function LoginPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Tu nombre"
-            className="h-11 w-full rounded-xl border border-slate-300 px-4 text-sm outline-none focus:border-primary-500"
+            className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm outline-none focus:border-primary-500"
             required
           />
         )}
@@ -79,7 +86,7 @@ export function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
           type="email"
           placeholder="tu@email.com"
-          className="h-11 w-full rounded-xl border border-slate-300 px-4 text-sm outline-none focus:border-primary-500"
+          className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm outline-none focus:border-primary-500"
           required
         />
         <input
@@ -87,7 +94,7 @@ export function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           type="password"
           placeholder="Contraseña"
-          className="h-11 w-full rounded-xl border border-slate-300 px-4 text-sm outline-none focus:border-primary-500"
+          className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm outline-none focus:border-primary-500"
           required
           minLength={6}
         />
@@ -97,14 +104,17 @@ export function LoginPage() {
       </form>
 
       {error && (
-        <p className="mt-3 w-full max-w-sm rounded-xl bg-rose-50 px-4 py-2.5 text-xs text-rose-700">{error}</p>
+        <p role="alert" className="mt-3 flex w-full max-w-sm items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-xs font-medium text-rose-700">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          {error}
+        </p>
       )}
 
       <button
         type="button"
         onClick={handleGoogle}
         disabled={loading}
-        className="mt-3 flex h-11 w-full max-w-sm items-center justify-center gap-2 rounded-xl border border-slate-300 text-sm font-semibold hover:bg-slate-50"
+        className="mt-3 flex h-11 w-full max-w-sm items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
       >
         <svg className="h-4 w-4" viewBox="0 0 24 24">
           <path
@@ -130,7 +140,7 @@ export function LoginPage() {
       <button
         type="button"
         onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-        className="mt-4 text-center text-sm text-primary-600 hover:underline"
+        className="mt-4 text-center text-sm font-semibold text-primary-600 hover:underline"
       >
         {mode === 'login' ? '¿No tienes cuenta? Crear una' : '¿Ya tienes cuenta? Iniciar sesión'}
       </button>

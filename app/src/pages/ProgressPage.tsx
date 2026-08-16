@@ -6,6 +6,7 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { LoadingScreen } from '../components/ui/Spinner';
+import { DayRoute } from '../components/DayRoute';
 import type { Assessment, AssessmentResult, WeeklyReport } from '../types';
 
 const SKILL_LABELS: Record<string, string> = {
@@ -40,16 +41,16 @@ export function ProgressPage() {
 
   return (
     <div className="p-5">
-      <h1 className="text-xl font-bold">Progreso</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Progreso</h1>
 
       <Card className="mt-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-3xl font-black text-primary-600">{progress.totalXp}</p>
+            <p className="num text-3xl font-bold text-primary-600">{progress.totalXp}</p>
             <p className="text-xs text-slate-500">Puntos XP · {progress.level}</p>
           </div>
           <div className="text-right">
-            <p className="text-3xl font-black text-orange-500">🔥 {progress.streaks.currentStreak}</p>
+            <p className="num text-3xl font-bold text-orange-500">🔥 {progress.streaks.currentStreak}</p>
             <p className="text-xs text-slate-500">días seguidos</p>
           </div>
         </div>
@@ -65,18 +66,14 @@ export function ProgressPage() {
 
       <Card className="mt-4">
         <p className="mb-2 font-semibold">Días completados</p>
-        <div className="flex flex-wrap gap-1.5">
-          {Array.from({ length: 21 }, (_, i) => i + 1).map((d) => (
-            <div
-              key={d}
-              className={`flex h-7 w-7 items-center justify-center rounded-md text-xs font-bold ${
-                progress.completedDays.includes(d) ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'
-              }`}
-            >
-              {d}
-            </div>
-          ))}
-        </div>
+        <DayRoute
+          days={Array.from({ length: 21 }, (_, i) => i + 1).map((d) => ({
+            day: d,
+            completed: progress.completedDays.includes(d),
+            locked: false,
+          }))}
+          currentDay={isChampion ? undefined : progress.daysCompleted + 1}
+        />
       </Card>
 
       <Card className="mt-4">

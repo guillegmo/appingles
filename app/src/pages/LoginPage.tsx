@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/useAppStore';
 import { signInEmail, signUpEmail, signInGoogle, getToken } from '../services/firebase';
-import { trackAnalyticsEvent } from '../services/api';
+import { trackAnalyticsEvent, registerSession } from '../services/api';
 import { Button } from '../components/ui/Button';
 
 export function LoginPage() {
@@ -23,6 +23,7 @@ export function LoginPage() {
     const displayName = user.displayName || user.email?.split('@')[0] || 'Student';
     login(user.uid, displayName, token ?? undefined);
     trackAnalyticsEvent('user_registered', { source: mode }).catch(() => {});
+    registerSession().catch(() => {});
     navigate('/home');
   };
 

@@ -7,6 +7,22 @@ const api = axios.create({
 
 // Auth: en producción se envía el token de Firebase. En modo dev se usa X-Dev-User.
 const AUTH_MODE = import.meta.env.VITE_AUTH_MODE || 'dev';
+
+// Session única: un sessionId persistente por dispositivo.
+export function getSessionId(): string {
+  let sid = localStorage.getItem('appingles_session');
+  if (!sid) {
+    sid = (crypto.randomUUID?.() ?? `s-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    localStorage.setItem('appingles_session', sid);
+  }
+  return sid;
+}
+
+export async function registerSession(): Promise<{ ok: boolean }> {
+  const { data } = await api.post('/auth/session', { sessionId: getSessionId() });
+  return data;
+}
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('appingles_token');
   if (token) {
@@ -15,8 +31,23 @@ api.interceptors.request.use((config) => {
     const userId = localStorage.getItem('appingles_user');
     if (userId) config.headers['X-Dev-User'] = userId;
   }
+  const sessionId = localStorage.getItem('appingles_session');
+  if (sessionId) config.headers['X-Session-Id'] = sessionId;
   return config;
 });
+
+// Si otra sesión tomó el control, fuerza el cierre local y avisa al router.
+api.interceptors.response.use(
+  (r) => r,
+  (err) => {
+    if (err.response?.data?.code === 'SESSION_EXPIRED') {
+      localStorage.removeItem('appingles_user');
+      localStorage.removeItem('appingles_token');
+      window.dispatchEvent(new CustomEvent('session-expired'));
+    }
+    return Promise.reject(err);
+  },
+);
 
 export async function getChallenge(): Promise<import('../types').ChallengeIndex> {
   const { data } = await api.get('/challenge');

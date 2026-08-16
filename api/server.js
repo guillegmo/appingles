@@ -39,6 +39,7 @@ app.use('/api', apiLimiter);
 // =============================
 
 app.use('/', require('./routes/health'));
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/challenge', require('./routes/challenge'));
 app.use('/api/exercises', require('./routes/exercises'));
 app.use('/api/subscription', require('./routes/subscription'));

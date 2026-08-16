@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, getToken } from './services/firebase';
+import { registerSession } from './services/api';
 import { useAppStore } from './store/useAppStore';
 import { LoadingScreen } from './components/ui/Spinner';
 import { MainLayout } from './components/layout/MainLayout';
@@ -48,6 +49,16 @@ export default function App() {
   const user = useAppStore((s) => s.user);
   const login = useAppStore((s) => s.login);
   const logout = useAppStore((s) => s.logout);
+  const setError = useAppStore((s) => s.setError);
+
+  useEffect(() => {
+    const onSessionExpired = () => {
+      logout();
+      setError('Tu sesión se cerró porque iniciaste sesión en otro dispositivo.');
+    };
+    window.addEventListener('session-expired', onSessionExpired);
+    return () => window.removeEventListener('session-expired', onSessionExpired);
+  }, [logout, setError]);
 
   useEffect(() => {
     const AUTH_MODE = import.meta.env.VITE_AUTH_MODE || 'dev';
@@ -62,6 +73,7 @@ export default function App() {
         if (!localStorage.getItem('appingles_user')) {
           localStorage.setItem('appingles_user', fbUser.uid);
           login(fbUser.uid, fbUser.displayName || fbUser.email?.split('@')[0] || 'Student', token ?? undefined);
+          registerSession().catch(() => {});
         }
         useAppStore.getState().refreshAll();
       } else {

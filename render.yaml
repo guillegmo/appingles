@@ -8,6 +8,8 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: "22"
       - key: STORE_MODE
         value: firebase
       - key: FIREBASE_PROJECT_ID

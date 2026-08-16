@@ -3,6 +3,7 @@
   publish = "app/dist"
 
 [build.environment]
+  NODE_VERSION = "22"
   VITE_API_URL = "https://appingles-km24.onrender.com/api"
   VITE_AUTH_MODE = "firebase"
   VITE_FIREBASE_API_KEY = "AIzaSyAfcQfLkf-ZuugTjtEjvvhsWg6kbmwuG6U"

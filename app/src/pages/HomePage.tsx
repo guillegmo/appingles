@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Flame, Award, Zap, Lock, Repeat } from 'lucide-react';
+import { Flame, Award, Zap, Lock, Repeat, Loader2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { getReviewCount } from '../services/api';
 import { greeting } from '../utils/dates';
@@ -13,6 +13,7 @@ export function HomePage() {
   const navigate = useNavigate();
   const { user, challenge, progress, entitlements, refreshAll, loading } = useAppStore();
   const [reviewDue, setReviewDue] = useState(0);
+  const [navigating, setNavigating] = useState(false);
 
   useEffect(() => {
     refreshAll();
@@ -55,8 +56,18 @@ export function HomePage() {
             <p className="text-base font-semibold">🗣 {nextDay.title}</p>
             <p className="mt-1 text-sm text-slate-500">{nextDay.weekLabel} · 15 minutos</p>
           </div>
-          <Button className="mt-4 w-full" size="lg" onClick={() => navigate(`/day/${nextDay.day}`)}>
-            {completed === 0 ? 'EMPEZAR' : 'CONTINUAR'}
+          <Button
+            className="mt-4 w-full"
+            size="lg"
+            onClick={() => {
+              setNavigating(true);
+              navigate(`/day/${nextDay.day}`);
+            }}
+            disabled={navigating}
+          >
+            {navigating ? (
+              <><Loader2 className="h-4 w-4 animate-spin" /> Cargando…</>
+            ) : completed === 0 ? 'EMPEZAR' : 'CONTINUAR'}
           </Button>
         </Card>
       ) : isChampion ? (

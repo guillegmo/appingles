@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Volume2, Mic, Sparkles } from 'lucide-react';
+import { ArrowLeft, Volume2, Mic, Sparkles, Loader2 } from 'lucide-react';
 import { getDay, completeDay, submitExercise, recordSpeaking, trackAnalyticsEvent } from '../services/api';
 import { speak } from '../utils/speech';
 import { isSpanish } from '../utils/language';
@@ -35,6 +35,7 @@ export function DayViewPage() {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [error, setErr] = useState<string | null>(null);
   const [saidCorrect, setSaidCorrect] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState(false);
 
   const speech = useSpeechRecognition();
 
@@ -64,6 +65,7 @@ export function DayViewPage() {
       return;
     }
     // Último paso -> completar día
+    setBusy(true);
     try {
       await completeDay(dayNumber);
       trackAnalyticsEvent('day_completed', { day: dayNumber }).catch(() => {});
@@ -71,23 +73,38 @@ export function DayViewPage() {
       navigate('/home');
     } catch (e) {
       setError((e as Error).message);
+      setBusy(false);
     }
   };
 
   const handleExercise = async (exerciseId: string, correct: boolean) => {
     markStep('practice');
-    await submitExercise({ day: dayNumber, exerciseId, type: 'mcq', answer: '', correct });
-    trackAnalyticsEvent('exercise_completed', { day: dayNumber, correct }).catch(() => {});
-    setStepIdx(Math.min(stepIdx + 1, steps.length - 1));
-    await refreshAll();
+    setBusy(true);
+    try {
+      await submitExercise({ day: dayNumber, exerciseId, type: 'mcq', answer: '', correct });
+      trackAnalyticsEvent('exercise_completed', { day: dayNumber, correct }).catch(() => {});
+      setStepIdx(Math.min(stepIdx + 1, steps.length - 1));
+      await refreshAll();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleSpeaking = async () => {
     markStep('speak');
-    await recordSpeaking(dayNumber);
-    trackAnalyticsEvent('speaking_completed', { day: dayNumber }).catch(() => {});
-    await refreshAll();
-    setStepIdx(Math.min(stepIdx + 1, steps.length - 1));
+    setBusy(true);
+    try {
+      await recordSpeaking(dayNumber);
+      trackAnalyticsEvent('speaking_completed', { day: dayNumber }).catch(() => {});
+      await refreshAll();
+      setStepIdx(Math.min(stepIdx + 1, steps.length - 1));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   // Compara la frase dicha con la frase objetivo (normalizada). 
@@ -258,7 +275,7 @@ export function DayViewPage() {
         )}
 
         {currentStep === 'practice' && (
-          <PracticeCard day={day} onAnswer={handleExercise} onNext={() => { markStep('practice'); setStepIdx(stepIdx + 1); }} />
+          <PracticeCard day={day} onAnswer={handleExercise} onNext={() => { markStep('practice'); setStepIdx(stepIdx + 1); }} busy={busy} />
         )}
 
         {currentStep === 'speak' && (
@@ -351,9 +368,11 @@ export function DayViewPage() {
               className="mt-5 w-full"
               size="lg"
               onClick={handleSpeaking}
-              disabled={speech.supported ? speech.listening || !allSaid : false}
+              disabled={busy || (speech.supported ? speech.listening || !allSaid : false)}
             >
-              {speech.supported && !allSaid ? 'Di todas las frases para continuar' : 'Completar práctica de habla'}
+              {busy ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</>
+              ) : speech.supported && !allSaid ? 'Di todas las frases para continuar' : 'Completar práctica de habla'}
             </Button>
           </Card>
         )}
@@ -376,8 +395,10 @@ export function DayViewPage() {
             <Sparkles className="mx-auto h-10 w-10 text-primary-600" />
             <h2 className="mt-2 text-xl font-bold">¡Día {day.day} completado!</h2>
             <p className="mt-1 text-sm text-slate-500">+{day.xpReward} XP ganados</p>
-            <Button className="mt-5 w-full" size="lg" onClick={next}>
-              {day.day === 21 ? 'Ver mi próximo plan' : 'Continuar al siguiente día'}
+            <Button className="mt-5 w-full" size="lg" onClick={next} disabled={busy}>
+              {busy ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</>
+              ) : day.day === 21 ? 'Ver mi próximo plan' : 'Continuar al siguiente día'}
             </Button>
           </Card>
         )}
@@ -390,10 +411,12 @@ function PracticeCard({
   day,
   onAnswer,
   onNext,
+  busy,
 }: {
   day: DayContent;
   onAnswer: (id: string, correct: boolean) => void;
   onNext: () => void;
+  busy?: boolean;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -444,8 +467,10 @@ function PracticeCard({
         })}
       </div>
       {answered ? (
-        <Button className="mt-5 w-full" size="lg" onClick={() => { onAnswer('quiz-1', selected === q.es); }}>
-          {selected === q.es ? '¡Correcto! Continuar' : 'Continuar'}
+        <Button className="mt-5 w-full" size="lg" onClick={() => { onAnswer('quiz-1', selected === q.es); }} disabled={busy}>
+          {busy ? (
+            <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</>
+          ) : selected === q.es ? '¡Correcto! Continuar' : 'Continuar'}
         </Button>
       ) : (
         <Button className="mt-5 w-full" size="lg" disabled>

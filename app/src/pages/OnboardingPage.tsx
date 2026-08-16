@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 import { trackAnalyticsEvent, submitOnboarding } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { useAppStore } from '../store/useAppStore';
@@ -79,7 +80,9 @@ export function OnboardingPage() {
         disabled={!ready || saving}
         onClick={handleSubmit}
       >
-        {saving ? 'Guardando…' : hasHistory ? 'Continuar mi progreso' : 'Empezar Día 1'}
+        {saving ? (
+          <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</>
+        ) : hasHistory ? 'Continuar mi progreso' : 'Empezar Día 1'}
       </Button>
     </div>
   );

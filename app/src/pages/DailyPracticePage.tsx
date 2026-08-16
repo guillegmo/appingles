@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, Mic, Volume2, Headphones, MessageCircle, BookOpen } from 'lucide-react';
+import { Check, Mic, Volume2, Headphones, MessageCircle, BookOpen, Loader2 } from 'lucide-react';
 import { getDailyPracticeToday, completeDailyPractice, recordSpeaking } from '../services/api';
 import { useAppStore } from '../store/useAppStore';
 import { speak } from '../utils/speech';
@@ -39,6 +39,7 @@ export function DailyPracticePage() {
   const [activeBlock, setActiveBlock] = useState(0);
   const [loading, setLoading] = useState(true);
   const [completed, setCompleted] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -82,9 +83,16 @@ export function DailyPracticePage() {
   };
 
   const completeAll = async () => {
-    await completeDailyPractice(mission.topic);
-    setCompleted(true);
-    await refreshAll();
+    setSaving(true);
+    try {
+      await completeDailyPractice(mission.topic);
+      setCompleted(true);
+      await refreshAll();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -192,8 +200,10 @@ export function DailyPracticePage() {
           )}
 
           {activeBlock >= 3 && (
-            <Button className="mt-4 w-full" size="lg" onClick={completeAll}>
-              {completed ? '✔ Completado' : 'COMPLETAR PRÁCTICA'}
+            <Button className="mt-4 w-full" size="lg" onClick={completeAll} disabled={saving}>
+              {saving ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</>
+              ) : completed ? '✔ Completado' : 'COMPLETAR PRÁCTICA'}
             </Button>
           )}
         </>

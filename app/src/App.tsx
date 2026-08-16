@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, getToken } from './services/firebase';
 import { useAppStore } from './store/useAppStore';
+import { LoadingScreen } from './components/ui/Spinner';
 import { MainLayout } from './components/layout/MainLayout';
 import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
@@ -38,7 +39,7 @@ function OnboardingGate({ children }: { children: React.ReactNode }) {
     challenge?.onboardingCompleted ||
     (progress && (progress.daysCompleted > 0 || progress.totalXp > 0)) ||
     !!hasSeen;
-  if (user && loading && !onboardingCompleted) return <div className="p-8 text-center text-slate-500">Cargando…</div>;
+  if (user && loading && !onboardingCompleted) return <LoadingScreen label="Cargando tu progreso…" />;
   if (user && !onboardingCompleted) return <Navigate to="/onboarding" replace />;
   return <>{children}</>;
 }

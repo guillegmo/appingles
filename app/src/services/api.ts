@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
+  timeout: 120000,
 });
 
 // Auth: en producción se envía el token de Firebase. En modo dev se usa X-Dev-User.

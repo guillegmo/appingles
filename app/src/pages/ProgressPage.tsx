@@ -5,6 +5,7 @@ import { getAssessment, completeAssessment, getWeeklyReport } from '../services/
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
+import { LoadingScreen } from '../components/ui/Spinner';
 import type { Assessment, AssessmentResult, WeeklyReport } from '../types';
 
 const SKILL_LABELS: Record<string, string> = {
@@ -33,7 +34,7 @@ export function ProgressPage() {
     }
   }, [progress]);
 
-  if (!progress) return <div className="p-8 text-center text-slate-500">Cargando…</div>;
+  if (!progress) return <LoadingScreen label="Cargando tu progreso…" />;
 
   const isChampion = progress.daysCompleted >= 21;
 

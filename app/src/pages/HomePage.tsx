@@ -7,6 +7,7 @@ import { greeting } from '../utils/dates';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
+import { LoadingScreen } from '../components/ui/Spinner';
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export function HomePage() {
   }, []);
 
   if (loading && !challenge) {
-    return <div className="p-8 text-center text-slate-500">Cargando…</div>;
+    return <LoadingScreen label="Cargando tu reto…" />;
   }
 
   const completed = progress?.daysCompleted ?? 0;

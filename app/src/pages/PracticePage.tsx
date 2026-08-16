@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Check, Sun, BookOpen } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
+import { LoadingScreen } from '../components/ui/Spinner';
 
 export function PracticePage() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ export function PracticePage() {
     refreshAll();
   }, []);
 
-  if (!challenge) return <div className="p-8 text-center text-slate-500">Cargando…</div>;
+  if (!challenge) return <LoadingScreen label="Cargando reto…" />;
 
   const isChampion = (progress?.daysCompleted ?? 0) >= 21;
   const weeks = Array.from(new Set(challenge.days.map((d) => d.week)));

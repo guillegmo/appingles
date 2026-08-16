@@ -4,6 +4,7 @@ import { getCurrentSeason, claimSeasonReward } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
+import { LoadingScreen } from '../components/ui/Spinner';
 import type { SeasonResponse } from '../types';
 
 function fmtDate(d: string) {
@@ -46,7 +47,7 @@ export function SeasonsPage() {
     );
   }
 
-  if (!season) return <div className="p-8 text-center text-slate-500">{error || 'Cargando…'}</div>;
+  if (!season) return <LoadingScreen label={error || 'Cargando temporadas…'} />;
 
   const handleClaim = async () => {
     setClaiming(true);

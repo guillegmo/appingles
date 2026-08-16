@@ -5,6 +5,7 @@ import { getDueCards, submitReviewResult } from '../services/api';
 import { speak } from '../utils/speech';
 import { Button } from '../components/ui/Button';
 import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
+import { LoadingScreen } from '../components/ui/Spinner';
 import type { ReviewCard } from '../types';
 
 export function SmartReviewPage() {
@@ -66,7 +67,7 @@ export function SmartReviewPage() {
     );
   }
 
-  if (!current) return <div className="p-8 text-center text-slate-500">Cargando…</div>;
+  if (!current) return <LoadingScreen label="Cargando repaso…" />;
 
   return (
     <div className="flex min-h-screen flex-col p-5">

@@ -7,6 +7,7 @@ import { speak } from '../utils/speech';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
+import { LoadingScreen } from '../components/ui/Spinner';
 import type { DailyPracticeToday } from '../types';
 
 const BLOCK_ICONS: Record<string, typeof BookOpen> = {
@@ -55,7 +56,7 @@ export function DailyPracticePage() {
     })();
   }, []);
 
-  if (loading) return <div className="p-8 text-center text-slate-500">Cargando…</div>;
+  if (loading) return <LoadingScreen label="Cargando práctica diaria…" />;
   if (error) {
     return (
       <div className="p-5">
@@ -69,7 +70,7 @@ export function DailyPracticePage() {
       </div>
     );
   }
-  if (!data) return null;
+  if (!data) return <LoadingScreen label="Cargando práctica diaria…" />;
 
   const { mission, lesson } = data;
   const block = mission.blocks[activeBlock];

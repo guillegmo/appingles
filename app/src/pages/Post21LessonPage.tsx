@@ -6,6 +6,7 @@ import { speak } from '../utils/speech';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
+import { LoadingScreen } from '../components/ui/Spinner';
 import type { Post21LessonDetail } from '../types';
 
 const SKILL_LABELS: Record<string, string> = {
@@ -51,7 +52,7 @@ export function Post21LessonPage() {
   }, [id]);
 
   if (error) return <div className="p-8 text-center text-slate-500">{error}</div>;
-  if (!lesson) return <div className="p-8 text-center text-slate-500">Cargando…</div>;
+  if (!lesson) return <LoadingScreen label="Cargando lección…" />;
 
   const total = lesson.vocabulary.length;
 

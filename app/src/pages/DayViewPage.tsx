@@ -10,6 +10,7 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
+import { LoadingScreen } from '../components/ui/Spinner';
 import type { DayContent } from '../types';
 
 const STEP_LABELS: Record<string, string> = {
@@ -120,7 +121,7 @@ export function DayViewPage() {
   const speakPhrases = day?.phrases.slice(0, 3) ?? [];
   const allSaid = speakPhrases.length > 0 && speakPhrases.every((p) => saidCorrect.has(p.en));
 
-  if (loading) return <div className="p-8 text-center text-slate-500">Cargando día…</div>;
+  if (loading) return <LoadingScreen label="Cargando día…" />;
   if (error) {
     return (
       <div className="p-8">

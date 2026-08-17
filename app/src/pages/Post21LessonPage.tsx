@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Volume2, Mic, ArrowLeft, Check, Loader2 } from 'lucide-react';
-import { getPost21Lesson, submitExercise, recordSpeaking, scorePronunciation } from '../services/api';
+import { getPost21Lesson, submitExercise, recordSpeaking, scorePronunciation, addVocabularyItems } from '../services/api';
 import { speak } from '../utils/speech';
 import { isSpanish } from '../utils/language';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
@@ -110,6 +110,9 @@ export function Post21LessonPage() {
 
   const finishLesson = async () => {
     await recordSpeaking(21);
+    if (lesson.vocabulary?.length) {
+      addVocabularyItems(lesson.vocabulary.map((v) => ({ en: v.en, es: v.es }))).catch(() => {});
+    }
     await submitExercise({ day: 21, exerciseId: lesson.id, type: 'post21', answer: 'lesson', correct: true });
     setDone(true);
   };

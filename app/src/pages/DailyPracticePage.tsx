@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Mic, Volume2, Headphones, MessageCircle, BookOpen, Loader2 } from 'lucide-react';
-import { getDailyPracticeToday, completeDailyPractice, recordSpeaking } from '../services/api';
+import { getDailyPracticeToday, completeDailyPractice, recordSpeaking, addVocabularyItems } from '../services/api';
 import { useAppStore } from '../store/useAppStore';
 import { speak } from '../utils/speech';
 import { Button } from '../components/ui/Button';
@@ -157,7 +157,16 @@ export function DailyPracticePage() {
                   </div>
                 ))}
               </div>
-              <Button className="mt-4 w-full" size="lg" onClick={() => finishBlock()}>
+              <Button
+                className="mt-4 w-full"
+                size="lg"
+                onClick={() => {
+                  if (lesson?.vocabulary?.length) {
+                    addVocabularyItems(lesson.vocabulary.map((v) => ({ en: v.en, es: v.es }))).catch(() => {});
+                  }
+                  finishBlock();
+                }}
+              >
                 Escuché y repetí
               </Button>
             </Card>

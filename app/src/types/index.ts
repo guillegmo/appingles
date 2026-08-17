@@ -357,6 +357,7 @@ export interface AdvancedStats {
     averageScore: number;
     bestScore: number;
     recent: { target: string; score: number; at: string }[];
+    phrases: { target: string; bestScore: number; attempts: number; lastScore: number }[];
   };
   ai: { totalSessions: number; totalTokens: number; usedToday: number };
   skills: {

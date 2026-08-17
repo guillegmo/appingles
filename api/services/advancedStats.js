@@ -70,7 +70,7 @@ async function aiUsage(userId, today = new Date(), deps = {}) {
   return { totalSessions, totalTokens, usedToday };
 }
 
-// Puntaje de pronunciación: promedio, mejor y últimas N.
+// Puntaje de pronunciación: promedio, mejor, últimas N y resumen por frase.
 async function pronunciationStats(userId, limit = 10, deps = {}) {
   const s = deps.store || store;
   const docs = await s.listDocs('pronunciationScores');
@@ -78,11 +78,22 @@ async function pronunciationStats(userId, limit = 10, deps = {}) {
   const scores = mine.map((m) => m.score || 0);
   const avg = scores.length ? Math.round((scores.reduce((s, x) => s + x, 0) / scores.length) * 10) / 10 : 0;
   const best = scores.length ? Math.max(...scores) : 0;
+  const byTarget = {};
+  for (const m of mine) {
+    const t = m.target || '(sin frase)';
+    if (!byTarget[t]) byTarget[t] = { target: t, bestScore: -1, attempts: 0, lastScore: 0 };
+    byTarget[t].attempts += 1;
+    const sc = m.score || 0;
+    if (sc > byTarget[t].bestScore) byTarget[t].bestScore = sc;
+    byTarget[t].lastScore = sc;
+  }
+  const phrases = Object.values(byTarget).sort((a, b) => b.bestScore - a.bestScore);
   return {
     attempts: mine.length,
     averageScore: avg,
     bestScore: best,
     recent: mine.slice(0, limit).map((m) => ({ target: m.target || '', score: m.score || 0, at: m.at })),
+    phrases,
   };
 }
 

@@ -103,6 +103,11 @@ test('AdvancedStats: pronóstico de pronunciación (promedio/mejor/recientes)', 
   assert.equal(s.pronunciation.bestScore, 90);
   assert.equal(s.pronunciation.recent.length, 2);
   assert.equal(s.pronunciation.recent[0].target, 'I like coffee');
+  assert.equal(s.pronunciation.phrases.length, 2);
+  assert.equal(s.pronunciation.phrases[0].target, 'I like coffee');
+  assert.equal(s.pronunciation.phrases[0].bestScore, 90);
+  assert.equal(s.pronunciation.phrases[0].attempts, 1);
+  assert.equal(s.pronunciation.phrases[1].bestScore, 70);
 });
 
 test('AdvancedStats: uso de IA suma sesiones/tokens y separa el de hoy', async () => {
@@ -137,6 +142,7 @@ test('AdvancedStats: datos vacíos no rompen (usuarios nuevos)', async () => {
   assert.equal(s.accuracy.overall.accuracyPct, 0);
   assert.equal(s.overview.totalXp, 0);
   assert.equal(s.pronunciation.averageScore, 0);
+  assert.equal(s.pronunciation.phrases.length, 0);
   assert.equal(s.series.length, 7);
   assert.equal(s.skills, null);
 });

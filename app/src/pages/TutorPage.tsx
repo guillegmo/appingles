@@ -219,50 +219,35 @@ export function TutorPage() {
 
       <Card className="mt-3 flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
-          {!premium && remaining === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center py-8 text-center">
-              <Lock className="h-8 w-8 text-slate-300" />
-              <p className="mt-3 font-bold">Se acabaron tus mensajes gratis de hoy</p>
-              <p className="mt-1 text-sm text-slate-500">
-                Con Premium IA conversas sin límite, con voz y con corrección al momento.
-              </p>
-              <Button className="mt-4" variant="secondary" onClick={() => (window.location.href = '/premium')}>
-                DESBLOQUEAR IA
-              </Button>
+          {messages.length === 0 && (
+            <div className="py-8 text-center text-sm text-slate-400">
+              {stuck
+                ? '¿Qué te tiene atascado? Cuéntamelo y te lo explico paso a paso.'
+                : modes.find((m) => m.id === mode)?.description ?? 'Empieza a practicar.'}
             </div>
-          ) : (
-            <>
-              {messages.length === 0 && (
-                <div className="py-8 text-center text-sm text-slate-400">
-                  {stuck
-                    ? '¿Qué te tiene atascado? Cuéntamelo y te lo explico paso a paso.'
-                    : modes.find((m) => m.id === mode)?.description ?? 'Empieza a practicar.'}
-                </div>
-              )}
-              {messages.map((m, i) => (
-                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div
-                    className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm ${
-                      m.role === 'user' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-800'
-                    }`}
-                  >
-                    <p className="whitespace-pre-wrap">{m.content}</p>
-                    {m.role === 'assistant' && (
-                      <button onClick={() => speak(m.content)} className="mt-1.5 flex items-center gap-1 text-xs text-primary-600" aria-label="Escuchar">
-                        <Volume2 className="h-3.5 w-3.5" /> escuchar
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-              {sending && (
-                <div className="flex justify-start">
-                  <div className="flex items-center gap-2 rounded-2xl bg-slate-100 px-3.5 py-2.5 text-sm text-slate-500">
-                    <Loader2 className="h-4 w-4 animate-spin" /> escribiendo…
-                  </div>
-                </div>
-              )}
-            </>
+          )}
+          {messages.map((m, i) => (
+            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm ${
+                  m.role === 'user' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-800'
+                }`}
+              >
+                <p className="whitespace-pre-wrap">{m.content}</p>
+                {m.role === 'assistant' && (
+                  <button onClick={() => speak(m.content)} className="mt-1.5 flex items-center gap-1 text-xs text-primary-600" aria-label="Escuchar">
+                    <Volume2 className="h-3.5 w-3.5" /> escuchar
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+          {sending && (
+            <div className="flex justify-start">
+              <div className="flex items-center gap-2 rounded-2xl bg-slate-100 px-3.5 py-2.5 text-sm text-slate-500">
+                <Loader2 className="h-4 w-4 animate-spin" /> escribiendo…
+              </div>
+            </div>
           )}
           <div ref={bottomRef} />
         </div>

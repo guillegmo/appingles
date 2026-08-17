@@ -14,6 +14,7 @@ import { useAppStore } from '../store/useAppStore';
 import { getAdvancedStats } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { Tooltip } from '../components/ui/Tooltip';
 import { LoadingScreen } from '../components/ui/Spinner';
 import type { AdvancedStats } from '../types';
 
@@ -79,7 +80,8 @@ export function StatsPage() {
     <div className="p-5">
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-xl font-bold">
-          <BarChart3 className="h-5 w-5 text-primary-600" /> Estadísticas
+          <BarChart3 className="h-5 w-5 text-primary-600" /> Estadísticas{' '}
+          <Tooltip text="Datos de tu progreso en el reto: precisión, pronunciación, uso de la IA y rachas." />
         </h1>
         <div className="flex gap-1 rounded-full bg-slate-100 p-1">
           {([7, 30] as const).map((d) => (
@@ -99,38 +101,39 @@ export function StatsPage() {
         <Card className="p-4">
           <TrendingUp className="h-5 w-5 text-emerald-600" />
           <p className="num mt-2 text-2xl font-bold">{stats.accuracy.overall.accuracyPct}%</p>
-          <p className="text-xs text-slate-500">precisión general</p>
+          <p className="text-xs text-slate-500">precisión general{' '}<Tooltip text="Porcentaje de tus respuestas correctas en todos los ejercicios del reto, desde que empezaste." /></p>
         </Card>
         <Card className="p-4">
           <Microscope className="h-5 w-5 text-primary-600" />
           <p className="num mt-2 text-2xl font-bold">{stats.pronunciation.averageScore}</p>
-          <p className="text-xs text-slate-500">pronunciación media</p>
+          <p className="text-xs text-slate-500">pronunciación media{' '}<Tooltip text="Promedio de tus puntajes al hablar las frases del reto en voz alta (escala 0-100)." /></p>
         </Card>
         <Card className="p-4">
           <Mic className="h-5 w-5 text-amber-500" />
           <p className="num mt-2 text-2xl font-bold">{stats.overview.speakingSessions}</p>
-          <p className="text-xs text-slate-500">sesiones speaking</p>
+          <p className="text-xs text-slate-500">sesiones speaking{' '}<Tooltip text="Veces que practicaste hablando en inglés en el modo speaking del reto." /></p>
         </Card>
         <Card className="p-4">
           <Sparkles className="h-5 w-5 text-violet-500" />
           <p className="num mt-2 text-2xl font-bold">{stats.ai.totalSessions}</p>
-          <p className="text-xs text-slate-500">mensajes tutor IA</p>
+          <p className="text-xs text-slate-500">mensajes tutor IA{' '}<Tooltip text="Mensajes que le has enviado a tu tutor IA (por ejemplo, para generar lecciones personalizadas)." /></p>
         </Card>
         <Card className="p-4">
           <BookOpen className="h-5 w-5 text-emerald-600" />
           <p className="num mt-2 text-2xl font-bold">{stats.overview.vocabularyCount}</p>
-          <p className="text-xs text-slate-500">palabras en tu banco</p>
+          <p className="text-xs text-slate-500">palabras en tu banco{' '}<Tooltip text="Frases y palabras nuevas que has guardado. Las que fallas en los ejercicios se agregan solas a tu banco de vocabulario." /></p>
         </Card>
         <Card className="p-4">
           <Flame className="h-5 w-5 text-orange-500" />
           <p className="num mt-2 text-2xl font-bold">{stats.overview.currentStreak}</p>
-          <p className="text-xs text-slate-500">racha actual 🔥</p>
+          <p className="text-xs text-slate-500">racha actual 🔥{' '}<Tooltip text="Días consecutivos practicando. Si dejas un día sin practicar, la racha se reinicia (salvo que tengas un congelador de racha)." /></p>
         </Card>
       </div>
 
       <Card className="mt-4">
         <p className="mb-3 flex items-center gap-2 font-semibold">
-          <TrendingUp className="h-4 w-4 text-primary-600" /> Precisión por día
+          <TrendingUp className="h-4 w-4 text-primary-600" /> Precisión por día{' '}
+          <Tooltip text="Tu % de aciertos cada día. Verde = 80% o más, ámbar = 50-79%, rojo = menos de 50%. Las barras grises son días sin ejercicios." />
         </p>
         {days === 7 ? (
           <div className="flex h-32 items-end gap-1.5">
@@ -155,7 +158,8 @@ export function StatsPage() {
 
       <Card className="mt-4">
         <p className="mb-3 flex items-center gap-2 font-semibold">
-          <Microscope className="h-4 w-4 text-primary-600" /> Pronunciación
+          <Microscope className="h-4 w-4 text-primary-600" /> Pronunciación{' '}
+          <Tooltip text="Frases que la IA ha evaluado al hablar en voz alta. Verde = buen nivel (80+), ámbar/rojo = por mejorar. Se muestra tu mejor puntaje por frase." />
         </p>
         <div className="flex items-center gap-3">
           <div className="rounded-xl bg-primary-50 px-4 py-3">
@@ -190,7 +194,8 @@ export function StatsPage() {
 
       <Card className="mt-4">
         <p className="mb-3 flex items-center gap-2 font-semibold">
-          <Sparkles className="h-4 w-4 text-violet-500" /> Tu tutor IA
+          <Sparkles className="h-4 w-4 text-violet-500" /> Tu tutor IA{' '}
+          <Tooltip text="Cuánto has usado tu tutor IA hoy y en total. Los tokens son el consumo de IA al generar contenido." />
         </p>
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-xl bg-violet-50 p-3">
@@ -207,7 +212,8 @@ export function StatsPage() {
       {stats.skills && (
         <Card className="mt-4">
           <p className="mb-3 flex items-center gap-2 font-semibold">
-            <Target className="h-4 w-4 text-primary-600" /> Tu perfil de habilidades
+            <Target className="h-4 w-4 text-primary-600" /> Tu perfil de habilidades{' '}
+            <Tooltip text="Nivel estimado y las habilidades más fuertes o débiles según tu progreso en el reto." />
           </p>
           <div className="rounded-xl bg-slate-50 p-3">
             <p className="text-xs text-slate-500">Nivel actual</p>
@@ -224,7 +230,8 @@ export function StatsPage() {
 
       <Card className="mt-4 border-primary-200 bg-gradient-to-br from-primary-50 to-white">
         <p className="text-sm font-bold text-primary-700">
-          {stats.overview.practiceThisWeek} días practicados esta semana · {stats.overview.totalXp} XP totales · {stats.overview.daysCompleted}/21 días del reto
+          {stats.overview.practiceThisWeek} días practicados esta semana · {stats.overview.totalXp} XP totales · {stats.overview.daysCompleted}/21 días del reto{' '}
+          <Tooltip text="Tu actividad de la última semana y el avance total en el reto de 21 días." />
         </p>
       </Card>
     </div>

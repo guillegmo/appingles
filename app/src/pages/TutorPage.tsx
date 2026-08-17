@@ -176,9 +176,9 @@ export function TutorPage() {
         <h1 className="flex items-center gap-2 text-xl font-bold">
           <Bot className="h-6 w-6 text-primary-600" /> Tutor IA
         </h1>
-        <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${remaining > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+        <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${premium ? 'bg-emerald-100 text-emerald-700' : remaining > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
           {!premium && <Lock className="h-3 w-3" />}
-          {remaining}/{usage.limit} mensajes {premium ? 'IA' : 'hoy'}
+          {premium ? 'Ilimitado' : `${remaining}/${usage.limit} mensajes hoy`}
         </span>
       </div>
       <p className="mt-1 text-xs text-slate-500">Hola {user?.name}, conozco tu nivel y tus debilidades.</p>

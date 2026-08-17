@@ -42,8 +42,41 @@ function loadVoices(): Promise<SpeechSynthesisVoice[]> {
   });
 }
 
-// Lee un texto en voz alta. Detecta el idioma: español -> voz es-CO (colombiana),
-// inglés -> voz en-US. Notifica vía onEnd cuando termina (para conversación continua).
+type Segment = { text: string; lang: 'es' | 'en' };
+
+// Divide el texto en "átomos": trozos entre comillas y trozos sin comillas.
+// Así un ejemplo en inglés ("I eat breakfast") dentro de una frase en español
+// se lee con voz americana nativa y el resto con voz latina.
+function splitAtoms(text: string): string[] {
+  const atoms: string[] = [];
+  const re = /["“”'’]([^"“”'’]*)["“”'’]/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text))) {
+    if (m.index > last) atoms.push(text.slice(last, m.index));
+    atoms.push(m[0]);
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) atoms.push(text.slice(last));
+  return atoms.length ? atoms : [text];
+}
+
+// Agrupa átomos consecutivos del mismo idioma para no fragmentar de más.
+function buildSegments(text: string): Segment[] {
+  const segments: Segment[] = [];
+  for (const atom of splitAtoms(text)) {
+    if (!atom.trim()) continue;
+    const lang = isSpanish(atom) ? 'es' : 'en';
+    const last = segments[segments.length - 1];
+    if (last && last.lang === lang) last.text += atom;
+    else segments.push({ text: atom, lang });
+  }
+  return segments;
+}
+
+// Lee un texto alternando la voz según el idioma: español -> voz es-CO/es-419
+// (latina nativa), inglés -> voz en-US (americano nativo). Cada segmento es un
+// utterance encolado; onEnd se dispara cuando termina el último.
 export async function speak(text: string, options?: SpeakOptions) {
   if (!('speechSynthesis' in window)) {
     options?.onEnd?.();
@@ -52,16 +85,32 @@ export async function speak(text: string, options?: SpeakOptions) {
   const synth = window.speechSynthesis;
   synth.cancel();
 
-  const es = isSpanish(text);
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = es ? 'es-CO' : 'en-US';
-  u.rate = options?.rate ?? getSpeechSpeed();
+  const rate = options?.rate ?? getSpeechSpeed();
+  const segments = buildSegments(text);
+  if (!segments.length) {
+    options?.onEnd?.();
+    return;
+  }
 
   const voices = await loadVoices();
-  const voice = pickVoice(es ? 'es' : 'en', voices);
-  if (voice) u.voice = voice;
+  const esVoice = pickVoice('es', voices);
+  const enVoice = pickVoice('en', voices);
 
-  u.onend = () => options?.onEnd?.();
-  u.onerror = () => options?.onEnd?.();
-  synth.speak(u);
+  const total = segments.length;
+  segments.forEach((seg, i) => {
+    const u = new SpeechSynthesisUtterance(seg.text);
+    u.lang = seg.lang === 'es' ? 'es-CO' : 'en-US';
+    if (seg.lang === 'es') {
+      if (esVoice) u.voice = esVoice;
+    } else if (enVoice) {
+      u.voice = enVoice;
+    }
+    u.rate = rate;
+    if (i === 0) u.onerror = () => options?.onEnd?.();
+    if (i === total - 1) {
+      u.onend = () => options?.onEnd?.();
+      u.onerror = () => options?.onEnd?.();
+    }
+    synth.speak(u);
+  });
 }

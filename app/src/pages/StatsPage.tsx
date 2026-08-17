@@ -129,9 +129,9 @@ export function StatsPage() {
         <p className="mb-3 flex items-center gap-2 font-semibold">
           <TrendingUp className="h-4 w-4 text-primary-600" /> Precisión por día
         </p>
-        <div className="flex h-32 items-end gap-1.5">
-          {stats.series.map((d) => (
-            <div key={d.date} className="flex h-full flex-1 flex-col items-center gap-1">
+        <div className={`flex h-32 items-end ${days === 30 ? 'gap-px' : 'gap-1.5'}`}>
+          {stats.series.map((d, i) => (
+            <div key={d.date} className="flex h-full min-w-0 flex-1 flex-col items-center gap-1">
               <div className="flex w-full flex-1 items-end">
                 <div
                   className={`w-full rounded-t ${d.attempts === 0 ? 'bg-slate-100' : d.accuracyPct >= 80 ? 'bg-emerald-400' : d.accuracyPct >= 50 ? 'bg-amber-400' : 'bg-rose-400'}`}
@@ -139,7 +139,9 @@ export function StatsPage() {
                   title={`${DAY_LABEL(d.date)}: ${d.accuracyPct}%`}
                 />
               </div>
-              <span className="text-[8px] text-slate-400">{DAY_LABEL(d.date)}</span>
+              {(days === 7 || i % 5 === 0 || i === stats.series.length - 1) && (
+                <span className="whitespace-nowrap text-[8px] text-slate-400">{DAY_LABEL(d.date)}</span>
+              )}
             </div>
           ))}
         </div>

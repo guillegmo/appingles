@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Check, Shield, Zap, Gift, AlertTriangle, Bot, Sparkles, Mic, BookOpen, BarChart3, Undo2, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Check, Shield, Zap, Gift, AlertTriangle, Bot, Sparkles, Mic, BookOpen, BarChart3, Undo2, Loader2, ArrowLeft } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { getPlans, getCheckoutForPlan, cancelSubscription, trackAnalyticsEvent } from '../services/api';
 import { Button } from '../components/ui/Button';
@@ -30,6 +31,7 @@ function planLabel(plan?: string) {
 }
 
 export function PremiumPage() {
+  const navigate = useNavigate();
   const { entitlements, subscription, upgradePremium, refreshAll } = useAppStore();
   const [plans, setPlans] = useState<PlanOption[]>([]);
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
@@ -146,6 +148,13 @@ export function PremiumPage() {
   return (
     <div className="flex min-h-screen flex-col p-6">
       <div className="mx-auto w-full max-w-md">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-2 flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-semibold text-slate-600 hover:bg-slate-100"
+          aria-label="Volver"
+        >
+          <ArrowLeft className="h-4 w-4" /> Volver sin comprar
+        </button>
         <div className="text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-600 text-white">
             <Bot className="h-7 w-7" />

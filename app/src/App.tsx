@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, getToken } from './services/firebase';
-import { registerSession } from './services/api';
+import { registerSession, getChallenge } from './services/api';
 import { isKicked, setKicked, clearKicked } from './services/sessionGuard';
 import { useAppStore } from './store/useAppStore';
 import { LoadingScreen } from './components/ui/Spinner';
@@ -73,6 +73,16 @@ export default function App() {
       if (user) useAppStore.getState().refreshAll();
       return;
     }
+
+    // Sesión única: al volver a esta pestaña, validamos la sesión. Si otro
+    // dispositivo tomó el control, la petición devuelve SESSION_EXPIRED y el
+    // interceptor expulsa el dispositivo automáticamente (aunque esté inactivo).
+    const onVisible = () => {
+      if (document.visibilityState === 'visible' && useAppStore.getState().user) {
+        getChallenge().catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
         if (isKicked()) return;
@@ -92,7 +102,10 @@ export default function App() {
         logout();
       }
     });
-    return () => unsub();
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      unsub();
+    };
   }, [user, login, logout]);
 
   return (

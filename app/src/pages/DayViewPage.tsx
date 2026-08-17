@@ -148,16 +148,17 @@ export function DayViewPage() {
   useEffect(() => {
     if (!speech.transcript || !day) return;
     const spoken = speech.transcript;
+    const phrases = day.phrases ?? [];
     setSaidCorrect((prev) => {
       const next = new Set(prev);
-      day.phrases.slice(0, 3).forEach((p) => {
+      phrases.slice(0, 3).forEach((p) => {
         if (!next.has(p.en) && fuzzyMatches(p.en, spoken)) next.add(p.en);
       });
       return next;
     });
     // Puntaje de pronunciación (Premium IA).
     if (entitlements?.canScorePronunciation) {
-      const attempted = day.phrases.slice(0, 3).find((p) => fuzzyMatches(p.en, spoken)) ?? day.phrases.slice(0, 3)[0];
+      const attempted = phrases.slice(0, 3).find((p) => fuzzyMatches(p.en, spoken)) ?? phrases.slice(0, 3)[0];
       if (attempted) {
         scorePronunciation({ transcript: spoken, target: attempted.en, day: dayNumber })
           .then((r) => setPronScore({ target: attempted.en, score: r.score }))
@@ -166,7 +167,7 @@ export function DayViewPage() {
     }
   }, [speech.transcript, day]);
 
-  const speakPhrases = day?.phrases.slice(0, 3) ?? [];
+  const speakPhrases = day?.phrases?.slice(0, 3) ?? [];
   const hasSpeakPhrases = speakPhrases.length > 0;
   const allSaid = hasSpeakPhrases && speakPhrases.every((p) => saidCorrect.has(p.en));
   const speakBlocked = hasSpeakPhrases && !allSaid;
@@ -288,7 +289,7 @@ export function DayViewPage() {
             )}
             <div className="mt-4">
               <p className="mb-2 font-semibold">Vocabulario clave</p>
-              {day.vocabulary.map((v, i) => (
+              {(day.vocabulary ?? []).map((v, i) => (
                 <button
                   key={i}
                   onClick={() => speak(v.en)}
@@ -313,7 +314,7 @@ export function DayViewPage() {
             <h2 className="text-lg font-bold">👂 Escuchar</h2>
             <p className="mt-2 text-sm text-slate-500">Toca una frase para oírla.</p>
             <div className="mt-3 space-y-2">
-              {day.phrases.map((p, i) => (
+              {(day.phrases ?? []).map((p, i) => (
                 <button
                   key={i}
                   onClick={() => speak(p.en)}
@@ -340,7 +341,7 @@ export function DayViewPage() {
               Repite después del audio para practicar tu pronunciación.
             </p>
             <div className="mt-4 space-y-2">
-              {day.phrases.slice(0, 3).map((p, i) => (
+              {(day.phrases ?? []).slice(0, 3).map((p, i) => (
                 <div key={i} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2.5">
                   <div>
                     <p className="text-sm font-semibold">{p.en}</p>
@@ -550,20 +551,21 @@ function PracticeCard({
   const [answered, setAnswered] = useState(false);
 
   // Quiz simple: traduce una palabra de vocabulario a su significado.
-  const q = day.vocabulary[0];
+  const vocab = day.vocabulary ?? [];
+  const q = vocab[0];
   const options = useMemo(() => {
-    if (!day.vocabulary.length) return [];
-    const correct = day.vocabulary[0].es;
-    const others = day.vocabulary.slice(1).map((v) => v.es).slice(0, 3);
+    if (!vocab.length) return [];
+    const correct = vocab[0].es;
+    const others = vocab.slice(1).map((v) => v.es).slice(0, 3);
     return [...new Set([correct, ...others])].sort();
-  }, [day]);
+  }, [vocab]);
 
   const check = (opt: string) => {
     setSelected(opt);
     setAnswered(true);
   };
 
-  if (!day.vocabulary.length) {    return (
+  if (!vocab.length) {    return (
       <Card>
         <h2 className="text-lg font-bold">✏️ Practicar</h2>
         <Button className="mt-4 w-full" size="lg" onClick={onNext}>

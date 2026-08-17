@@ -44,7 +44,7 @@ export function HomePage() {
           className="flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3 py-1.5 text-sm font-semibold text-orange-600"
         >
           <Flame className="h-4 w-4 text-orange-500" />
-          <span className="num">{progress?.streaks.currentStreak ?? 0}</span> días
+          <span className="num">{progress?.streaks?.currentStreak ?? 0}</span> días
         </Link>
       </header>
       {(progress?.streakFreezes ?? 0) > 0 && (
@@ -143,7 +143,7 @@ export function HomePage() {
         </Card>
         <Card className="p-4">
           <Award className="h-5 w-5 text-primary-600" />
-          <p className="num mt-2 text-2xl font-bold">{progress?.badges.length ?? 0}</p>
+          <p className="num mt-2 text-2xl font-bold">{progress?.badges?.length ?? 0}</p>
           <p className="text-xs text-slate-500">Insignias</p>
         </Card>
       </div>
@@ -194,7 +194,7 @@ export function HomePage() {
         </Link>
       </div>
 
-      {progress?.level && (
+      {progress?.level && progress?.levelProgress && (
         <Card className="mt-4">
           <div className="flex items-center justify-between">
             <p className="text-sm font-bold capitalize">{progress.level}</p>

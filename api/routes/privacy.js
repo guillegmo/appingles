@@ -18,8 +18,12 @@ const USER_COLLECTIONS = [
   'recommendations',
   'subscriptions',
   'payments',
+  'paymentEvents',
+  'users',
+  'userEmails',
   'exerciseAttempts',
   'speakingSessions',
+  'pronunciationScores',
   'reviewCards',
   'reviewResults',
   'conversations',
@@ -27,6 +31,7 @@ const USER_COLLECTIONS = [
   'analyticsEvents',
   'seasonClaims',
   'savedPhrases',
+  'vocabulary',
 ];
 
 function docBelongsToUser(docId, userId) {

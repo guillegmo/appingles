@@ -5,20 +5,78 @@ const hotmart = require('../services/payments/hotmart');
 const subscriptionService = require('../services/subscriptionService');
 const analytics = require('../services/analytics');
 
-test('Hotmart: mapea PURCHASE_APPROVED -> active', () => {
+test('Hotmart: mapea PURCHASE_APPROVED -> active (plan mensual)', () => {
   const sub = hotmart.mapEventToSubscription({
     event: 'PURCHASE_APPROVED',
     id: 'evt-1',
     data: {
       subscriber: { buyer: { email: 'a@b.com' } },
       product: { id: 'premium' },
-      purchase: { next_cycle_date: '2026-09-01T00:00:00Z' },
+      purchase: { next_cycle_date: '2026-09-01T00:00:00Z', recurrency_number: 1 },
     },
   });
   assert.equal(sub.status, 'active');
-  assert.equal(sub.plan, 'premium');
+  assert.equal(sub.plan, 'premium-monthly');
   assert.equal(sub.buyerEmail, 'a@b.com');
   assert.ok(sub.nextBillingDate);
+  assert.equal(sub.renewing, false);
+});
+
+test('Hotmart: producto anual -> premium-annual', () => {
+  process.env.HOTMART_PRODUCT_ANNUAL_ID = 'ann-42';
+  const modPath = require.resolve('../services/payments/hotmart');
+  delete require.cache[modPath];
+  const hm = require('../services/payments/hotmart');
+  const sub = hm.mapEventToSubscription({
+    event: 'PURCHASE_APPROVED',
+    data: { product: { id: 'ann-42' }, purchase: { recurrency_number: 1 } },
+  });
+  assert.equal(sub.plan, 'premium-annual');
+  delete process.env.HOTMART_PRODUCT_ANNUAL_ID;
+  delete require.cache[modPath];
+});
+
+test('Hotmart: renovación recurrente (recurrency_number > 1)', () => {
+  const renewal = hotmart.mapEventToSubscription({
+    event: 'PURCHASE_APPROVED',
+    id: 'evt-2',
+    data: { product: { id: 'premium' }, purchase: { recurrency_number: 2 } },
+  });
+  assert.equal(renewal.renewing, true);
+  assert.equal(renewal.status, 'active');
+});
+
+test('Hotmart: estado real desde subscription.status (past_due)', () => {
+  const sub = hotmart.mapEventToSubscription({
+    event: 'SUBSCRIPTION_STATUS_UPDATE',
+    data: { subscription: { status: 'past_due' } },
+  });
+  assert.equal(sub.status, 'past_due');
+});
+
+test('Hotmart: checkout incluye custom=userId y plan', () => {
+  process.env.HOTMART_CHECKOUT_URL_MONTHLY = 'https://pay.hotmart.com/PROD';
+  const modPath = require.resolve('../services/payments/hotmart');
+  delete require.cache[modPath];
+  const hm = require('../services/payments/hotmart');
+  const r = hm.createCheckout({ email: 'a@b.com', userId: 'u-1', plan: 'monthly' });
+  assert.equal(r.dev, false);
+  assert.ok(r.url.includes('custom=u-1'));
+  assert.ok(r.url.includes('email=a%40b.com'));
+  delete process.env.HOTMART_CHECKOUT_URL_MONTHLY;
+  delete require.cache[modPath];
+});
+
+test('Hotmart: checkout dev sin URL', () => {
+  delete process.env.HOTMART_CHECKOUT_URL;
+  delete process.env.HOTMART_CHECKOUT_URL_MONTHLY;
+  delete process.env.HOTMART_CHECKOUT_URL_ANNUAL;
+  const modPath = require.resolve('../services/payments/hotmart');
+  delete require.cache[modPath];
+  const hm = require('../services/payments/hotmart');
+  const r = hm.createCheckout({ userId: 'u', plan: 'monthly' });
+  assert.equal(r.dev, true);
+  delete require.cache[modPath];
 });
 
 test('Hotmart: eventos sin efecto devuelven null', () => {

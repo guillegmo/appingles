@@ -1,6 +1,7 @@
 // routes/tutor.js
 // Tutor IA: chat por modos + "I'm Stuck".
-// - Gate: Premium (canUseRoleplay).
+// - Acceso: todos los usuarios; Free tiene 3 mensajes IA/día de muestra,
+//   Premium IA (suscripción recurrente) tiene el límite completo.
 // - Límite diario de mensajes según entitlement (aiMessagesPerDay).
 // - Memoria contextual: colección 'conversations' por user+mode.
 
@@ -22,13 +23,10 @@ function entitlementsOf(req) {
   return entitlement.buildEntitlements(req.subscription);
 }
 
-function ensurePremium(req, res) {
-  const ent = entitlementsOf(req);
-  if (!ent.canUseRoleplay) {
-    res.status(403).json({ error: 'premium_required', message: 'El Tutor IA es exclusivo de Premium.' });
-    return false;
-  }
-  return true;
+// El acceso al tutor está abierto (Free tiene 3 mensajes de muestra al día);
+// el tope real lo impone aiMessagesPerDay en handleMessage.
+function canAccessTutor(req) {
+  return entitlementsOf(req).aiMessagesPerDay > 0;
 }
 
 // Contexto del usuario para el system prompt (nivel + debilidades).
@@ -70,7 +68,9 @@ function buildModelMessages(modeId, history, userMessage, context) {
 }
 
 async function handleMessage(req, res, modeId) {
-  if (!ensurePremium(req, res)) return;
+  if (!canAccessTutor(req)) {
+    return res.status(403).json({ error: 'ai_disabled', message: 'El Tutor IA no está disponible.' });
+  }
 
   const { message } = req.body || {};
   if (!message || !message.trim()) {
@@ -138,7 +138,7 @@ router.post('/stuck', async (req, res) => {
 
 // GET /tutor/history?mode=roleplay — historial reciente del modo (incluye stuck)
 router.get('/history', async (req, res) => {
-  if (!ensurePremium(req, res)) return;
+  if (!canAccessTutor(req)) return res.status(403).json({ error: 'ai_disabled', message: 'El Tutor IA no está disponible.' });
   const raw = req.query.mode || 'conversation';
   const resolved = raw === 'stuck' ? { id: 'stuck' } : prompts.resolveMode(raw) || prompts.MODES.Conversation;
   const history = await getConversation(req.user.id, resolved.id);
@@ -149,7 +149,7 @@ router.get('/history', async (req, res) => {
 router.get('/usage', async (req, res) => {
   const ent = entitlementsOf(req);
   const used = await aiUsage.usedToday(req.user.id, MODE_PARAM);
-  res.json({ used, limit: ent.aiMessagesPerDay, premium: ent.canUseRoleplay });
+  res.json({ used, limit: ent.aiMessagesPerDay, premium: ent.plan === 'premium' });
 });
 
 // GET /tutor/modes — catálogo de modos

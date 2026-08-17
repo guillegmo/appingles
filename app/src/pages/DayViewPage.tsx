@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Volume2, Mic, Sparkles, Check, Loader2 } from 'lucide-react';
-import { getDay, completeDay, submitExercise, recordSpeaking, trackAnalyticsEvent } from '../services/api';
+import { getDay, completeDay, submitExercise, recordSpeaking, trackAnalyticsEvent, scorePronunciation, addVocabularyItems } from '../services/api';
 import { speak } from '../utils/speech';
 import { isSpanish } from '../utils/language';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
@@ -27,7 +27,7 @@ export function DayViewPage() {
   const { day: dayParam } = useParams();
   const dayNumber = Number(dayParam);
   const navigate = useNavigate();
-  const { refreshAll, setError } = useAppStore();
+  const { refreshAll, setError, entitlements } = useAppStore();
 
   const [day, setDay] = useState<DayContent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,6 +35,7 @@ export function DayViewPage() {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [error, setErr] = useState<string | null>(null);
   const [saidCorrect, setSaidCorrect] = useState<Set<string>>(new Set());
+  const [pronScore, setPronScore] = useState<{ target: string; score: number } | null>(null);
   const [busy, setBusy] = useState(false);
 
   const speech = useSpeechRecognition();
@@ -82,6 +83,10 @@ export function DayViewPage() {
     setBusy(true);
     try {
       await submitExercise({ day: dayNumber, exerciseId, type: 'mcq', answer: '', correct });
+      // Banco de vocabulario IA: un fallo guarda las palabras del día.
+      if (!correct && day?.vocabulary?.length) {
+        addVocabularyItems(day.vocabulary.map((v) => ({ en: v.en, es: v.es }))).catch(() => {});
+      }
       trackAnalyticsEvent('exercise_completed', { day: dayNumber, correct }).catch(() => {});
       setStepIdx(Math.min(stepIdx + 1, steps.length - 1));
       await refreshAll();
@@ -133,6 +138,15 @@ export function DayViewPage() {
       });
       return next;
     });
+    // Puntaje de pronunciación (Premium IA).
+    if (entitlements?.canScorePronunciation) {
+      const attempted = day.phrases.slice(0, 3).find((p) => phraseMatches(p.en, spoken)) ?? day.phrases.slice(0, 3)[0];
+      if (attempted) {
+        scorePronunciation({ transcript: spoken, target: attempted.en, day: dayNumber })
+          .then((r) => setPronScore({ target: attempted.en, score: r.score }))
+          .catch(() => {});
+      }
+    }
   }, [speech.transcript, day]);
 
   const speakPhrases = day?.phrases.slice(0, 3) ?? [];
@@ -148,10 +162,10 @@ export function DayViewPage() {
           <ArrowLeft className="h-4 w-4" /> Volver
         </Button>
         <Card>
-          <p className="font-bold text-rose-600">🔒 Este día requiere Premium</p>
+          <p className="font-bold text-rose-600">Este contenido está en Premium IA</p>
           <p className="mt-2 text-sm text-slate-600">{error}</p>
           <Button className="mt-4 w-full" variant="secondary" onClick={() => navigate('/premium')}>
-            PROBAR PREMIUM
+            VER PREMIUM IA
           </Button>
         </Card>
       </div>
@@ -376,6 +390,25 @@ export function DayViewPage() {
                         <p className="mt-3 w-full rounded-xl bg-amber-100 px-4 py-3 text-center text-sm font-semibold text-amber-800">
                           🗣️ Lo dijiste en español. ¡Inténtalo en inglés! Escucha el modelo arriba y repite la frase.
                         </p>
+                      )}
+                      {pronScore && entitlements?.canScorePronunciation && (
+                        <div className="mt-3 flex w-full items-center justify-between rounded-xl bg-primary-50 px-4 py-3">
+                          <div className="text-left">
+                            <p className="text-xs font-bold text-primary-700">Puntaje de pronunciación</p>
+                            <p className="text-[11px] text-slate-500">“{pronScore.target}”</p>
+                          </div>
+                          <span className={`rounded-full px-3 py-1 text-sm font-black ${pronScore.score >= 80 ? 'bg-emerald-500 text-white' : pronScore.score >= 50 ? 'bg-amber-500 text-white' : 'bg-rose-500 text-white'}`}>
+                            {pronScore.score}
+                          </span>
+                        </div>
+                      )}
+                      {!entitlements?.canScorePronunciation && (
+                        <button
+                          onClick={() => navigate('/premium')}
+                          className="mt-3 w-full rounded-xl border border-primary-200 bg-white px-4 py-2 text-center text-xs font-semibold text-primary-700"
+                        >
+                          ✨ Con Premium IA recibes puntaje de pronunciación en cada frase
+                        </button>
                       )}
                     </>
                   )}

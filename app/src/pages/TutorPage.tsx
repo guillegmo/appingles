@@ -51,13 +51,12 @@ export function TutorPage() {
   }, []);
 
   useEffect(() => {
-    if (!premium) return;
     (async () => {
       const [h, u] = await Promise.all([getTutorHistory(mode), getTutorUsage()]);
       setMessages(h.messages);
       setUsage({ used: u.used, limit: u.limit });
     })().catch((e) => setError((e as Error).message));
-  }, [mode, premium]);
+  }, [mode]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -171,37 +170,26 @@ export function TutorPage() {
 
   const remaining = Math.max(0, usage.limit - usage.used);
 
-  if (!premium) {
-    return (
-      <div className="p-5">
-        <h1 className="text-xl font-bold">Tutor IA</h1>
-        <Card className="mt-4">
-          <div className="flex flex-col items-center py-6 text-center">
-            <Lock className="h-8 w-8 text-slate-300" />
-            <p className="mt-3 font-bold">Tutor IA es Premium</p>
-            <p className="mt-1 text-sm text-slate-500">
-              Conversación, roleplays, correcciones y práctica de voz con un tutor que conoce tu nivel.
-            </p>
-            <Button className="mt-4" variant="secondary" onClick={() => (window.location.href = '/premium')}>
-              PROBAR PREMIUM
-            </Button>
-          </div>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="flex h-[calc(100dvh-7rem)] flex-col p-5 pb-0">
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-xl font-bold">
           <Bot className="h-6 w-6 text-primary-600" /> Tutor IA
         </h1>
-        <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${remaining > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
-          {remaining}/{usage.limit} mensajes
+        <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${remaining > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+          {!premium && <Lock className="h-3 w-3" />}
+          {remaining}/{usage.limit} mensajes {premium ? 'IA' : 'hoy'}
         </span>
       </div>
       <p className="mt-1 text-xs text-slate-500">Hola {user?.name}, conozco tu nivel y tus debilidades.</p>
+      {!premium && (
+        <button
+          onClick={() => (window.location.href = '/premium')}
+          className="mt-2 w-full rounded-xl bg-primary-600 px-3 py-2 text-left text-xs font-semibold text-white"
+        >
+          Tienes {remaining} mensajes IA gratis hoy. Desbloquea conversaciones ilimitadas con Premium IA →
+        </button>
+      )}
       <div className="mt-2 flex justify-center">
         <SpeechSpeedControl compact />
       </div>
@@ -230,7 +218,19 @@ export function TutorPage() {
 
       <Card className="mt-3 flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
-          {messages.length === 0 && (
+          {messages.length === 0 && !premium && remaining === 0 && (
+            <div className="flex flex-col items-center py-8 text-center">
+              <Lock className="h-8 w-8 text-slate-300" />
+              <p className="mt-3 font-bold">Se acabaron tus mensajes gratis de hoy</p>
+              <p className="mt-1 text-sm text-slate-500">
+                Con Premium IA conversas sin límite, con voz y con corrección al momento.
+              </p>
+              <Button className="mt-4" variant="secondary" onClick={() => (window.location.href = '/premium')}>
+                DESBLOQUEAR IA
+              </Button>
+            </div>
+          )}
+          {messages.length === 0 && !(premium || remaining === 0) && (
             <div className="py-8 text-center text-sm text-slate-400">
               {stuck
                 ? '¿Qué te tiene atascado? Cuéntamelo y te lo explico paso a paso.'

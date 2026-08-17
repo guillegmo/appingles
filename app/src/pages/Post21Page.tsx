@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Headphones, MessageCircle, PenLine, MessageSquare } from 'lucide-react';
-import { getPost21 } from '../services/api';
+import { BookOpen, Headphones, MessageCircle, PenLine, MessageSquare, Sparkles, Loader2 } from 'lucide-react';
+import { getPost21, generateLesson } from '../services/api';
+import { useAppStore } from '../store/useAppStore';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import type { Post21Index, Post21LessonSummary } from '../types';
@@ -38,23 +39,76 @@ const SITUATION_LABELS: Record<string, string> = {
 
 export function Post21Page() {
   const navigate = useNavigate();
+  const { entitlements } = useAppStore();
   const [index, setIndex] = useState<Post21Index | null>(null);
   const [skill, setSkill] = useState<string>('all');
+  const [topic, setTopic] = useState('');
+  const [generating, setGenerating] = useState(false);
+  const [genError, setGenError] = useState<string | null>(null);
+
+  const reload = async (s = skill) => {
+    try {
+      setIndex(await getPost21(s === 'all' ? undefined : s));
+    } catch {
+      setIndex(null);
+    }
+  };
 
   useEffect(() => {
-    (async () => {
-      try {
-        setIndex(await getPost21(skill === 'all' ? undefined : skill));
-      } catch {
-        setIndex(null);
-      }
-    })();
+    reload(skill);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skill]);
+
+  const handleGenerate = async () => {
+    if (!topic.trim() || generating) return;
+    setGenerating(true);
+    setGenError(null);
+    try {
+      const { lesson } = await generateLesson({
+        skill: skill === 'all' ? 'conversation' : skill,
+        situation: 'social',
+        topic: topic.trim(),
+      });
+      await reload(skill);
+      navigate(`/practice/${lesson.id}`);
+    } catch (e) {
+      setGenError((e as Error).message || 'No se pudo generar la lección.');
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   return (
     <div className="p-5">
       <h1 className="text-xl font-bold">Aprendizaje continuo</h1>
       <p className="text-sm text-slate-500">Contenido post-21 por habilidad y situación.</p>
+
+      {entitlements?.canGenerateLessons ? (
+        <Card className="mt-3 border-primary-200">
+          <p className="flex items-center gap-1.5 text-sm font-bold text-primary-700">
+            <Sparkles className="h-4 w-4" /> Genera una lección con IA
+          </p>
+          <p className="mt-1 text-xs text-slate-500">Escribe el tema que quieras practicar y la IA crea una lección solo para ti.</p>
+          <div className="mt-3 flex gap-2">
+            <input
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
+              placeholder="Ej: ordenar comida en un restaurante"
+              className="h-10 min-w-0 flex-1 rounded-xl border border-slate-300 px-3 text-sm outline-none focus:border-primary-500"
+            />
+            <Button className="h-10 shrink-0 px-3" onClick={handleGenerate} disabled={generating || !topic.trim()}>
+              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Generar'}
+            </Button>
+          </div>
+          {genError && <p className="mt-2 text-xs text-rose-600">{genError}</p>}
+        </Card>
+      ) : (
+        <button onClick={() => navigate('/premium')} className="mt-3 w-full rounded-xl border border-primary-200 bg-primary-50 px-4 py-3 text-left">
+          <p className="text-sm font-bold text-primary-700">✨ Lecciones IA on-demand</p>
+          <p className="text-xs text-slate-600">Genera lecciones del tema que quieras con Premium IA.</p>
+        </button>
+      )}
 
       <div className="mt-3 flex flex-wrap gap-2">
         <button

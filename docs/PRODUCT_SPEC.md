@@ -27,22 +27,34 @@ EBOOK → RETO 21 DÍAS → HÁBITO → EVALUACIÓN → PLAN PERSONALIZADO → A
 
 | Plan | Incluye | Monetización |
 |---|---|---|
-| **Free** | Onboarding, Días 1–7 del reto, ejercicios básicos, streak, XP, 3 mensajes IA de prueba | Activación / retención |
-| **Premium** (core) | Reto completo, contenido post-21, Daily Practice, Tutor IA completo (8 modos + voz), roleplays, listening, Smart Review, progreso avanzado, reportes | Suscripción mensual/anual vía Hotmart, trial configurable (7 días), condiciones transparentes |
-| **Premium Plus** | Descartado en MVP. Arquitectura lista para añadirlo como upgrade de AI allowance cuando haya valor real | Fase V5+ |
+| **Free** (permanente) | Reto de 21 días COMPLETO (sin caducidad), ejercicios, speaking, Daily Practice, post-21, Smart Review, temporadas, streaks, XP, badges, reportes, analytics básicos, 3 mensajes IA/día de muestra | Activación / retención / muestra de valor IA |
+| **Premium IA** (recurrente) | Todo lo relacionado con IA: Tutor IA completo (8 modos + voz bilingüe + "I'm Stuck"), lecciones IA on-demand, score de pronunciación IA, banco de vocabulario IA, analytics avanzados | Suscripción recurrente Hotmart: **Mensual $15** o **Anual $99** (2 meses gratis), condiciones transparentes |
+| **Retención (gratis)** | Listening premium (audios nativos + quizzes), ligas/leaderboard semanal, streak freeze, certificado Día 21 + tarjetas compartibles | Mantienen el hábito y empujan hacia la IA |
 
-**Principios de pago:** valor recurrente real, sin dark patterns, condiciones transparentes, paywalls después de demostrar valor (≈Día 7 y tras primera conversación IA).
+**Modelo:** el reto de 21 días es la prueba del producto (gratis para siempre); la IA es el producto de pago. El paywall **informa los beneficios y funciones adicionales** que se desbloquean al comprar la IA (comparativa Free vs Premium IA), nunca vende "Premium" genérico.
+
+**Principios de pago:** valor recurrente real de la IA, sin dark patterns, condiciones transparentes, paywalls después de demostrar valor (Día 7, tras las 3 primeras conversaciones IA y en el Día 21).
 
 ## Momentos de conversión
 
 - Después de completar los primeros días → mostrar progreso.
+- Después de agotar los **3 mensajes IA/día** de muestra → "Tu tutor IA te espera. Desbloquea conversaciones ilimitadas".
 - Después de una conversación IA → mostrar valor.
 - Después de detectar una debilidad → "Your personalized practice is ready".
-- Día 21 → "You've built the foundation. Now let's build fluency" + plan personalizado.
+- Día 21 → "You've built the foundation. Now let's build fluency" + plan personalizado + certificado + upgrade a IA.
+
+## Paywall (copy de beneficios IA)
+
+El paywall comunica **qué hace la IA por el usuario** y las funciones adicionales al suscribirse:
+- Tutor IA que conversa contigo, corrige tus errores en el momento y te da feedback (8 modos + voz).
+- Lecciones generadas por IA para el tema exacto que quieres practicar.
+- Puntaje de pronunciación en cada ejercicio de speaking.
+- Banco de vocabulario personal que se arma con tus errores y lo que el tutor te enseña.
+- Comparativa clara: qué es gratis (21 días + práctica + racha) y qué desbloquea la suscripción (IA).
 
 ## Retención (mecanismos legítimos)
 
-Daily Practice · Streak · Recomendaciones personalizadas · Smart Review · Progreso · Nuevos escenarios · Conversaciones IA · Goals · Reportes semanales/mensuales · Retos continuos.
+Daily Practice · Streak (+ streak freeze) · Recomendaciones personalizadas · Smart Review · Progreso · Nuevos escenarios · Conversaciones IA · Goals · Reportes semanales/mensuales · Retos continuos · Ligas/leaderboard · Listening · Certificado Día 21.
 
 ## Objetivos de negocio (KPIs)
 

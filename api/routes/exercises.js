@@ -6,6 +6,8 @@ const router = express.Router();
 const store = require('../lib/store');
 const scoring = require('../services/scoring');
 const reviewService = require('../services/reviewService');
+const pronunciation = require('../services/pronunciation');
+const entitlement = require('../services/entitlement');
 const { authenticate } = require('../middleware/auth');
 
 router.use(authenticate);
@@ -69,6 +71,32 @@ router.post('/speaking', async (req, res) => {
     at: new Date().toISOString(),
   });
   res.json({ speakingSessions: progress.speakingSessions, xpEarned: scoring.XP.speakingSession, totalXp: progress.totalXp });
+});
+
+// POST /exercises/pronunciation
+// body: { transcript, target, day? }
+// Premium IA: puntaje de pronunciación comparando la transcripción con la frase.
+router.post('/pronunciation', async (req, res) => {
+  const ent = entitlement.buildEntitlements(req.subscription);
+  if (!ent.canScorePronunciation) {
+    return res.status(403).json({ error: 'premium_required', message: 'El puntaje de pronunciación es parte de Premium IA.' });
+  }
+  const { transcript, target, day } = req.body || {};
+  if (!target || !transcript) {
+    return res.status(400).json({ error: 'transcript y target son requeridos' });
+  }
+
+  const result = pronunciation.scorePronunciation({ transcript, target });
+  await store.setDoc('pronunciationScores', `${req.user.id}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, {
+    userId: req.user.id,
+    day: day || null,
+    target,
+    transcript,
+    ...result,
+    at: new Date().toISOString(),
+  });
+
+  res.json(result);
 });
 
 module.exports = router;

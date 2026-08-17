@@ -79,6 +79,11 @@ export async function recordSpeaking(day: number) {
   return data;
 }
 
+export async function scorePronunciation(payload: { transcript: string; target: string; day?: number }) {
+  const { data } = await api.post('/exercises/pronunciation', payload);
+  return data;
+}
+
 export async function getProgress(): Promise<import('../types').ProgressResponse> {
   const { data } = await api.get('/challenge/progress');
   return data;
@@ -99,8 +104,18 @@ export async function getSubscriptionStatus(): Promise<import('../types').Subscr
   return data;
 }
 
-export async function getCheckout(): Promise<{ url: string | null; dev: boolean }> {
+export async function getCheckout(): Promise<{ url: string | null; dev: boolean; plan?: string }> {
   const { data } = await api.get('/subscription/checkout');
+  return data;
+}
+
+export async function getCheckoutForPlan(plan: 'monthly' | 'annual'): Promise<{ url: string | null; dev: boolean; plan?: string }> {
+  const { data } = await api.get('/subscription/checkout', { params: { plan } });
+  return data;
+}
+
+export async function getPlans(): Promise<{ plans: import('../types').PlanOption[] }> {
+  const { data } = await api.get('/subscription/plans');
   return data;
 }
 
@@ -216,6 +231,26 @@ export async function sendTutorStuck(message: string): Promise<import('../types'
 
 export async function getTutorUsage(): Promise<import('../types').TutorUsage> {
   const { data } = await api.get('/tutor/usage');
+  return data;
+}
+
+export async function addVocabularyItems(words: { en: string; es: string }[]): Promise<{ ok: boolean; total: number }> {
+  const { data } = await api.post('/vocabulary/items', { words });
+  return data;
+}
+
+export async function getVocabulary(): Promise<{ items: { en: string; es: string; addedAt: string }[]; total: number }> {
+  const { data } = await api.get('/vocabulary');
+  return data;
+}
+
+export async function getLeaderboard(): Promise<import('../types').Leaderboard> {
+  const { data } = await api.get('/leaderboard');
+  return data;
+}
+
+export async function generateLesson(payload: { skill: string; situation: string; topic: string }): Promise<{ id: string; lesson: import('../types').Post21LessonDetail }> {
+  const { data } = await api.post('/content/post21/generate', payload);
   return data;
 }
 

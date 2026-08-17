@@ -1,21 +1,28 @@
 // services/payments/hotmart.js
-// Proveedor Hotmart (V4).
+// Proveedor Hotmart (V4, extendido en V7 para recurrencia en producción).
 // - Webhooks firmados con HMAC (clave webhook + token).
-// - Checkout vía link con parámetros (checkout_token opcional).
+// - Checkout vía link con parámetros (email, custom=userId, plan mensual/anual).
+// - Mapeo de eventos a estados reales de la suscripción + renovaciones.
 //
-// Documentación de referencia (simplificada para MVP):
-//   Hotmart envía eventos tipo 'PURCHASE_APPROVED', 'SUBSCRIPTION_CANCELED',
-//   'SUBSCRIPTION_STATUS_UPDATE', 'PURCHASE_REFUNDED', etc.
-//   El body incluye: { event, data: { subscriber: { buyer: { email } }, product, purchase: {...} } }
-//
-// La verificación real de firma depende de la configuración de la cuenta
-// (webhook secret/token). Aquí se implementa HMAC-SHA256 con HOTMART_WEBHOOK_SECRET
-// y, si se provee HOTMART_WEBHOOK_TOKEN, se valida también como fallback.
+// Referencia (V7):
+//   Hotmart envía eventos tipo 'PURCHASE_APPROVED' (también por renovación),
+//   'PURCHASE_CANCELED', 'PURCHASE_REFUNDED', 'PURCHASE_EXPIRED',
+//   'SUBSCRIPTION_CANCELED', 'SUBSCRIPTION_STATUS_UPDATE',
+//   'SUBSCRIPTION_PLAN_CHANGED', 'SUBSCRIPTION_REACTIVATION',
+//   'SUBSCRIPTION_SUSPENDED' (overdue), 'SUBSCRIPTION_DEBT_RECOVERY'.
+//   El body incluye: { event, data: { subscriber: { buyer: { email } }, product, purchase, subscription } }
+//   En el checkout se pasa custom=userId para poder resolver el usuario en el webhook.
 
 const crypto = require('crypto');
 
 const SECRET = process.env.HOTMART_WEBHOOK_SECRET || '';
 const TOKEN = process.env.HOTMART_WEBHOOK_TOKEN || '';
+
+const CHECKOUT_URLS = {
+  monthly: process.env.HOTMART_CHECKOUT_URL_MONTHLY || process.env.HOTMART_CHECKOUT_URL || '',
+  annual: process.env.HOTMART_CHECKOUT_URL_ANNUAL || process.env.HOTMART_CHECKOUT_URL || '',
+};
+const PRODUCT_ANNUAL_ID = process.env.HOTMART_PRODUCT_ANNUAL_ID || '';
 
 function safeJsonParse(str) {
   try {
@@ -25,31 +32,48 @@ function safeJsonParse(str) {
   }
 }
 
-// Eventos de Hotmart que importan para el estado de la suscripción.
-const EVENT_MAP = {
-  PURCHASE_APPROVED: 'active',
-  PURCHASE_APPROVED_BY_CARD: 'active',
-  SUBSCRIPTION_STATUS_UPDATE: 'active', // según status interno
-  PURCHASE_CANCELED: 'canceled',
-  SUBSCRIPTION_CANCELED: 'canceled',
-  PURCHASE_REFUNDED: 'expired',
-  PURCHASE_EXPIRED: 'expired',
-  SUBSCRIPTION_SUSPENDED: 'past_due',
-  SUBSCRIPTION_DEBT_RECOVERY: 'past_due',
-};
-
+// Estados de evento que importan. La mayoría de eventos recurrentes traen el
+// estado real en data.subscription.status o data.purchase.status.
 function normalizeStatus(event) {
-  // Algunos eventos traen el estado en el body (data.purchase.status).
-  const status = EVENT_MAP[event];
-  if (status) return status;
-  return null;
+  const map = {
+    PURCHASE_APPROVED: 'active',
+    PURCHASE_APPROVED_BY_CARD: 'active',
+    PURCHASE_CANCELED: 'canceled',
+    PURCHASE_REFUNDED: 'expired',
+    PURCHASE_EXPIRED: 'expired',
+    SUBSCRIPTION_CANCELED: 'canceled',
+    SUBSCRIPTION_SUSPENDED: 'past_due',
+    SUBSCRIPTION_DEBT_RECOVERY: 'past_due',
+  };
+  return map[event] || null;
 }
 
-// Verifica firma HMAC. En Hotmart, el header puede ser 'x-hotmart-notification-secret'
-// o el token como query param. Para MVP: HMAC-SHA256 del body con el secret.
+// Estado real de una suscripción desde el body de Hotmart (V7).
+const SUB_STATUS = {
+  active: 'active',
+  started: 'active',
+  canceled: 'canceled',
+  cancelled: 'canceled',
+  past_due: 'past_due',
+  'past due': 'past_due',
+  expired: 'expired',
+  inactive: 'canceled',
+  grace_period: 'trialing',
+};
+
+// Decide si el evento es una renovación recurrente (no el primer cobro).
+function isRenewal(event, data) {
+  if (event !== 'PURCHASE_APPROVED' && event !== 'PURCHASE_APPROVED_BY_CARD') return false;
+  const recurrency = Number(data?.purchase?.recurrency_number || data?.recurrency_number || 0);
+  if (recurrency > 1) return true;
+  // El primer cobro tras un período de gracia también es una "renovación" del ciclo.
+  return Boolean(data?.purchase?.subscription && recurrency >= 1 && data?.subscription?.created_date);
+}
+
+// Verifica firma HMAC. En Hotmart, el header puede ser 'x-hotmart-signature' o
+// 'x-hotmart-notification-secret', o el token como query param (legacy).
 function verifyWebhook({ headers = {}, rawBody = '' }) {
   if (!SECRET) {
-    // Sin secret configurado, rechazamos en producción pero aceptamos en dev.
     if (process.env.NODE_ENV === 'production') {
       return { valid: false, reason: 'HOTMART_WEBHOOK_SECRET no configurado' };
     }
@@ -70,17 +94,36 @@ function verifyWebhook({ headers = {}, rawBody = '' }) {
 // Mapea un evento Hotmart a una suscripción AppIngles.
 function mapEventToSubscription(event) {
   const eventName = event?.event;
-  const status = normalizeStatus(eventName);
+  const data = event?.data || {};
+
+  // Estado real: prioridad al estado de la suscripción, luego al de la compra.
+  let status = normalizeStatus(eventName);
+  const subStatusRaw = data?.subscription?.status || data?.subscription_status;
+  if (subStatusRaw && SUB_STATUS[String(subStatusRaw).toLowerCase()]) {
+    status = SUB_STATUS[String(subStatusRaw).toLowerCase()];
+  }
+  if (!status && data?.purchase?.status) {
+    const pStatus = String(data.purchase.status).toLowerCase();
+    if (pStatus === 'approved' || pStatus === 'complete' || pStatus === 'active') status = 'active';
+    else if (pStatus === 'canceled' || pStatus === 'cancelled') status = 'canceled';
+    else if (pStatus === 'refunded' || pStatus === 'chargeback') status = 'expired';
+    else if (pStatus === 'overdue' || pStatus === 'delayed' || pStatus === 'expired') status = 'past_due';
+  }
   if (!status) return null;
 
-  const data = event?.data || {};
   const buyerEmail = data?.subscriber?.buyer?.email || data?.buyer?.email || '';
-  const productId = data?.product?.id || 'premium';
-  const plan = productId === 'free' ? 'free' : 'premium';
+  const productId = data?.product?.id || data?.product_id || 'premium';
+  const productName = String(data?.product?.name || '').toLowerCase();
+
+  // Plan: anual si el product id/name coincide, si no mensual (premium).
+  let plan = 'premium-monthly';
+  if (PRODUCT_ANNUAL_ID && String(productId) === PRODUCT_ANNUAL_ID) plan = 'premium-annual';
+  else if (/annual|anual|año|ano/i.test(productName)) plan = 'premium-annual';
+
   const nextCycle = data?.purchase?.next_cycle_date
     ? new Date(data.purchase.next_cycle_date).toISOString()
     : undefined;
-  const eventId = event?.id || event?.data?.purchase?.transaction || `${Date.now()}`;
+  const eventId = event?.id || data?.purchase?.transaction || `${Date.now()}`;
 
   return {
     provider: 'hotmart',
@@ -88,24 +131,26 @@ function mapEventToSubscription(event) {
     buyerEmail,
     plan,
     status,
-    subscriptionId: String(event?.data?.purchase?.subscription || event?.data?.subscription?.id || ''),
+    subscriptionId: String(data?.purchase?.subscription || data?.subscription?.id || ''),
     nextBillingDate: nextCycle,
+    renewing: isRenewal(eventName, data),
     updatedAt: new Date().toISOString(),
   };
 }
 
-// Crea un link de checkout Hotmart (MVP: link con parámetros de producto).
-function createCheckout({ email, plan = 'premium', successUrl, cancelUrl }) {
-  const base = process.env.HOTMART_CHECKOUT_URL;
+// Crea un link de checkout Hotmart. El 'custom' transporta el userId para que el
+// webhook pueda resolver el usuario en producción.
+function createCheckout({ email, userId, plan = 'monthly', successUrl, cancelUrl }) {
+  const base = CHECKOUT_URLS[plan] || CHECKOUT_URLS.monthly;
   if (!base) return { url: null, dev: true, reason: 'HOTMART_CHECKOUT_URL no configurado (modo dev)' };
 
   const url = new URL(base);
   const params = url.searchParams;
-  params.set('email', email);
+  params.set('email', email || '');
+  if (userId) params.set('custom', userId);
   if (successUrl) params.set('return_to', successUrl);
   if (cancelUrl) params.set('cancel_url', cancelUrl);
-  // plan/hm: pasar como parámetro opcional de oferta.
-  return { url: url.toString(), dev: false };
+  return { url: url.toString(), dev: false, plan };
 }
 
-module.exports = { verifyWebhook, mapEventToSubscription, createCheckout, normalizeStatus, safeJsonParse };
+module.exports = { verifyWebhook, mapEventToSubscription, createCheckout, normalizeStatus, isRenewal, safeJsonParse };

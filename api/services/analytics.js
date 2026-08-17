@@ -40,6 +40,14 @@ function eventName(req, res, next) {
 // ---- Métricas de negocio (dashboard) ----
 
 const PRICE_MONTHLY_USD = Number(process.env.PRICE_MONTHLY_USD || 15);
+const PRICE_ANNUAL_USD = Number(process.env.PRICE_ANNUAL_USD || 99);
+
+// Precio mensual equivalente de cada plan (anual -> precio/12).
+function planPricePerMonth(plan) {
+  if (plan === 'premium-annual') return +(PRICE_ANNUAL_USD / 12).toFixed(2);
+  if (plan === 'premium-monthly') return PRICE_MONTHLY_USD;
+  return 0;
+}
 
 async function businessDashboard() {
   const subs = await store.listDocs('subscriptions');
@@ -47,7 +55,7 @@ async function businessDashboard() {
     const st = s.status;
     return st === 'active' || st === 'trialing';
   });
-  const paying = active.filter((s) => s.status === 'active' && s.plan === 'premium');
+  const paying = active.filter((s) => s.status === 'active' && (s.plan === 'premium' || s.plan === 'premium-monthly' || s.plan === 'premium-annual'));
   const trialing = active.filter((s) => s.status === 'trialing');
 
   // Cancelados/vencidos en los últimos 30 días para churn aproximado.
@@ -57,7 +65,7 @@ async function businessDashboard() {
     return (s.status === 'canceled' || s.status === 'expired') && t >= monthAgo;
   });
 
-  const mrr = paying.length * PRICE_MONTHLY_USD;
+  const mrr = paying.reduce((sum, s) => sum + planPricePerMonth(s.plan), 0);
 
   // Coste de IA acumulado (todas las fechas).
   const aiUsageDocs = await store.listDocs('aiUsage');
@@ -83,6 +91,7 @@ async function businessDashboard() {
     subscriptionCounts: { total: subs.length, active: active.length, paying: paying.length, trialing: trialing.length, canceledRecent: canceledRecent.length },
     mrr,
     monthlyPrice: PRICE_MONTHLY_USD,
+    annualPrice: PRICE_ANNUAL_USD,
     churnPct: churn,
     aiTotalCost: +aiCost.toFixed(4),
     aiCostPerUser: paying.length > 0 ? +(aiCost / paying.length).toFixed(4) : 0,
@@ -90,4 +99,4 @@ async function businessDashboard() {
   };
 }
 
-module.exports = { EVENTS, trackEvent, businessDashboard, PRICE_MONTHLY_USD };
+module.exports = { EVENTS, trackEvent, businessDashboard, PRICE_MONTHLY_USD, PRICE_ANNUAL_USD };

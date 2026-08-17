@@ -21,11 +21,26 @@ router.get('/status', async (req, res) => {
   });
 });
 
-// GET /subscription/checkout -> link de pago (Hotmart). Dev: url null.
+// GET /subscription/plans -> precios de los planes (mensual/anual) para el paywall.
+router.get('/plans', (req, res) => {
+  const monthly = Number(process.env.PRICE_MONTHLY_USD || 15);
+  const annual = Number(process.env.PRICE_ANNUAL_USD || 99);
+  res.json({
+    plans: [
+      { id: 'monthly', label: 'Mensual', price: monthly, period: 'month', pricePerMonth: monthly },
+      { id: 'annual', label: 'Anual', price: annual, period: 'year', pricePerMonth: +(annual / 12).toFixed(2) },
+    ],
+  });
+});
+
+// GET /subscription/checkout?plan=monthly|annual -> link de pago (Hotmart).
+// El custom transporta el userId para resolver al usuario en el webhook.
 router.get('/checkout', (req, res) => {
+  const plan = req.query.plan === 'annual' ? 'annual' : 'monthly';
   const result = hotmart.createCheckout({
     email: req.user.email || '',
-    plan: 'premium',
+    userId: req.user.id,
+    plan,
     successUrl: process.env.HOTMART_SUCCESS_URL,
     cancelUrl: process.env.HOTMART_CANCEL_URL,
   });

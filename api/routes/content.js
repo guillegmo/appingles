@@ -6,6 +6,10 @@ const express = require('express');
 const router = express.Router();
 const store = require('../lib/store');
 const content = require('../lib/content');
+const entitlement = require('../services/entitlement');
+const contentGenerator = require('../services/contentGenerator');
+const aiUsage = require('../services/aiUsage');
+const aiClient = require('../services/aiClient');
 const { authenticate } = require('../middleware/auth');
 
 router.use(authenticate);
@@ -59,6 +63,40 @@ router.get('/post21/:id', async (req, res) => {
   if (!lesson) return res.status(404).json({ error: 'not_found', message: 'Lección no encontrada.' });
 
   res.json(lesson);
+});
+
+// POST /content/post21/generate -> lección IA on-demand (Premium IA)
+// body: { skill, situation, topic }
+// Genera y publica directamente una lección personalizada para el usuario.
+router.post('/post21/generate', async (req, res) => {
+  const ent = entitlement.buildEntitlements(req.subscription);
+  if (!ent.canGenerateLessons) {
+    return res.status(403).json({ error: 'premium_required', message: 'Las lecciones IA on-demand son parte de Premium IA.' });
+  }
+  const { skill, situation, topic } = req.body || {};
+  if (!topic || !String(topic).trim()) {
+    return res.status(400).json({ error: 'topic es requerido' });
+  }
+
+  try {
+    const { id, lesson } = await contentGenerator.generateLesson({
+      skill: skill || 'conversation',
+      situation: situation || 'social',
+      topic: String(topic).trim().slice(0, 60),
+    });
+    const pub = await contentGenerator.publishLesson(id);
+    if (!pub.ok) return res.status(500).json({ error: 'publish_failed' });
+
+    await aiUsage.incrementUsage(req.user.id, 'content', {
+      tokens: lesson.usage?.total_tokens || 0,
+      estimatedCost: aiClient.estimateCost(lesson.usage),
+    });
+
+    res.json({ id, lesson: pub.lesson });
+  } catch (err) {
+    console.error('Content generation error:', err.message);
+    res.status(502).json({ error: 'ai_unavailable', message: 'No se pudo generar la lección. Intenta de nuevo.' });
+  }
 });
 
 module.exports = router;

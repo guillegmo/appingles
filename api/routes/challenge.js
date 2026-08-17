@@ -7,6 +7,7 @@ const content = require('../lib/content');
 const store = require('../lib/store');
 const scoring = require('../services/scoring');
 const streak = require('../services/streak');
+const seasons = require('../services/seasons');
 const entitlement = require('../services/entitlement');
 const { authenticate } = require('../middleware/auth');
 
@@ -84,7 +85,18 @@ router.post('/day/:n/complete', async (req, res) => {
   if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);
   if (!alreadyDone) progress.totalXp += day.xpReward;
 
-  const { currentStreak, longestStreak } = streak.computeStreaks(progress.practiceDays);
+  // Streak freeze: puentea un hueco de un día si el usuario tiene freezes.
+  const { keys: streakKeys, usedFreeze } = streak.applyStreakFreeze(progress.practiceDays, new Date(), progress.streakFreezes);
+  if (usedFreeze) progress.streakFreezes = Math.max(0, (progress.streakFreezes || 0) - 1);
+  // Recompensa: 1 freeze por semana con racha >= 7 (máx 3 acumulados).
+  const rawStreak = streak.computeStreaks(progress.practiceDays).currentStreak;
+  const weekKey = seasons.currentSeason().key;
+  if (rawStreak >= 7 && progress.streakFreezeAwardedWeek !== weekKey) {
+    progress.streakFreezes = Math.min(3, (progress.streakFreezes || 0) + 1);
+    progress.streakFreezeAwardedWeek = weekKey;
+  }
+
+  const { currentStreak, longestStreak } = streak.computeStreaks(streakKeys);
   const stats = {
     daysCompleted: streak.daysCompleted(progress.completedDays),
     currentStreak,
@@ -104,6 +116,7 @@ router.post('/day/:n/complete', async (req, res) => {
     totalXp: progress.totalXp,
     currentStreak,
     longestStreak,
+    streakFreezes: progress.streakFreezes || 0,
     badges,
     level: level.label,
     challengeComplete: progress.completedDays.includes(21),
@@ -156,6 +169,7 @@ router.get('/progress', async (req, res) => {
     level: level.label,
     levelProgress,
     streaks,
+    streakFreezes: progress.streakFreezes || 0,
     badges: badges.earned,
     allBadges: scoring.BADGES,
     profile: profile ? profile.profile : null,

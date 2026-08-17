@@ -55,4 +55,19 @@ function daysCompleted(completedKeys) {
   return new Set(completedKeys).size;
 }
 
-module.exports = { toDayKey, dayKeyOffset, daysBetween, computeStreaks, daysCompleted };
+// Aplica un "streak freeze": si ayer NO se practicó pero el día anterior sí y
+// hay freezes disponibles, puentea la brecha de ayer para que la racha no se
+// rompa. Devuelve las claves efectivas y si usó un freeze.
+function applyStreakFreeze(completedKeys, today = new Date(), freezes = 0) {
+  if (!freezes || freezes <= 0) return { keys: [...completedKeys], usedFreeze: false };
+  const set = new Set(completedKeys);
+  const yKey = dayKeyOffset(-1, today);
+  const dyKey = dayKeyOffset(-2, today);
+  // Si ayer se practicó, no hay brecha que puentear.
+  if (set.has(yKey)) return { keys: [...completedKeys], usedFreeze: false };
+  // El freeze solo puentea un hueco de EXACTAMENTE un día.
+  if (!set.has(dyKey)) return { keys: [...completedKeys], usedFreeze: false };
+  return { keys: [...set, yKey], usedFreeze: true };
+}
+
+module.exports = { toDayKey, dayKeyOffset, daysBetween, computeStreaks, daysCompleted, applyStreakFreeze };

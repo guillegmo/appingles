@@ -49,6 +49,8 @@ app.use('/api/report', require('./routes/report'));
 app.use('/api/review', require('./routes/review'));
 app.use('/api/seasons', require('./routes/seasons'));
 app.use('/api/privacy', require('./routes/privacy'));
+app.use('/api/vocabulary', require('./routes/vocabulary'));
+app.use('/api/leaderboard', require('./routes/leaderboard'));
 app.use('/api/tutor', require('./routes/tutor'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/admin', require('./routes/admin'));

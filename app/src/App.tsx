@@ -19,6 +19,10 @@ import { ProgressPage } from './pages/ProgressPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { PremiumPage } from './pages/PremiumPage';
 import { SmartReviewPage } from './pages/SmartReviewPage';
+import { VocabularyPage } from './pages/VocabularyPage';
+import { LeaderboardPage } from './pages/LeaderboardPage';
+import { ListeningPage } from './pages/ListeningPage';
+import { CertificatePage } from './pages/CertificatePage';
 import { AdminPage } from './pages/AdminPage';
 import { SeasonsPage } from './pages/SeasonsPage';
 import { PrivacyPage } from './pages/PrivacyPage';
@@ -124,6 +128,10 @@ export default function App() {
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/review" element={<SmartReviewPage />} />
           <Route path="/seasons" element={<SeasonsPage />} />
+          <Route path="/vocabulary" element={<VocabularyPage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/listening" element={<ListeningPage />} />
+          <Route path="/certificate" element={<CertificatePage />} />
           <Route path="/admin" element={<AdminPage />} />
         </Route>
         <Route path="*" element={<Navigate to={user ? '/home' : '/login'} replace />} />

@@ -70,11 +70,19 @@
 - **Privacidad / GDPR:** `/api/privacy/data/export` (paquete JSON con datos del usuario) y `DELETE /api/privacy/data` (derecho al olvido); `PrivacyPage` accesible desde Profile.
 - **PWA offline:** `manifest.webmanifest` + `sw.js` (caché de app shell, network-first con fallback); icono SVG; instalable desde el navegador.
 
-### V7 — Escalado (siguiente)
-- Modo concurso/liga entre usuarios.
+### V7 — Modelo Premium IA + Recurrencia Hotmart ✅ (en curso)
+- **Nuevo modelo de negocio:** el reto de 21 días es **permanente y gratis** (sin trial, sin caducidad). Todo lo relacionado con IA es **premium con pago recurrente** (Hotmart mensual $15 o anual $99). La prueba del producto es el reto completo; el gancho de pago es la IA.
+- **Entitlements re-definidos:** Free = reto 21 días + Daily Practice + post-21 + Smart Review + temporadas + streaks + reportes + analytics básicos + **3 mensajes IA/día** de muestra. Premium IA = Tutor IA completo (8 modos + voz bilingüe) + lecciones IA on-demand + score de pronunciación IA + banco de vocabulario IA + analytics avanzados.
+- **Hotmart recurrente en producción:** checkout con `custom=userId`; resolución de usuario en webhook por `custom` o índice `email→userId`; `mapEventToSubscription` con estados reales (`data.subscription.status`/`data.purchase.status`); eventos plan_changed, reactivación y overdue; renovación → `subscription_renewed` + `nextBillingDate`; planes mensual/anual con MRR = precio/12; config real + sandbox.
+- **Paywall de beneficios IA:** PremiumPage vende los beneficios concretos de la IA (comparativa Free vs Premium IA) y comunica las funciones adicionales al suscribirse.
+- **Features IA premium:** score de pronunciación por fonema, lecciones IA on-demand (usa `contentGenerator.js`), banco de vocabulario personal (de errores y del tutor).
+- **Features de retención (gratis):** listening premium (audios nativos + quizzes), ligas/leaderboard semanal, streak freeze, certificado Día 21 + tarjetas de progreso compartibles.
+
+### V8 — Escalado (siguiente)
+- Notificaciones push / recordatorios de racha (Web Push + FCM).
 - Lecciones generadas por IA en producción (costo optimizado).
-- Notificaciones push / recordatorios de racha.
-- Pago recurrente completo en Hotmart.
+- Modo concurso/liga avanzado entre usuarios.
+- Plan familiar o anual+.
 
 ## Reglas de implementación
 

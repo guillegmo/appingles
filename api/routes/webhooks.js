@@ -28,14 +28,15 @@ router.post('/hotmart', async (req, res) => {
       return res.json({ ok: true, ignored: true, event: payload?.event });
     }
 
-    // Resolución del usuario: preferimos devUserId (dev), luego email (prod).
-    // En producción, Hotmart debe asociarse al userId real vía campo custom o
-    // por email del buyer (requiere tabla de usuarios).
-    let userId = payload?.data?.custom || req.body?.devUserId || null;
-    if (!userId && dev) userId = req.body?.devUserId || null;
+    // Resolución del usuario: custom=userId (pasa por el checkout), luego el
+    // índice email->userId, y en dev un devUserId para simular.
+    const custom = payload?.data?.custom || payload?.custom || null;
+    const userId = await subscriptionService.resolveUser({
+      userId: custom || req.body?.devUserId || null,
+      email: mapped.buyerEmail,
+    });
 
     if (!userId) {
-      // No podemos resolver el usuario: en prod, mapear por email.
       return res.status(422).json({ error: 'user_not_resolvable', email: mapped.buyerEmail || null });
     }
 

@@ -56,13 +56,17 @@ test('Streak: racha rota', () => {
   assert.equal(s.longestStreak, 1);
 });
 
-test('Entitlements: free accede a 7 días, premium a 21', () => {
+test('Entitlements: free accede a los 21 días (reto permanente), premium IA completo', () => {
   const free = entitlement.buildEntitlements({ status: 'free', plan: 'free' });
   assert.equal(free.canAccessDay(7), true);
-  assert.equal(free.canAccessDay(8), false);
+  assert.equal(free.canAccessDay(21), true);
+  assert.equal(free.aiMessagesPerDay, 3); // muestra de IA
+  assert.equal(free.canUseRoleplay, false);
+  assert.equal(free.canGenerateLessons, false);
   const premium = entitlement.buildEntitlements({ status: 'active', plan: 'premium' });
   assert.equal(premium.canAccessDay(21), true);
   assert.ok(premium.canUseRoleplay);
+  assert.ok(premium.canGenerateLessons);
 });
 
 test('Entitlements: trialing cuenta como premium', () => {

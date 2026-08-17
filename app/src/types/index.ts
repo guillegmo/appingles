@@ -46,6 +46,9 @@ export interface Entitlements {
   canUseRoleplay: boolean;
   canAccessSmartReview: boolean;
   canAccessAdvancedStats: boolean;
+  canGenerateLessons: boolean;
+  canScorePronunciation: boolean;
+  canUseVocabularyBank: boolean;
 }
 
 export interface ChallengeIndex {
@@ -74,6 +77,7 @@ export interface ProgressResponse {
   level: string;
   levelProgress: LevelProgress;
   streaks: Streaks;
+  streakFreezes: number;
   badges: string[];
   allBadges: { id: string; label: string; desc: string }[];
   profile: { level: string; strongestSkill: string; needsImprovement: string[]; averageScore: number } | null;
@@ -116,8 +120,17 @@ export interface SubscriptionStatus {
     plan: string;
     trialStart?: string;
     trialEnd?: string;
+    nextBillingDate?: string;
   };
   entitlements: Entitlements;
+}
+
+export interface PlanOption {
+  id: 'monthly' | 'annual';
+  label: string;
+  price: number;
+  period: 'month' | 'year';
+  pricePerMonth: number;
 }
 
 export interface PracticeBlock {
@@ -278,4 +291,19 @@ export interface TutorUsage {
   used: number;
   limit: number;
   premium: boolean;
+}
+
+export interface LeaderboardRow {
+  rank: number;
+  userId: string;
+  name: string;
+  totalXp: number;
+  weeklyDays: number;
+  daysCompleted: number;
+}
+
+export interface Leaderboard {
+  allTime: LeaderboardRow[];
+  weekly: LeaderboardRow[];
+  me: LeaderboardRow | null;
 }

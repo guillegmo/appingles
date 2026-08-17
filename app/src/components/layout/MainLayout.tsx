@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { Home, Dumbbell, Bot, TrendingUp, User } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { Banner } from '../ui/Banner';
 
 const items = [
   { to: '/home', label: 'Inicio', icon: Home },
@@ -13,6 +14,7 @@ const items = [
 export function MainLayout() {
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-slate-50">
+      <Banner />
       <main className="flex-1 pb-28">
         <Outlet />
       </main>

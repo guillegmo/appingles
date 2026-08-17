@@ -4,6 +4,7 @@ import { AlertCircle } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { signInEmail, signUpEmail, signInGoogle, getToken } from '../services/firebase';
 import { trackAnalyticsEvent, registerSession } from '../services/api';
+import { clearKicked } from '../services/sessionGuard';
 import { friendlyErrorMessage } from '../utils/errors';
 import { Button } from '../components/ui/Button';
 
@@ -11,6 +12,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const login = useAppStore((s) => s.login);
   const setError = useAppStore((s) => s.setError);
+  const setNotice = useAppStore((s) => s.setNotice);
   const error = useAppStore((s) => s.error);
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
@@ -29,8 +31,12 @@ export function LoginPage() {
     localStorage.setItem('appingles_user', user.uid);
     const displayName = user.displayName || user.email?.split('@')[0] || 'Student';
     login(user.uid, displayName, token ?? undefined);
+    clearKicked();
     trackAnalyticsEvent('user_registered', { source: mode }).catch(() => {});
-    registerSession().catch(() => {});
+    try {
+      const { replaced } = await registerSession();
+      if (replaced) setNotice('Se cerró tu sesión en el otro dispositivo.');
+    } catch {}
     navigate('/home');
   };
 

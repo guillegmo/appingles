@@ -12,6 +12,8 @@ interface AppState {
   loading: boolean;
   error: string | null;
   setError: (msg: string | null) => void;
+  notice: string | null;
+  setNotice: (msg: string | null) => void;
 
   login: (id: string, name: string, token?: string) => void;
   logout: () => void;
@@ -33,8 +35,10 @@ export const useAppStore = create<AppState>()(
       subscription: null,
       loading: false,
       error: null,
+      notice: null,
 
       setError: (msg) => set({ error: msg }),
+      setNotice: (msg) => set({ notice: msg }),
 
       login: (id, name, token) => {
         localStorage.setItem('appingles_user', id);
@@ -48,7 +52,7 @@ export const useAppStore = create<AppState>()(
         }
         localStorage.removeItem('appingles_user');
         localStorage.removeItem('appingles_token');
-        set({ user: null, challenge: null, progress: null, entitlements: null, subscription: null });
+        set({ user: null, challenge: null, progress: null, entitlements: null, subscription: null, notice: null });
       },
 
       loadChallenge: async () => {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Download, Trash2, ShieldCheck, Lock } from 'lucide-react';
-import { exportUserData, deleteUserData } from '../services/api';
+import { exportUserData, deleteUserData, clearSession } from '../services/api';
 import { useAppStore } from '../store/useAppStore';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -39,6 +39,7 @@ export function PrivacyPage() {
     setErr(null);
     try {
       await deleteUserData();
+      await clearSession().catch(() => {});
       logout();
       navigate('/login');
     } catch (e) {

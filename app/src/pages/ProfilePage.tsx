@@ -1,11 +1,17 @@
 import { Link } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
+import { clearSession } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 
 export function ProfilePage() {
   const { user, logout, progress, subscription } = useAppStore();
+
+  const handleLogout = async () => {
+    await clearSession().catch(() => {});
+    logout();
+  };
 
   return (
     <div className="p-5">
@@ -39,7 +45,7 @@ export function ProfilePage() {
         </Link>
       </Card>
 
-      <Button className="mt-4 w-full" variant="outline" onClick={logout}>
+      <Button className="mt-4 w-full" variant="outline" onClick={handleLogout}>
         Cerrar sesión
       </Button>
     </div>

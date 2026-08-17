@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, getToken } from './services/firebase';
 import { registerSession } from './services/api';
+import { isKicked, setKicked, clearKicked } from './services/sessionGuard';
 import { useAppStore } from './store/useAppStore';
 import { LoadingScreen } from './components/ui/Spinner';
 import { MainLayout } from './components/layout/MainLayout';
@@ -58,6 +59,7 @@ export default function App() {
 
   useEffect(() => {
     const onSessionExpired = () => {
+      setKicked(true);
       logout();
       setError('Tu sesión se cerró porque iniciaste sesión en otro dispositivo.');
     };
@@ -73,15 +75,20 @@ export default function App() {
     }
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
+        if (isKicked()) return;
         const token = await getToken();
         if (token) localStorage.setItem('appingles_token', token);
         if (!localStorage.getItem('appingles_user')) {
           localStorage.setItem('appingles_user', fbUser.uid);
           login(fbUser.uid, fbUser.displayName || fbUser.email?.split('@')[0] || 'Student', token ?? undefined);
-          registerSession().catch(() => {});
         }
+        try {
+          const { replaced } = await registerSession();
+          if (replaced) useAppStore.getState().setNotice('Se cerró tu sesión en el otro dispositivo.');
+        } catch {}
         useAppStore.getState().refreshAll();
       } else {
+        clearKicked();
         logout();
       }
     });

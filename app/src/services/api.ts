@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { setKicked } from './sessionGuard';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
@@ -18,8 +19,14 @@ export function getSessionId(): string {
   return sid;
 }
 
-export async function registerSession(): Promise<{ ok: boolean }> {
+export async function registerSession(): Promise<{ ok: boolean; replaced: boolean }> {
   const { data } = await api.post('/auth/session', { sessionId: getSessionId() });
+  return data;
+}
+
+// Cierra la sesión en el backend al hacer logout explícito.
+export async function clearSession(): Promise<{ ok: boolean }> {
+  const { data } = await api.delete('/auth/session', { data: { sessionId: getSessionId() } });
   return data;
 }
 
@@ -43,6 +50,7 @@ api.interceptors.response.use(
     if (err.response?.data?.code === 'SESSION_EXPIRED') {
       localStorage.removeItem('appingles_user');
       localStorage.removeItem('appingles_token');
+      setKicked(true);
       window.dispatchEvent(new CustomEvent('session-expired'));
     }
     return Promise.reject(err);

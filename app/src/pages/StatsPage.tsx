@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   BarChart3,
   Microscope,
@@ -129,22 +129,24 @@ export function StatsPage() {
         <p className="mb-3 flex items-center gap-2 font-semibold">
           <TrendingUp className="h-4 w-4 text-primary-600" /> Precisión por día
         </p>
-        <div className={`flex h-32 items-end ${days === 30 ? 'gap-px' : 'gap-1.5'}`}>
-          {stats.series.map((d, i) => (
-            <div key={d.date} className="flex h-full min-w-0 flex-1 flex-col items-center gap-1">
-              <div className="flex w-full flex-1 items-end">
-                <div
-                  className={`w-full rounded-t ${d.attempts === 0 ? 'bg-slate-100' : d.accuracyPct >= 80 ? 'bg-emerald-400' : d.accuracyPct >= 50 ? 'bg-amber-400' : 'bg-rose-400'}`}
-                  style={{ height: `${d.attempts === 0 ? 6 : Math.max((d.accuracyPct / maxAccuracy) * 100, 8)}%` }}
-                  title={`${DAY_LABEL(d.date)}: ${d.accuracyPct}%`}
-                />
-              </div>
-              {(days === 7 || i % 5 === 0 || i === stats.series.length - 1) && (
+        {days === 7 ? (
+          <div className="flex h-32 items-end gap-1.5">
+            {stats.series.map((d) => (
+              <div key={d.date} className="flex h-full min-w-0 flex-1 flex-col items-center gap-1">
+                <div className="flex w-full flex-1 items-end">
+                  <div
+                    className={`w-full rounded-t ${d.attempts === 0 ? 'bg-slate-100' : d.accuracyPct >= 80 ? 'bg-emerald-400' : d.accuracyPct >= 50 ? 'bg-amber-400' : 'bg-rose-400'}`}
+                    style={{ height: `${d.attempts === 0 ? 6 : Math.max((d.accuracyPct / maxAccuracy) * 100, 8)}%` }}
+                    title={`${DAY_LABEL(d.date)}: ${d.accuracyPct}%`}
+                  />
+                </div>
                 <span className="whitespace-nowrap text-[8px] text-slate-400">{DAY_LABEL(d.date)}</span>
-              )}
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <AccuracyLineChart data={stats.series} />
+        )}
         <p className="mt-2 text-right text-[10px] text-slate-400">% aciertos · últimos {days} días</p>
       </Card>
 
@@ -216,6 +218,88 @@ export function StatsPage() {
           {stats.overview.practiceThisWeek} días practicados esta semana · {stats.overview.totalXp} XP totales · {stats.overview.daysCompleted}/21 días del reto
         </p>
       </Card>
+    </div>
+  );
+}
+
+// Gráfico de línea para la vista de 30 días: solo pinta los días con intentos y
+// separa tramos cuando hay días sin actividad, para no inventar tendencia.
+function AccuracyLineChart({ data }: { data: { date: string; attempts: number; accuracyPct: number }[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(0);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => setW(el.clientWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const H = 120;
+  const padT = 10;
+  const padB = 8;
+  const n = data.length;
+  const x = (i: number) => (n <= 1 ? w / 2 : (i / (n - 1)) * w);
+  const y = (pct: number) => H - padB - (Math.min(pct, 100) / 100) * (H - padT - padB);
+  const fill = (pct: number) => (pct >= 80 ? '#34d399' : pct >= 50 ? '#fbbf24' : '#fb7185');
+
+  const active = data.map((d, i) => ({ ...d, i })).filter((d) => d.attempts > 0);
+  const segments: { x: number; y: number }[][] = [];
+  let cur: { x: number; y: number }[] = [];
+  let prev = -2;
+  for (const d of active) {
+    if (d.i !== prev + 1 && cur.length) {
+      segments.push(cur);
+      cur = [];
+    }
+    cur.push({ x: x(d.i), y: y(d.accuracyPct) });
+    prev = d.i;
+  }
+  if (cur.length) segments.push(cur);
+
+  return (
+    <div>
+      <div ref={ref} className="h-32 w-full">
+        {active.length === 0 ? (
+          <div className="flex h-full items-center justify-center text-xs text-slate-400">
+            Sin datos de precisión en este período
+          </div>
+        ) : (
+          w > 0 && (
+            <svg width={w} height={H} className="block">
+              {segments.map((seg, k) => (
+                <polyline
+                  key={k}
+                  points={seg.map((p) => `${p.x},${p.y}`).join(' ')}
+                  fill="none"
+                  stroke="#94a3b8"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              ))}
+              {active.map((d) => (
+                <g key={d.date}>
+                  <circle cx={x(d.i)} cy={y(d.accuracyPct)} r="4" fill={fill(d.accuracyPct)} stroke="#fff" strokeWidth="1.5" />
+                  <title>{`${DAY_LABEL(d.date)}: ${d.accuracyPct}%`}</title>
+                </g>
+              ))}
+            </svg>
+          )
+        )}
+      </div>
+      <div className="mt-1 flex">
+        {data.map((d, i) => (
+          <div key={d.date} className="min-w-0 flex-1 text-center">
+            {(i % 5 === 0 || i === data.length - 1) && (
+              <span className="whitespace-nowrap text-[8px] text-slate-400">{DAY_LABEL(d.date)}</span>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

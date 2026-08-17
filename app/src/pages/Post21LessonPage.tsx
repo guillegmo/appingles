@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Volume2, Mic, ArrowLeft } from 'lucide-react';
-import { getPost21Lesson, submitExercise, recordSpeaking } from '../services/api';
+import { Volume2, Mic, ArrowLeft, Check, Loader2 } from 'lucide-react';
+import { getPost21Lesson, submitExercise, recordSpeaking, scorePronunciation } from '../services/api';
 import { speak } from '../utils/speech';
+import { isSpanish } from '../utils/language';
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
+import { useAppStore } from '../store/useAppStore';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
@@ -34,11 +37,18 @@ const SITUATION_LABELS: Record<string, string> = {
 export function Post21LessonPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { entitlements } = useAppStore();
   const [lesson, setLesson] = useState<Post21LessonDetail | null>(null);
   const [quizIndex, setQuizIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [recognitionLang, setRecognitionLang] = useState<'es-CO' | 'en-US'>('en-US');
+  const [saidCorrect, setSaidCorrect] = useState<Set<string>>(new Set());
+  const [pronScore, setPronScore] = useState<{ target: string; score: number } | null>(null);
+  const [voiceDone, setVoiceDone] = useState(false);
+
+  const speech = useSpeechRecognition({ lang: recognitionLang });
 
   useEffect(() => {
     if (!id) return;
@@ -51,10 +61,52 @@ export function Post21LessonPage() {
     })();
   }, [id]);
 
+  useEffect(() => {
+    return () => {
+      speech.stop();
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (error) return <div className="p-8 text-center text-slate-500">{error}</div>;
   if (!lesson) return <LoadingScreen label="Cargando lección…" />;
 
   const total = lesson.vocabulary.length;
+
+  // Compara lo dicho con la frase objetivo (normalizada).
+  const phraseMatches = (target: string, spoken: string) => {
+    const norm = (s: string) =>
+      s.toLowerCase().replace(/[.,!?¡¿'’]/g, '').split(/\s+/).filter(Boolean);
+    const t = norm(target);
+    const sp = norm(spoken);
+    if (!t.length || !sp.length) return false;
+    const set = new Set(t);
+    let hits = 0;
+    for (const w of sp) if (set.has(w)) hits++;
+    return hits / t.length >= 0.8;
+  };
+
+  useEffect(() => {
+    if (!speech.transcript || !lesson) return;
+    const spoken = speech.transcript;
+    setSaidCorrect((prev) => {
+      const next = new Set(prev);
+      lesson.phrases.forEach((p) => {
+        if (!next.has(p.en) && phraseMatches(p.en, spoken)) next.add(p.en);
+      });
+      return next;
+    });
+    if (entitlements?.canScorePronunciation) {
+      const attempted = lesson.phrases.find((p) => phraseMatches(p.en, spoken)) ?? lesson.phrases[0];
+      if (attempted) {
+        scorePronunciation({ transcript: spoken, target: attempted.en, day: 21 })
+          .then((r) => setPronScore({ target: attempted.en, score: r.score }))
+          .catch(() => {});
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speech.transcript, lesson]);
 
   const finishLesson = async () => {
     await recordSpeaking(21);
@@ -121,8 +173,88 @@ export function Post21LessonPage() {
           <Card className="mt-4">
             <p className="text-sm font-semibold">Hablar</p>
             <p className="mt-1 text-sm text-slate-600">{lesson.speak}</p>
-            <Button className="mt-3 w-full" variant="outline" size="sm" onClick={() => recordSpeaking(21)}>
-              <Mic className="mr-1 h-4 w-4" /> Grabé mi voz
+
+            <div className="mt-3 rounded-xl bg-slate-50 p-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-slate-500">Di estas frases:</p>
+                <div className="flex gap-1 rounded-full bg-white p-0.5">
+                  {(['en-US', 'es-CO'] as const).map((l) => (
+                    <button
+                      key={l}
+                      onClick={() => setRecognitionLang(l)}
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                        recognitionLang === l ? 'bg-primary-600 text-white' : 'text-slate-500'
+                      }`}
+                    >
+                      {l === 'en-US' ? 'EN' : 'ES'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <ul className="mt-2 space-y-1">
+                {lesson.phrases.map((p) => (
+                  <li key={p.en} className="flex items-center justify-between text-sm">
+                    <span className={saidCorrect.has(p.en) ? 'font-semibold text-emerald-600' : 'text-slate-700'}>
+                      {p.en}
+                    </span>
+                    {saidCorrect.has(p.en) && <Check className="h-4 w-4 text-emerald-500" />}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {speech.supported ? (
+              <Button
+                className="mt-3 w-full"
+                variant="outline"
+                onClick={() => (speech.listening ? speech.stop() : speech.start())}
+              >
+                {speech.listening ? (
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Escuchando… toca para detener</>
+                ) : (
+                  <><Mic className="h-4 w-4" /> {speech.transcript ? 'Reintentar' : 'Grabar mi voz'}</>
+                )}
+              </Button>
+            ) : (
+              <p className="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-center text-xs font-semibold text-amber-700">
+                Tu navegador no soporta el micrófono. Usa Chrome o Edge para grabar tu voz.
+              </p>
+            )}
+
+            {speech.transcript && (
+              <div className="mt-3">
+                <div className="w-full rounded-lg bg-slate-100 p-3 text-center text-sm font-medium">
+                  “{speech.transcript}”
+                </div>
+                {isSpanish(speech.transcript) && (
+                  <p className="mt-2 w-full rounded-xl bg-amber-100 px-4 py-3 text-center text-sm font-semibold text-amber-800">
+                    🗣️ Lo dijiste en español. ¡Inténtalo en inglés!
+                  </p>
+                )}
+                {pronScore && entitlements?.canScorePronunciation && (
+                  <div className="mt-2 flex w-full items-center justify-between rounded-xl bg-primary-50 px-4 py-3">
+                    <div className="text-left">
+                      <p className="text-xs font-bold text-primary-700">Puntaje de pronunciación</p>
+                      <p className="text-[11px] text-slate-500">“{pronScore.target}”</p>
+                    </div>
+                    <span className={`rounded-full px-3 py-1 text-sm font-black ${pronScore.score >= 80 ? 'bg-emerald-500 text-white' : pronScore.score >= 50 ? 'bg-amber-500 text-white' : 'bg-rose-500 text-white'}`}>
+                      {pronScore.score}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <Button
+              className="mt-3 w-full"
+              variant={voiceDone ? 'outline' : 'secondary'}
+              onClick={async () => {
+                if (voiceDone) return;
+                await recordSpeaking(21);
+                setVoiceDone(true);
+              }}
+            >
+              {voiceDone ? <><Check className="h-4 w-4" /> ¡Voz registrada!</> : 'He terminado de hablar'}
             </Button>
           </Card>
 

@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const store = require('../lib/store');
+const { normalizeProgress } = require('../lib/progress');
 const content = require('../lib/content');
 const scoring = require('../services/scoring');
 const recommendation = require('../services/recommendation');
@@ -13,7 +14,7 @@ router.use(authenticate);
 
 // GET /practice/today -> misión diaria (recomendación personalizada)
 router.get('/today', async (req, res) => {
-  const progress = (await store.getDoc('progress', req.user.id)) || { completedDays: [] };
+  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
 
   // Post-21: requiere haber completado el reto
   const champion = progress.completedDays.includes(21);
@@ -37,7 +38,7 @@ router.get('/today', async (req, res) => {
 
 // POST /practice/complete -> marcar práctica diaria completada (+XP)
 router.post('/complete', async (req, res) => {
-  const progress = (await store.getDoc('progress', req.user.id)) || { completedDays: [], practiceDays: [], dailyPractice: {}, totalXp: 0, exercisesCompleted: 0, speakingSessions: 0 };
+  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
   if (!progress.completedDays.includes(21)) return res.status(403).json({ error: 'post21_required' });
 
   const todayKey = new Date().toISOString().slice(0, 10);

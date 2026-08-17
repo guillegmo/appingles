@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const content = require('../lib/content');
 const store = require('../lib/store');
+const { normalizeProgress } = require('../lib/progress');
 const scoring = require('../services/scoring');
 const streak = require('../services/streak');
 const seasons = require('../services/seasons');
@@ -18,8 +19,8 @@ router.get('/', async (req, res) => {
   const index = content.getChallengeIndex();
   if (!index) return res.status(404).json({ error: 'Contenido no encontrado' });
 
-  const progress = await store.getDoc('progress', req.user.id);
-  const completedDays = progress?.completedDays || [];
+  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
+  const completedDays = progress.completedDays;
   const ent = entitlement.serializableEntitlements(req.subscription);
 
   const days = index.days.map((d) => ({
@@ -40,7 +41,7 @@ router.get('/', async (req, res) => {
 // (se muestra solo una vez por usuario; nivel real se calcula de XP/progreso).
 router.post('/onboarding', async (req, res) => {
   const { goal, level } = req.body || {};
-  const progress = (await store.getDoc('progress', req.user.id)) || { completedDays: [], practiceDays: [], totalXp: 0, exercisesCompleted: 0, speakingSessions: 0 };
+  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
   progress.onboarding = {
     goal: goal || 'daily',
     level: typeof level === 'number' ? level : 0,
@@ -78,7 +79,7 @@ router.post('/day/:n/complete', async (req, res) => {
   if (!day) return res.status(404).json({ error: 'Día no encontrado' });
 
   const todayKey = streak.toDayKey();
-  const progress = (await store.getDoc('progress', req.user.id)) || { completedDays: [], practiceDays: [], totalXp: 0, exercisesCompleted: 0, speakingSessions: 0 };
+  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
 
   const alreadyDone = progress.completedDays.includes(n);
   if (!alreadyDone) progress.completedDays.push(n);
@@ -146,7 +147,7 @@ router.post('/assessment/complete', async (req, res) => {
 
 // GET /progress -> resumen de progreso del usuario
 router.get('/progress', async (req, res) => {
-  const progress = (await store.getDoc('progress', req.user.id)) || { completedDays: [], practiceDays: [], totalXp: 0, exercisesCompleted: 0, speakingSessions: 0 };
+  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
   const streaks = (await store.getDoc('streaks', req.user.id)) || { currentStreak: 0, longestStreak: 0 };
   const badges = (await store.getDoc('badges', req.user.id)) || { earned: [] };
   const profile = await store.getDoc('profiles', req.user.id);

@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const store = require('../lib/store');
+const { normalizeProgress } = require('../lib/progress');
 const scoring = require('../services/scoring');
 const reviewService = require('../services/reviewService');
 const pronunciation = require('../services/pronunciation');
@@ -21,7 +22,7 @@ router.post('/attempt', async (req, res) => {
     return res.status(400).json({ error: 'day, exerciseId y correct son requeridos' });
   }
 
-  const progress = (await store.getDoc('progress', req.user.id)) || { completedDays: [], practiceDays: [], totalXp: 0, exercisesCompleted: 0, speakingSessions: 0 };
+  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
   const todayKey = new Date().toISOString().slice(0, 10);
   if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);
 
@@ -57,7 +58,7 @@ router.post('/attempt', async (req, res) => {
 // Registra una sesión de speaking (V1: sin transcripción de IA).
 router.post('/speaking', async (req, res) => {
   const { day } = req.body || {};
-  const progress = (await store.getDoc('progress', req.user.id)) || { completedDays: [], practiceDays: [], totalXp: 0, exercisesCompleted: 0, speakingSessions: 0 };
+  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
 
   const todayKey = new Date().toISOString().slice(0, 10);
   if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);

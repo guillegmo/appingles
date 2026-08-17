@@ -7,6 +7,22 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "to be (am/is/are) · ser/estar",
+  "lesson": {
+    "title": "El verbo to be (am / is / are)",
+    "rule": "El verbo 'to be' cambia según el sujeto: I am (yo soy/estoy), You/We/They are, He/She/It is. Se usa para presentarse, decir origen y describir. Negativo: am not / isn't / aren't. Pregunta: Are you...? / Is he...?",
+    "examples": [
+      "I am Maria.",
+      "You are from Mexico.",
+      "She is my friend.",
+      "They are students."
+    ],
+    "commonMistakes": [
+      "I is → I am",
+      "She are → She is",
+      "I am from → NO 'I am from of' (sin 'of')"
+    ]
+  },
+  "pronunciationTip": "En 'Nice to meet you', la 'e' de 'meet' es un sonido largo /iː/ (como 'iiii'). Estírala un poco: mee-eet.",
   "vocabulary": [
     {
       "en": "Hello",
@@ -61,6 +77,31 @@
     {
       "en": "I am a student.",
       "es": "Soy estudiante."
+    }
+  ],
+  "exercises": [
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “Nice to meet you”?",
+      "options": ["Encantado de conocerte", "Buenos días", "Hasta luego", "¿Cómo estás?"],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I ___ from Mexico.",
+      "options": ["am", "is", "are"],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “Soy de Colombia.”",
+      "answer": "I am from Colombia."
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la frase: “Mi nombre es María.”",
+      "words": ["is", "My", "Maria", "name"],
+      "answer": [1, 3, 0, 2]
     }
   ],
   "speak": "Di hola, tu nombre, tu país y una cosa sobre ti. Habla durante 30 segundos.",

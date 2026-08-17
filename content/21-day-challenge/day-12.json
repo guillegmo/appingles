@@ -7,61 +7,45 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "past simple (was/were + verbos regulares)",
+  "lesson": {
+    "title": "El pasado simple: was/were, -ed y verbos irregulares",
+    "rule": "Para 'was/were' (ser/estar en pasado): I/he/she was, you/we/they were. Los verbos regulares terminan en -ed: worked, visited. Los irregulares cambian: go→went, have→had, see→saw. Expresiones de tiempo: yesterday (ayer), last week (la semana pasada), last night (anoche).",
+    "examples": [
+      "Yesterday I worked from home.",
+      "I was at the office at 9:00.",
+      "Last week I visited my family.",
+      "I went to the supermarket.",
+      "It was a good day."
+    ],
+    "commonMistakes": [
+      "I go yesterday → I went yesterday",
+      "I was work → I worked",
+      "I visited my family last week → NO 'the last week'"
+    ]
+  },
+  "pronunciationTip": "El pasado -ed suena distinto: worked /t/, played /d/, visited /id/. Practica: work-ed no se dice, es 'workt'.",
   "vocabulary": [
-    {
-      "en": "yesterday",
-      "es": "ayer"
-    },
-    {
-      "en": "last week",
-      "es": "la semana pasada"
-    },
-    {
-      "en": "I was...",
-      "es": "Yo estaba/fui..."
-    },
-    {
-      "en": "I went...",
-      "es": "Fui..."
-    },
-    {
-      "en": "I had...",
-      "es": "Tuve..."
-    },
-    {
-      "en": "worked",
-      "es": "trabajé"
-    },
-    {
-      "en": "visited",
-      "es": "visité"
-    },
-    {
-      "en": "I saw...",
-      "es": "Vi..."
-    }
+    { "en": "yesterday", "es": "ayer" },
+    { "en": "last week", "es": "la semana pasada" },
+    { "en": "last night", "es": "anoche" },
+    { "en": "worked", "es": "trabajé" },
+    { "en": "visited", "es": "visité" },
+    { "en": "went", "es": "fui" },
+    { "en": "had", "es": "tuve" },
+    { "en": "saw", "es": "vi" }
   ],
   "phrases": [
-    {
-      "en": "Yesterday I worked from home.",
-      "es": "Ayer trabajé desde casa."
-    },
-    {
-      "en": "I was at the office at 9:00.",
-      "es": "Estaba en la oficina a las 9:00."
-    },
-    {
-      "en": "Last week I visited my family.",
-      "es": "La semana pasada visité a mi familia."
-    },
-    {
-      "en": "I went to the supermarket.",
-      "es": "Fui al supermercado."
-    },
-    {
-      "en": "It was a good day.",
-      "es": "Fue un buen día."
-    }
+    { "en": "Yesterday I worked from home.", "es": "Ayer trabajé desde casa." },
+    { "en": "I was at the office at 9:00.", "es": "Estaba en la oficina a las 9:00." },
+    { "en": "Last week I visited my family.", "es": "La semana pasada visité a mi familia." },
+    { "en": "I went to the supermarket.", "es": "Fui al supermercado." },
+    { "en": "It was a good day.", "es": "Fue un buen día." }
+  ],
+  "exercises": [
+    { "type": "mcq", "prompt": "¿Qué significa “yesterday”?", "options": ["ayer", "hoy", "mañana", "la semana pasada"], "answer": 0 },
+    { "type": "gapfill", "prompt": "Completa: Yesterday I ___ to the supermarket.", "options": ["go", "went", "gone"], "answer": 1 },
+    { "type": "translate", "prompt": "Traduce al inglés: “La semana pasada visité a mi familia.”", "answer": "Last week I visited my family." },
+    { "type": "order", "prompt": "Ordena la frase: “Estaba en la oficina.”", "words": ["office", "was", "I", "the", "at"], "answer": [2, 1, 4, 3, 0] }
   ],
   "speak": "Describe en 5 oraciones lo que hiciste ayer. 60 segundos.",
   "challenge": "Cuenta tu \"día perfecto\" del fin de semana pasado en pasado.",
@@ -70,13 +54,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
 }

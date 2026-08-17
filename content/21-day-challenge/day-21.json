@@ -4,65 +4,59 @@
   "title": "Examen final y transición",
   "topic": "final",
   "goal": "Cierra tu reto y define tu siguiente meta.",
-  "estimatedTime": 10,
+  "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "examen final + repaso",
+  "lesson": {
+    "title": "Tu base está lista",
+    "rule": "En 21 días aprendiste: presentarte y hablar de ti (to be), gustos (like + -ing), rutinas (present simple), preguntas WH, pedir en tiendas y restaurantes (Can I have...?), dar direcciones, hablar del pasado (was/were, -ed, irregulares) y del futuro (going to / will), y expresar opiniones. Ya puedes sostener una conversación básica. Sigue con el plan post-21.",
+    "examples": [
+      "I am Maria and I am from Mexico.",
+      "I usually wake up at 7:00.",
+      "Where do you work?",
+      "I went to the supermarket yesterday.",
+      "I am going to travel next month."
+    ],
+    "commonMistakes": [
+      "No digas 'I have 25 years' → I am 25 years old",
+      "No digas 'She work' → She works",
+      "No digas 'I like play' → I like playing"
+    ]
+  },
+  "pronunciationTip": "Sonidos que ya dominas: /iː/ en meet, /ei/ en straight, /θ/ en think, el -ed del pasado (worked /t/, played /d/, visited /id/) y la -s de la tercera persona (works, plays, watches).",
   "vocabulary": [
-    {
-      "en": "congratulations",
-      "es": "felicidades"
-    },
-    {
-      "en": "you did it!",
-      "es": "¡lo lograste!"
-    },
-    {
-      "en": "foundation",
-      "es": "fundamento"
-    },
-    {
-      "en": "journey",
-      "es": "viaje/trayecto"
-    },
-    {
-      "en": "continue",
-      "es": "continuar"
-    },
-    {
-      "en": "next step",
-      "es": "siguiente paso"
-    },
-    {
-      "en": "keep going",
-      "es": "sigue adelante"
-    },
-    {
-      "en": "fluency",
-      "es": "fluidez"
-    }
+    { "en": "congratulations", "es": "felicidades" },
+    { "en": "you did it!", "es": "¡lo lograste!" },
+    { "en": "foundation", "es": "fundamento" },
+    { "en": "journey", "es": "viaje/trayecto" },
+    { "en": "continue", "es": "continuar" },
+    { "en": "next step", "es": "siguiente paso" },
+    { "en": "keep going", "es": "sigue adelante" },
+    { "en": "fluency", "es": "fluidez" }
   ],
   "phrases": [
-    {
-      "en": "Congratulations! You did it!",
-      "es": "¡Felicidades! ¡Lo lograste!"
-    },
-    {
-      "en": "You built your foundation.",
-      "es": "Construiste tu base."
-    },
-    {
-      "en": "Your English journey is just beginning.",
-      "es": "Tu viaje de inglés apenas comienza."
-    },
-    {
-      "en": "Let's continue to the next step.",
-      "es": "Continuemos al siguiente paso."
-    },
-    {
-      "en": "Keep going!",
-      "es": "¡Sigue adelante!"
-    }
+    { "en": "Congratulations! You did it!", "es": "¡Felicidades! ¡Lo lograste!" },
+    { "en": "You built your foundation.", "es": "Construiste tu base." },
+    { "en": "Your English journey is just beginning.", "es": "Tu viaje de inglés apenas comienza." },
+    { "en": "Let's continue to the next step.", "es": "Continuemos al siguiente paso." },
+    { "en": "Keep going!", "es": "¡Sigue adelante!" }
   ],
+  "review": {
+    "title": "Examen final de los 21 días",
+    "passScore": 70,
+    "questions": [
+      { "type": "mcq", "prompt": "¿Qué significa “Where are you from?”", "options": ["¿De dónde eres?", "¿Dónde trabajas?", "¿Cómo te llamas?", "¿Cuántos años tienes?"], "answer": 0 },
+      { "type": "gapfill", "prompt": "Completa: She ___ at a hospital.", "options": ["works", "work", "working"], "answer": 0 },
+      { "type": "translate", "prompt": "Traduce al inglés: “Voy a viajar el próximo mes.”", "answer": "I am going to travel next month." },
+      { "type": "mcq", "prompt": "¿Qué significa “the bill”?", "options": ["la cuenta", "el menú", "el agua", "el equipaje"], "answer": 0 },
+      { "type": "gapfill", "prompt": "Completa: Yesterday I ___ my family.", "options": ["visited", "visit", "visits"], "answer": 0 },
+      { "type": "translate", "prompt": "Traduce al inglés: “¿Te gusta la pizza?”", "answer": "Do you like pizza?" },
+      { "type": "mcq", "prompt": "Completa: How much ___ this?", "options": ["is", "are", "am"], "answer": 0 },
+      { "type": "translate", "prompt": "Traduce al inglés: “Necesito ayuda.”", "answer": "I need help." },
+      { "type": "mcq", "prompt": "¿Qué significa “I agree”?", "options": ["Estoy de acuerdo", "No estoy de acuerdo", "Creo que", "Quisiera"], "answer": 0 },
+      { "type": "gapfill", "prompt": "Completa: Can I have the ___, please?", "options": ["bill", "change", "water"], "answer": 0 }
+    ]
+  },
   "speak": "Tarea final de habla: un minuto sobre lo que aprendiste y tu próxima meta.",
   "challenge": "Completa el examen final y empieza la evaluación del post-reto.",
   "xpReward": 30,
@@ -70,13 +64,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "speak", "challenge", "complete"]
 }

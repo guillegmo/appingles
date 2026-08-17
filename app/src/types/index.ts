@@ -8,6 +8,27 @@ export interface PhraseItem {
   es: string;
 }
 
+export interface GrammarLesson {
+  title: string;
+  rule: string;
+  examples: string[];
+  commonMistakes?: string[];
+}
+
+export interface DayExercise {
+  type: 'mcq' | 'gapfill' | 'translate' | 'order';
+  prompt: string;
+  options?: string[];
+  answer: number | string | number[];
+  words?: string[];
+}
+
+export interface ReviewExam {
+  title: string;
+  questions: DayExercise[];
+  passScore: number;
+}
+
 export interface DayContent {
   id: string;
   day: number;
@@ -25,6 +46,10 @@ export interface DayContent {
   premium: boolean;
   completed: boolean;
   steps: string[];
+  lesson?: GrammarLesson;
+  pronunciationTip?: string;
+  exercises?: DayExercise[];
+  review?: ReviewExam;
 }
 
 export interface ChallengeDay {

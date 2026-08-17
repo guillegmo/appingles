@@ -11,7 +11,7 @@ import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
 import { LoadingScreen } from '../components/ui/Spinner';
-import type { DayContent } from '../types';
+import type { DayContent, DayExercise, ReviewExam } from '../types';
 
 const STEP_LABELS: Record<string, string> = {
   learn: 'Aprender',
@@ -22,6 +22,20 @@ const STEP_LABELS: Record<string, string> = {
   challenge: 'Reto',
   complete: 'Completado',
 };
+
+// Compara una respuesta escrita/dicha con la esperada (normalizada).
+// Devuelve true si coincide razonablemente (web speech suele acortar).
+function fuzzyMatches(target: string, spoken: string) {
+  const norm = (s: string) =>
+    s.toLowerCase().replace(/[.,!?¡¿'’]/g, '').split(/\s+/).filter(Boolean);
+  const t = norm(target);
+  const sp = norm(spoken);
+  if (!t.length || !sp.length) return false;
+  const set = new Set(t);
+  let hits = 0;
+  for (const w of sp) if (set.has(w)) hits++;
+  return hits / t.length >= 0.8;
+}
 
 export function DayViewPage() {
   const { day: dayParam } = useParams();
@@ -97,6 +111,24 @@ export function DayViewPage() {
     }
   };
 
+  const handleExerciseResult = async (exerciseId: string, type: string, correct: boolean) => {
+    markStep('practice');
+    setBusy(true);
+    try {
+      await submitExercise({ day: dayNumber, exerciseId, type, answer: '', correct });
+      // Banco de vocabulario IA: un fallo guarda las palabras del día.
+      if (!correct && day?.vocabulary?.length) {
+        addVocabularyItems(day.vocabulary.map((v) => ({ en: v.en, es: v.es }))).catch(() => {});
+      }
+      trackAnalyticsEvent('exercise_completed', { day: dayNumber, correct }).catch(() => {});
+      await refreshAll();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleSpeaking = async () => {
     markStep('speak');
     setBusy(true);
@@ -112,21 +144,6 @@ export function DayViewPage() {
     }
   };
 
-  // Compara la frase dicha con la frase objetivo (normalizada). 
-  // Devuelve true si coincide razonablemente (web speech suele acortar).
-  const phraseMatches = (target: string, spoken: string) => {
-    const norm = (s: string) =>
-      s.toLowerCase().replace(/[.,!?¡¿'’]/g, '').split(/\s+/).filter(Boolean);
-    const t = norm(target);
-    const sp = norm(spoken);
-    if (!t.length || !sp.length) return false;
-    const set = new Set(t);
-    let hits = 0;
-    for (const w of sp) if (set.has(w)) hits++;
-    const coverage = hits / t.length;
-    return coverage >= 0.8;
-  };
-
   // Cuando llega una transcripción nueva, marca las frases dichas correctamente.
   useEffect(() => {
     if (!speech.transcript || !day) return;
@@ -134,13 +151,13 @@ export function DayViewPage() {
     setSaidCorrect((prev) => {
       const next = new Set(prev);
       day.phrases.slice(0, 3).forEach((p) => {
-        if (!next.has(p.en) && phraseMatches(p.en, spoken)) next.add(p.en);
+        if (!next.has(p.en) && fuzzyMatches(p.en, spoken)) next.add(p.en);
       });
       return next;
     });
     // Puntaje de pronunciación (Premium IA).
     if (entitlements?.canScorePronunciation) {
-      const attempted = day.phrases.slice(0, 3).find((p) => phraseMatches(p.en, spoken)) ?? day.phrases.slice(0, 3)[0];
+      const attempted = day.phrases.slice(0, 3).find((p) => fuzzyMatches(p.en, spoken)) ?? day.phrases.slice(0, 3)[0];
       if (attempted) {
         scorePronunciation({ transcript: spoken, target: attempted.en, day: dayNumber })
           .then((r) => setPronScore({ target: attempted.en, score: r.score }))
@@ -230,6 +247,42 @@ export function DayViewPage() {
               <p className="font-semibold">Punto de gramática</p>
               <p className="text-slate-600">{day.grammarFocus}</p>
             </div>
+            {day.lesson && (
+              <div className="mt-4 space-y-4">
+                <div>
+                  <p className="font-semibold">{day.lesson.title}</p>
+                  <p className="mt-1 text-sm text-slate-600">{day.lesson.rule}</p>
+                </div>
+                <div className="rounded-lg bg-primary-50 p-3">
+                  <p className="text-xs font-bold uppercase text-primary-700">Ejemplos</p>
+                  <ul className="mt-1.5 space-y-1">
+                    {day.lesson.examples.map((ex, i) => (
+                      <li key={i}>
+                        <button onClick={() => speak(ex)} className="flex w-full items-center justify-between text-left text-sm">
+                          <span className="font-semibold text-primary-900">{ex}</span>
+                          <Volume2 className="h-4 w-4 text-primary-500" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {day.lesson.commonMistakes?.length ? (
+                  <div className="rounded-lg bg-rose-50 p-3">
+                    <p className="text-xs font-bold uppercase text-rose-700">Errores comunes</p>
+                    <ul className="mt-1.5 space-y-1 text-sm text-rose-900">
+                      {day.lesson.commonMistakes.map((m, i) => (
+                        <li key={i}>{m}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+              </div>
+            )}
+            {day.pronunciationTip && (
+              <div className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+                🔊 <span className="font-semibold">Pronunciación:</span> {day.pronunciationTip}
+              </div>
+            )}
             <div className="mt-4">
               <p className="mb-2 font-semibold">Vocabulario clave</p>
               {day.vocabulary.map((v, i) => (
@@ -304,7 +357,16 @@ export function DayViewPage() {
         )}
 
         {currentStep === 'practice' && (
-          <PracticeCard day={day} onAnswer={handleExercise} onNext={() => { markStep('practice'); setStepIdx(stepIdx + 1); }} busy={busy} />
+          day.exercises?.length ? (
+            <ExerciseCard
+              day={day}
+              onAnswer={handleExerciseResult}
+              onNext={() => { markStep('practice'); setStepIdx(stepIdx + 1); }}
+              busy={busy}
+            />
+          ) : (
+            <PracticeCard day={day} onAnswer={handleExercise} onNext={() => { markStep('practice'); setStepIdx(stepIdx + 1); }} busy={busy} />
+          )
         )}
 
         {currentStep === 'speak' && (
@@ -432,16 +494,25 @@ export function DayViewPage() {
         )}
 
         {currentStep === 'challenge' && (
-          <Card>
-            <h2 className="text-lg font-bold">⚡ Reto de la vida real</h2>
-            <p className="mt-2 text-slate-600">{day.challenge}</p>
-            <div className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
-              💡 Reto real: hazlo con tu voz o con un compañero (o el tutor IA cuando esté disponible).
-            </div>
-            <Button className="mt-5 w-full" size="lg" onClick={() => { markStep('challenge'); setStepIdx(stepIdx + 1); }}>
-              Continuar
-            </Button>
-          </Card>
+          day.review ? (
+            <ExamCard
+              exam={day.review}
+              onAnswer={handleExerciseResult}
+              onDone={() => { markStep('challenge'); setStepIdx(stepIdx + 1); }}
+              busy={busy}
+            />
+          ) : (
+            <Card>
+              <h2 className="text-lg font-bold">⚡ Reto de la vida real</h2>
+              <p className="mt-2 text-slate-600">{day.challenge}</p>
+              <div className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+                💡 Reto real: hazlo con tu voz o con un compañero (o el tutor IA cuando esté disponible).
+              </div>
+              <Button className="mt-5 w-full" size="lg" onClick={() => { markStep('challenge'); setStepIdx(stepIdx + 1); }}>
+                Continuar
+              </Button>
+            </Card>
+          )
         )}
 
         {currentStep === 'complete' && (
@@ -532,5 +603,252 @@ function PracticeCard({
         </Button>
       )}
     </Card>
+  );
+}
+
+// Renderiza una pregunta (mcq | gapfill | translate | order) con su input y
+// botón "Comprobar". Llamado por ExerciseCard y ExamCard.
+function QuestionCard({
+  q,
+  index,
+  total,
+  onCheck,
+  onContinue,
+  busy,
+  continueLabel,
+}: {
+  q: DayExercise;
+  index: number;
+  total: number;
+  onCheck: (correct: boolean) => void;
+  onContinue: () => void;
+  busy?: boolean;
+  continueLabel?: string;
+}) {
+  const [answered, setAnswered] = useState(false);
+  const [chosen, setChosen] = useState<number | null>(null);
+  const [orderSel, setOrderSel] = useState<number[]>([]);
+  const [input, setInput] = useState('');
+  const [ok, setOk] = useState(false);
+
+  const check = () => {
+    if (answered) return;
+    let correct = false;
+    if (q.type === 'mcq' || q.type === 'gapfill') correct = chosen === q.answer;
+    else if (q.type === 'translate') correct = fuzzyMatches(String(q.answer), input.trim());
+    else if (q.type === 'order') {
+      const answer = q.answer as number[];
+      correct = orderSel.length === answer.length && answer.every((v, i) => orderSel[i] === v);
+    }
+    setOk(correct);
+    setAnswered(true);
+    onCheck(correct);
+  };
+
+  const ready = answered
+    ? false
+    : q.type === 'order'
+      ? orderSel.length < (q.words?.length ?? 0)
+      : q.type === 'translate'
+        ? !input.trim()
+        : chosen === null;
+
+  return (
+    <Card>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold">✏️ Practicar</h2>
+        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+          {index} / {total}
+        </span>
+      </div>
+      <p className="mt-3 text-sm font-semibold text-slate-700">{q.prompt}</p>
+
+      {q.type === 'order' && (
+        <div className="mt-3">
+          <div className="flex min-h-[52px] flex-wrap items-center gap-2 rounded-xl bg-slate-50 p-2">
+            {orderSel.length === 0 && <span className="text-xs text-slate-400">Toca las palabras en orden…</span>}
+            {orderSel.map((wi, i) => (
+              <span key={i} className="rounded-lg bg-white px-3 py-1.5 text-sm font-semibold shadow-sm">
+                {q.words?.[wi]}
+              </span>
+            ))}
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {q.words?.map((w, wi) => {
+              const used = orderSel.includes(wi);
+              return (
+                <button
+                  key={wi}
+                  disabled={used || answered}
+                  onClick={() => setOrderSel((p) => [...p, wi])}
+                  className={`rounded-lg border px-3 py-1.5 text-sm font-semibold transition-colors ${
+                    used ? 'border-slate-200 bg-slate-100 text-slate-400' : 'border-primary-200 bg-white text-primary-700 hover:bg-primary-50'
+                  }`}
+                >
+                  {w}
+                </button>
+              );
+            })}
+          </div>
+          {orderSel.length > 0 && !answered && (
+            <button className="mt-2 text-xs font-semibold text-rose-500" onClick={() => setOrderSel((p) => p.slice(0, -1))}>
+              Deshacer
+            </button>
+          )}
+        </div>
+      )}
+
+      {(q.type === 'mcq' || q.type === 'gapfill') && (
+        <div className="mt-4 space-y-2">
+          {q.options?.map((opt, i) => {
+            const isCorrect = answered && i === q.answer;
+            const isWrong = answered && i === chosen && i !== q.answer;
+            return (
+              <button
+                key={i}
+                disabled={answered || busy}
+                onClick={() => setChosen(i)}
+                className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
+                  isCorrect ? 'border-emerald-500 bg-emerald-50 font-semibold' : isWrong ? 'border-rose-500 bg-rose-50' : chosen === i ? 'border-primary-400 bg-primary-50' : 'border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {q.type === 'translate' && (
+        <div className="mt-4">
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={answered || busy}
+            onKeyDown={(e) => { if (e.key === 'Enter') check(); }}
+            placeholder="Escribe tu respuesta en inglés…"
+            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-primary-400 focus:outline-none"
+          />
+          <button
+            onClick={() => speak(String(q.answer))}
+            className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200"
+          >
+            <Volume2 className="h-3.5 w-3.5" /> Oír respuesta
+          </button>
+        </div>
+      )}
+
+      {answered && (
+        <div className={`mt-4 rounded-xl px-4 py-3 text-sm font-bold ${ok ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+          {ok ? '✓ ¡Correcto!' : `✗ No exacto. Respuesta: ${String(q.answer)}`}
+        </div>
+      )}
+
+      {answered ? (
+        <Button className="mt-5 w-full" size="lg" onClick={onContinue} disabled={busy}>
+          {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</> : continueLabel ?? 'Siguiente'}
+        </Button>
+      ) : (
+        <Button className="mt-5 w-full" size="lg" disabled={ready} onClick={check}>
+          Comprobar respuesta
+        </Button>
+      )}
+    </Card>
+  );
+}
+
+// Paso Practicar con 3-4 ejercicios variados por día.
+function ExerciseCard({
+  day,
+  onAnswer,
+  onNext,
+  busy,
+}: {
+  day: DayContent;
+  onAnswer: (id: string, type: string, correct: boolean) => void;
+  onNext: () => void;
+  busy?: boolean;
+}) {
+  const exercises = day.exercises ?? [];
+  const [idx, setIdx] = useState(0);
+
+  const ex = exercises[idx];
+  if (!ex) {
+    return (
+      <Card>
+        <h2 className="text-lg font-bold">✏️ Practicar</h2>
+        <Button className="mt-4 w-full" size="lg" onClick={onNext}>
+          Continuar
+        </Button>
+      </Card>
+    );
+  }
+
+  const isLast = idx + 1 >= exercises.length;
+  return (
+    <QuestionCard
+      key={idx}
+      q={ex}
+      index={idx + 1}
+      total={exercises.length}
+      onCheck={(correct) => onAnswer(`ex-${idx + 1}`, ex.type, correct)}
+      onContinue={() => {
+        if (isLast) onNext();
+        else setIdx(idx + 1);
+      }}
+      busy={busy}
+      continueLabel={isLast ? '¡Terminado! Continuar' : 'Siguiente ejercicio'}
+    />
+  );
+}
+
+// Examen de repaso (días 7, 14, 21): preguntas + resultado final.
+function ExamCard({
+  exam,
+  onAnswer,
+  onDone,
+  busy,
+}: {
+  exam: ReviewExam;
+  onAnswer: (id: string, type: string, correct: boolean) => void;
+  onDone: () => void;
+  busy?: boolean;
+}) {
+  const [idx, setIdx] = useState(0);
+  const [results, setResults] = useState<boolean[]>([]);
+
+  const q = exam.questions[idx];
+  if (!q) {
+    const score = Math.round((results.filter(Boolean).length / Math.max(1, exam.questions.length)) * 100);
+    const passed = score >= exam.passScore;
+    return (
+      <Card className="text-center">
+        <h2 className="text-lg font-bold">📝 {exam.title}</h2>
+        <p className={`num mt-3 text-4xl font-black ${passed ? 'text-emerald-600' : 'text-amber-600'}`}>{score}%</p>
+        <p className="mt-1 text-sm text-slate-500">
+          {passed ? '¡Aprobado! Repaso bien hecho.' : `Repasa esta semana y vuelve a intentarlo (mínimo ${exam.passScore}%).`}
+        </p>
+        <Button className="mt-5 w-full" size="lg" onClick={onDone} disabled={busy}>
+          Continuar
+        </Button>
+      </Card>
+    );
+  }
+
+  const isLast = idx + 1 >= exam.questions.length;
+  return (
+    <QuestionCard
+      key={idx}
+      q={q}
+      index={idx + 1}
+      total={exam.questions.length}
+      onCheck={(correct) => {
+        setResults((p) => [...p, correct]);
+        onAnswer(`exam-${idx + 1}`, q.type, correct);
+      }}
+      onContinue={() => setIdx(idx + 1)}
+      busy={busy}
+      continueLabel={isLast ? 'Ver resultado' : 'Siguiente pregunta'}
+    />
   );
 }

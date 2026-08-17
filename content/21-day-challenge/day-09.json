@@ -7,61 +7,45 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "Can I have...? / How much...?",
+  "lesson": {
+    "title": "Comprar y pagar: peticiones, some/any y there is/are",
+    "rule": "Para pedir educadamente: Can I have...? / Do you have...? Para preguntar precio: How much is this? En afirmaciones se usa 'some' (I have some questions) y en negativas/preguntas 'any' (I don't have any change). Para existir: There is / There are (Hay un/una / Hay varios).",
+    "examples": [
+      "How much is this shirt?",
+      "Do you have this in a larger size?",
+      "Can I pay by card?",
+      "It is too expensive.",
+      "I am just looking, thank you."
+    ],
+    "commonMistakes": [
+      "How much is cost? → How much is it? / How much does it cost?",
+      "I have any money → I don't have any money / I have some money",
+      "Is too expensive → It IS too expensive"
+    ]
+  },
+  "pronunciationTip": "Distingue 'price' (precio, termina en /s/) de 'prize' (premio, termina en /z/). La 's' final en price es sorda: pres.",
   "vocabulary": [
-    {
-      "en": "How much is this?",
-      "es": "¿Cuánto cuesta esto?"
-    },
-    {
-      "en": "Can I have...?",
-      "es": "¿Me das...?"
-    },
-    {
-      "en": "size",
-      "es": "talla"
-    },
-    {
-      "en": "price",
-      "es": "precio"
-    },
-    {
-      "en": "cheap",
-      "es": "barato"
-    },
-    {
-      "en": "expensive",
-      "es": "caro"
-    },
-    {
-      "en": "a refund",
-      "es": "un reembolso"
-    },
-    {
-      "en": "I am just looking",
-      "es": "Solo estoy mirando"
-    }
+    { "en": "How much is this?", "es": "¿Cuánto cuesta esto?" },
+    { "en": "Can I have...?", "es": "¿Me das...?" },
+    { "en": "size", "es": "talla" },
+    { "en": "price", "es": "precio" },
+    { "en": "cheap", "es": "barato" },
+    { "en": "expensive", "es": "caro" },
+    { "en": "a refund", "es": "un reembolso" },
+    { "en": "cash", "es": "efectivo" }
   ],
   "phrases": [
-    {
-      "en": "How much is this shirt?",
-      "es": "¿Cuánto cuesta esta camisa?"
-    },
-    {
-      "en": "Do you have this in a larger size?",
-      "es": "¿Tienes esto en una talla más grande?"
-    },
-    {
-      "en": "Can I pay by card?",
-      "es": "¿Puedo pagar con tarjeta?"
-    },
-    {
-      "en": "It is too expensive.",
-      "es": "Es demasiado caro."
-    },
-    {
-      "en": "I am just looking, thank you.",
-      "es": "Solo estoy mirando, gracias."
-    }
+    { "en": "How much is this shirt?", "es": "¿Cuánto cuesta esta camisa?" },
+    { "en": "Do you have this in a larger size?", "es": "¿Tienes esto en una talla más grande?" },
+    { "en": "Can I pay by card?", "es": "¿Puedo pagar con tarjeta?" },
+    { "en": "It is too expensive.", "es": "Es demasiado caro." },
+    { "en": "I am just looking, thank you.", "es": "Solo estoy mirando, gracias." }
+  ],
+  "exercises": [
+    { "type": "mcq", "prompt": "¿Qué significa “a refund”?", "options": ["un reembolso", "una talla", "un precio", "una oferta"], "answer": 0 },
+    { "type": "gapfill", "prompt": "Completa: Do you have this in a ___ size?", "options": ["large", "larger", "largest"], "answer": 1 },
+    { "type": "translate", "prompt": "Traduce al inglés: “¿Cuánto cuesta esta camisa?”", "answer": "How much is this shirt?" },
+    { "type": "order", "prompt": "Ordena la frase: “Solo estoy mirando.”", "words": ["just", "I", "looking", "am"], "answer": [1, 3, 0, 2] }
   ],
   "speak": "Simula comprar una camisa: pregunta el precio, la talla y paga. 45 segundos.",
   "challenge": "Roleplay: tú eres el cliente y el vendedor te ofrece una opción más barata.",
@@ -70,13 +54,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
 }

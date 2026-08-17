@@ -7,6 +7,23 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "present simple + hora",
+  "lesson": {
+    "title": "El presente simple: rutinas y la -s de he/she/it",
+    "rule": "El presente simple describe rutinas: I wake up at 7:00. Con he/she/it el verbo lleva -s: She wakes up. Las horas se dicen con 'at': at 7:00, at noon, at night. Los adverbios de frecuencia (usually, always, sometimes) van antes del verbo: I usually have breakfast.",
+    "examples": [
+      "I wake up at 7:00.",
+      "She wakes up at 7:00.",
+      "I usually have breakfast at home.",
+      "He doesn't work on Sundays.",
+      "I go to bed at 11:00."
+    ],
+    "commonMistakes": [
+      "She wake up → She wakes up",
+      "I usually breakfast have → I usually have breakfast",
+      "a las 7 → at 7:00 (sin 'a las')"
+    ]
+  },
+  "pronunciationTip": "La -s de la 3ª persona suena distinto: works /s/, plays /z/, watches /ɪz/. Practica: she works, she plays, she watches.",
   "vocabulary": [
     {
       "en": "wake up",
@@ -61,6 +78,31 @@
     {
       "en": "I go to bed at 11:00.",
       "es": "Me acuesto a las 11:00."
+    }
+  ],
+  "exercises": [
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “wake up”?",
+      "options": ["despertarse", "acostarse", "almorzar", "dormir"],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: She ___ up at 7:00.",
+      "options": ["wake", "wakes", "waking"],
+      "answer": 1
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “Voy al trabajo a las 8:00.”",
+      "answer": "I go to work at 8:00."
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la frase: “Usualmente desayuno en casa.”",
+      "words": ["breakfast", "have", "at", "I", "home", "usually"],
+      "answer": [3, 5, 1, 0, 4, 2]
     }
   ],
   "speak": "Describe tu rutina desde que te despiertas hasta que te acuestas. 60 segundos.",

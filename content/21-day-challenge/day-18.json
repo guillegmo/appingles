@@ -7,61 +7,45 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "I need... / Can you help me...?",
+  "lesson": {
+    "title": "Pedir ayuda y negar en presente simple",
+    "rule": "Para pedir ayuda: Can you help me, please? / Excuse me, I need help. Para explicar que algo no funciona: It doesn't work (el negativo de 'does' + verbo en infinitivo). En presente simple, he/she/it lleva 'doesn't' y el verbo sin -s.",
+    "examples": [
+      "Excuse me, I need help.",
+      "My phone doesn't work.",
+      "Can you help me with this?",
+      "There is a problem with the internet.",
+      "Please, wait a moment."
+    ],
+    "commonMistakes": [
+      "My phone don't work → My phone DOESN'T work",
+      "I need help → NO 'I need a help'",
+      "Can you help me? → NO 'Can you help to me?'"
+    ]
+  },
+  "pronunciationTip": "En 'doesn't' la 's' suena como /z/: 'duz-n't'. No la pronuncies como 'doss-n't'.",
   "vocabulary": [
-    {
-      "en": "problem",
-      "es": "problema"
-    },
-    {
-      "en": "I need help.",
-      "es": "Necesito ayuda."
-    },
-    {
-      "en": "It doesn't work.",
-      "es": "No funciona."
-    },
-    {
-      "en": "broken",
-      "es": "roto/descompuesto"
-    },
-    {
-      "en": "emergency",
-      "es": "emergencia"
-    },
-    {
-      "en": "Can you help me?",
-      "es": "¿Puedes ayudarme?"
-    },
-    {
-      "en": "I lost my phone.",
-      "es": "Perdí mi teléfono."
-    },
-    {
-      "en": "wait a moment",
-      "es": "espera un momento"
-    }
+    { "en": "problem", "es": "problema" },
+    { "en": "I need help.", "es": "Necesito ayuda." },
+    { "en": "It doesn't work.", "es": "No funciona." },
+    { "en": "broken", "es": "roto/descompuesto" },
+    { "en": "emergency", "es": "emergencia" },
+    { "en": "Can you help me?", "es": "¿Puedes ayudarme?" },
+    { "en": "I lost my phone.", "es": "Perdí mi teléfono." },
+    { "en": "wait a moment", "es": "espera un momento" }
   ],
   "phrases": [
-    {
-      "en": "Excuse me, I need help.",
-      "es": "Disculpe, necesito ayuda."
-    },
-    {
-      "en": "My phone doesn't work.",
-      "es": "Mi teléfono no funciona."
-    },
-    {
-      "en": "Can you help me with this?",
-      "es": "¿Puedes ayudarme con esto?"
-    },
-    {
-      "en": "There is a problem with the internet.",
-      "es": "Hay un problema con el internet."
-    },
-    {
-      "en": "Please, wait a moment.",
-      "es": "Por favor, espera un momento."
-    }
+    { "en": "Excuse me, I need help.", "es": "Disculpe, necesito ayuda." },
+    { "en": "My phone doesn't work.", "es": "Mi teléfono no funciona." },
+    { "en": "Can you help me with this?", "es": "¿Puedes ayudarme con esto?" },
+    { "en": "There is a problem with the internet.", "es": "Hay un problema con el internet." },
+    { "en": "Please, wait a moment.", "es": "Por favor, espera un momento." }
+  ],
+  "exercises": [
+    { "type": "mcq", "prompt": "¿Qué significa “broken”?", "options": ["roto", "perdido", "abierto", "pesado"], "answer": 0 },
+    { "type": "translate", "prompt": "Traduce al inglés: “Necesito ayuda.”", "answer": "I need help." },
+    { "type": "gapfill", "prompt": "Completa: My phone doesn't ___.", "options": ["work", "works", "working"], "answer": 0 },
+    { "type": "order", "prompt": "Ordena la pregunta: “¿Puedes ayudarme, por favor?”", "words": ["me", "help", "Can", "please", "you"], "answer": [2, 4, 1, 0, 3] }
   ],
   "speak": "Explica un problema en tu departamento al encargado del edificio. 45 segundos.",
   "challenge": "Roleplay: tu computadora está rota, pide ayuda para arreglarla.",
@@ -70,13 +54,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
 }

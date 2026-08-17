@@ -7,61 +7,45 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "imperativos + preposiciones de lugar",
+  "lesson": {
+    "title": "Imperativos y preposiciones de lugar",
+    "rule": "Para dar órdenes se usa el verbo sin sujeto: Turn left, Go straight, Stop. Preposiciones clave: next to (al lado de), near (cerca de), far from (lejos de), between (entre), behind (detrás de). Para pedir ayuda: Excuse me, how do I get to...?",
+    "examples": [
+      "Turn left at the corner.",
+      "Go straight for two blocks.",
+      "It is next to the supermarket.",
+      "It is not far from here.",
+      "Excuse me, how do I get to the station?"
+    ],
+    "commonMistakes": [
+      "Turn to left → Turn left",
+      "Go straight on → Go straight",
+      "I am lose → I am lost"
+    ]
+  },
+  "pronunciationTip": "En 'straight' el sonido es /ei/ como en 'ay': s-t-r-ay-t. No digas 'strat'.",
   "vocabulary": [
-    {
-      "en": "turn left",
-      "es": "gira a la izquierda"
-    },
-    {
-      "en": "turn right",
-      "es": "gira a la derecha"
-    },
-    {
-      "en": "go straight",
-      "es": "sigue recto"
-    },
-    {
-      "en": "next to",
-      "es": "al lado de"
-    },
-    {
-      "en": "near",
-      "es": "cerca de"
-    },
-    {
-      "en": "far",
-      "es": "lejos"
-    },
-    {
-      "en": "Where is...?",
-      "es": "¿Dónde está...?"
-    },
-    {
-      "en": "the bank",
-      "es": "el banco"
-    }
+    { "en": "turn left", "es": "gira a la izquierda" },
+    { "en": "turn right", "es": "gira a la derecha" },
+    { "en": "go straight", "es": "sigue recto" },
+    { "en": "next to", "es": "al lado de" },
+    { "en": "near", "es": "cerca de" },
+    { "en": "far", "es": "lejos" },
+    { "en": "between", "es": "entre" },
+    { "en": "the corner", "es": "la esquina" }
   ],
   "phrases": [
-    {
-      "en": "Where is the bank?",
-      "es": "¿Dónde está el banco?"
-    },
-    {
-      "en": "Turn left at the corner.",
-      "es": "Gira a la izquierda en la esquina."
-    },
-    {
-      "en": "Go straight for two blocks.",
-      "es": "Sigue recto dos cuadras."
-    },
-    {
-      "en": "It is next to the supermarket.",
-      "es": "Está al lado del supermercado."
-    },
-    {
-      "en": "Excuse me, how do I get to...?",
-      "es": "Disculpe, ¿cómo llego a...?"
-    }
+    { "en": "Where is the bank?", "es": "¿Dónde está el banco?" },
+    { "en": "Turn left at the corner.", "es": "Gira a la izquierda en la esquina." },
+    { "en": "Go straight for two blocks.", "es": "Sigue recto dos cuadras." },
+    { "en": "It is next to the supermarket.", "es": "Está al lado del supermercado." },
+    { "en": "Excuse me, how do I get to...?", "es": "Disculpe, ¿cómo llego a...?" }
+  ],
+  "exercises": [
+    { "type": "mcq", "prompt": "¿Qué significa “go straight”?", "options": ["sigue recto", "gira a la izquierda", "gira a la derecha", "detente"], "answer": 0 },
+    { "type": "translate", "prompt": "Traduce al inglés: “¿Dónde está el banco?”", "answer": "Where is the bank?" },
+    { "type": "gapfill", "prompt": "Completa: Turn left ___ the corner.", "options": ["at", "in", "on"], "answer": 0 },
+    { "type": "order", "prompt": "Ordena la frase: “Sigue recto dos cuadras.”", "words": ["for", "Go", "blocks", "straight", "two"], "answer": [1, 3, 4, 0, 2] }
   ],
   "speak": "Da indicaciones para llegar a tu casa desde un punto conocido. 60 segundos.",
   "challenge": "Roleplay: pregúntale a un extraño cómo llegar a la estación de tren.",
@@ -70,13 +54,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
 }

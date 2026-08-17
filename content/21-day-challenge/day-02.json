@@ -7,14 +7,25 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "to be + preguntas",
+  "lesson": {
+    "title": "Preguntas con to be + números",
+    "rule": "Para preguntar con 'to be', pon el verbo al inicio: Are you...? / Is he...? / Where are you from? La edad se dice con 'be', no con 'have': I am 25 years old. El número de teléfono y la dirección usan 'My... is'.",
+    "examples": [
+      "How old are you? — I am 25 years old.",
+      "Where are you from? — I am from Colombia.",
+      "Where do you live? — I live in Bogotá.",
+      "My phone number is 555-1234."
+    ],
+    "commonMistakes": [
+      "I have 25 years → I am 25 years old",
+      "How old do you have? → How old are you?"
+    ]
+  },
+  "pronunciationTip": "No confundas -teen con -ty: thirteen (13) /θɜːrˈtiːn/ suena con el acento al final, thirty (30) /ˈθɜːrti/ con el acento al inicio.",
   "vocabulary": [
     {
-      "en": "How old are you?",
-      "es": "¿Cuántos años tienes?"
-    },
-    {
-      "en": "I am 30 years old.",
-      "es": "Tengo 30 años."
+      "en": "age",
+      "es": "edad"
     },
     {
       "en": "phone number",
@@ -25,8 +36,8 @@
       "es": "dirección de correo"
     },
     {
-      "en": "Where are you from?",
-      "es": "¿De dónde eres?"
+      "en": "address",
+      "es": "dirección"
     },
     {
       "en": "married",
@@ -37,8 +48,12 @@
       "es": "soltero(a)"
     },
     {
-      "en": "address",
-      "es": "dirección"
+      "en": "live",
+      "es": "vivir"
+    },
+    {
+      "en": "from",
+      "es": "de (procedencia)"
     }
   ],
   "phrases": [
@@ -61,6 +76,31 @@
     {
       "en": "Where do you live?",
       "es": "¿Dónde vives?"
+    }
+  ],
+  "exercises": [
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “married”?",
+      "options": ["casado(a)", "soltero(a)", "edad", "dirección"],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: Where ___ you from?",
+      "options": ["am", "is", "are"],
+      "answer": 2
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “Tengo 25 años.”",
+      "answer": "I am 25 years old."
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la frase: “Vivo en México.”",
+      "words": ["in", "I", "live", "Mexico"],
+      "answer": [1, 2, 0, 3]
     }
   ],
   "speak": "Responde: edad, número de teléfono y dónde vives. 45 segundos.",

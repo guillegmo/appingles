@@ -7,61 +7,45 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "I would like... / Can I have...?",
+  "lesson": {
+    "title": "Pedir comida con cortesía",
+    "rule": "Para pedir con educación: I would like... (Quisiera...) o Can I have...? (¿Me puede traer...?). La forma corta de 'I would' es 'I'd'. Para preguntar si algo es apto: Is this dish vegetarian? Para pagar: Can I have the bill, please?",
+    "examples": [
+      "Could I see the menu, please?",
+      "I would like a coffee, please.",
+      "I'd like the grilled chicken.",
+      "Is this dish vegetarian?",
+      "Can I have the bill, please?"
+    ],
+    "commonMistakes": [
+      "I want a coffee (brusco) → I would like a coffee",
+      "I like a coffee (me gusta el café) → I would like a coffee (lo quiero ahora)",
+      "The menu, please is rude → May I see the menu, please?"
+    ]
+  },
+  "pronunciationTip": "'I would like' en conversación se contrae: I'd like /aɪd laɪk/. El sonido /d/ conecta con 'like'.",
   "vocabulary": [
-    {
-      "en": "menu",
-      "es": "menú"
-    },
-    {
-      "en": "I would like...",
-      "es": "Quisiera..."
-    },
-    {
-      "en": "water",
-      "es": "agua"
-    },
-    {
-      "en": "the bill",
-      "es": "la cuenta"
-    },
-    {
-      "en": "delicious",
-      "es": "delicioso"
-    },
-    {
-      "en": "Are you ready to order?",
-      "es": "¿Está listo para ordenar?"
-    },
-    {
-      "en": "vegetarian",
-      "es": "vegetariano"
-    },
-    {
-      "en": "anything else?",
-      "es": "¿algo más?"
-    }
+    { "en": "menu", "es": "menú" },
+    { "en": "I would like...", "es": "Quisiera..." },
+    { "en": "water", "es": "agua" },
+    { "en": "the bill", "es": "la cuenta" },
+    { "en": "delicious", "es": "delicioso" },
+    { "en": "vegetarian", "es": "vegetariano" },
+    { "en": "a table for two", "es": "una mesa para dos" },
+    { "en": "anything else?", "es": "¿algo más?" }
   ],
   "phrases": [
-    {
-      "en": "Could I see the menu, please?",
-      "es": "¿Me muestra el menú, por favor?"
-    },
-    {
-      "en": "I would like a coffee, please.",
-      "es": "Quisiera un café, por favor."
-    },
-    {
-      "en": "Is this dish vegetarian?",
-      "es": "¿Este platillo es vegetariano?"
-    },
-    {
-      "en": "Can I have the bill, please?",
-      "es": "¿Me trae la cuenta, por favor?"
-    },
-    {
-      "en": "The food was delicious.",
-      "es": "La comida estaba deliciosa."
-    }
+    { "en": "Could I see the menu, please?", "es": "¿Me muestra el menú, por favor?" },
+    { "en": "I would like a coffee, please.", "es": "Quisiera un café, por favor." },
+    { "en": "Is this dish vegetarian?", "es": "¿Este platillo es vegetariano?" },
+    { "en": "Can I have the bill, please?", "es": "¿Me trae la cuenta, por favor?" },
+    { "en": "The food was delicious.", "es": "La comida estaba deliciosa." }
+  ],
+  "exercises": [
+    { "type": "mcq", "prompt": "¿Qué significa “the bill”?", "options": ["la cuenta", "el menú", "la propina", "la mesa"], "answer": 0 },
+    { "type": "gapfill", "prompt": "Completa: I would ___ a coffee, please.", "options": ["like", "liked", "liking"], "answer": 0 },
+    { "type": "translate", "prompt": "Traduce al inglés: “Quisiera un café, por favor.”", "answer": "I would like a coffee, please." },
+    { "type": "order", "prompt": "Ordena la frase: “¿Me trae la cuenta, por favor?”", "words": ["have", "Can", "the", "please", "I", "bill"], "answer": [1, 4, 0, 3, 5, 2] }
   ],
   "speak": "Pide una comida completa: entrada, plato principal y bebida. 45 segundos.",
   "challenge": "Roleplay: tú eres el cliente en un restaurante (el camarero es IA o un compañero).",
@@ -70,13 +54,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
 }

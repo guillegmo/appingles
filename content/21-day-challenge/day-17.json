@@ -7,61 +7,45 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "preguntas de seguimiento",
+  "lesson": {
+    "title": "Small talk: preguntas de seguimiento y reacciones",
+    "rule": "Para mantener una conversación: escucha, haz una pregunta de seguimiento (How was your weekend?) y reacciona con interés (Really? That sounds great!). Muletillas que te hacen sonar natural: And you? (¿Y tú?), I see (Ya veo), Actually (en realidad), Good idea! (¡Buena idea!).",
+    "examples": [
+      "How was your weekend?",
+      "Really? That sounds great!",
+      "What do you do in your free time?",
+      "I like talking to new people.",
+      "Let's keep in touch."
+    ],
+    "commonMistakes": [
+      "And you? → NO 'And you too?'",
+      "I am agree → I agree",
+      "That sound great → That SOUNDS great"
+    ]
+  },
+  "pronunciationTip": "La pregunta 'Really?' se dice con entonación ascendente y expresa sorpresa. Practica: 'Re-ally?' subiendo la voz.",
   "vocabulary": [
-    {
-      "en": "How is your day?",
-      "es": "¿Cómo va tu día?"
-    },
-    {
-      "en": "Really?",
-      "es": "¿En serio?"
-    },
-    {
-      "en": "That is interesting!",
-      "es": "¡Qué interesante!"
-    },
-    {
-      "en": "And you?",
-      "es": "¿Y tú?"
-    },
-    {
-      "en": "I see.",
-      "es": "Ya veo."
-    },
-    {
-      "en": "For example",
-      "es": "por ejemplo"
-    },
-    {
-      "en": "Actually",
-      "es": "en realidad"
-    },
-    {
-      "en": "Good idea!",
-      "es": "¡Buena idea!"
-    }
+    { "en": "How is your day?", "es": "¿Cómo va tu día?" },
+    { "en": "Really?", "es": "¿En serio?" },
+    { "en": "That is interesting!", "es": "¡Qué interesante!" },
+    { "en": "And you?", "es": "¿Y tú?" },
+    { "en": "I see.", "es": "Ya veo." },
+    { "en": "Actually", "es": "en realidad" },
+    { "en": "for example", "es": "por ejemplo" },
+    { "en": "Good idea!", "es": "¡Buena idea!" }
   ],
   "phrases": [
-    {
-      "en": "How was your weekend?",
-      "es": "¿Cómo estuvo tu fin de semana?"
-    },
-    {
-      "en": "Really? That sounds great!",
-      "es": "¿En serio? ¡Suena genial!"
-    },
-    {
-      "en": "What do you do in your free time?",
-      "es": "¿Qué haces en tu tiempo libre?"
-    },
-    {
-      "en": "I like talking to new people.",
-      "es": "Me gusta hablar con gente nueva."
-    },
-    {
-      "en": "Let's keep in touch.",
-      "es": "Mantengamos el contacto."
-    }
+    { "en": "How was your weekend?", "es": "¿Cómo estuvo tu fin de semana?" },
+    { "en": "Really? That sounds great!", "es": "¿En serio? ¡Suena genial!" },
+    { "en": "What do you do in your free time?", "es": "¿Qué haces en tu tiempo libre?" },
+    { "en": "I like talking to new people.", "es": "Me gusta hablar con gente nueva." },
+    { "en": "Let's keep in touch.", "es": "Mantengamos el contacto." }
+  ],
+  "exercises": [
+    { "type": "mcq", "prompt": "¿Qué significa “And you?”", "options": ["¿Y tú?", "¿Qué?", "¿Cómo?", "¿Por qué?"], "answer": 0 },
+    { "type": "translate", "prompt": "Traduce al inglés: “¿Cómo estuvo tu fin de semana?”", "answer": "How was your weekend?" },
+    { "type": "gapfill", "prompt": "Completa: That ___ interesting!", "options": ["is", "are", "be"], "answer": 0 },
+    { "type": "order", "prompt": "Ordena la pregunta: “¿Qué haces en tu tiempo libre?”", "words": ["free", "do", "What", "you", "in", "time", "your", "do"], "answer": [2, 1, 3, 7, 5, 6, 0, 4] }
   ],
   "speak": "Inicia y mantén una conversación de 3 preguntas. 60 segundos.",
   "challenge": "Small talk: haz 3 preguntas y reacciona con interés.",
@@ -70,13 +54,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
 }

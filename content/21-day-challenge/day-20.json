@@ -7,61 +7,45 @@
   "estimatedTime": 15,
   "skill": "speaking",
   "grammarFocus": "repaso de la semana 3",
+  "lesson": {
+    "title": "Estructura de una entrevista corta",
+    "rule": "Una presentación profesional sigue un orden: 1) saludo y nombre, 2) experiencia y trabajo (I have five years of experience), 3) gustos profesionales (I enjoy working with my team), 4) planes futuros (In the future, I want to travel). El verbo tras 'enjoy' va en -ing: I enjoy working.",
+    "examples": [
+      "I have five years of experience.",
+      "My goal is to improve my English.",
+      "I work in customer service.",
+      "In the future, I want to travel.",
+      "I enjoy working with my team."
+    ],
+    "commonMistakes": [
+      "I enjoy work → I enjoy WORKING",
+      "I have five years of experience → NO 'I have 5 years experience' (sin 'of')",
+      "In the future, I want → NO 'In future'"
+    ]
+  },
+  "pronunciationTip": "Divide tu discurso en frases cortas con pausas naturales: 'I work in customer service' / 'and I enjoy working with my team'. Las pausas dan ritmo.",
   "vocabulary": [
-    {
-      "en": "experience",
-      "es": "experiencia"
-    },
-    {
-      "en": "goal",
-      "es": "meta"
-    },
-    {
-      "en": "future",
-      "es": "futuro"
-    },
-    {
-      "en": "plans",
-      "es": "planes"
-    },
-    {
-      "en": "work",
-      "es": "trabajo"
-    },
-    {
-      "en": "skills",
-      "es": "habilidades"
-    },
-    {
-      "en": "team",
-      "es": "equipo"
-    },
-    {
-      "en": "company",
-      "es": "empresa"
-    }
+    { "en": "experience", "es": "experiencia" },
+    { "en": "goal", "es": "meta" },
+    { "en": "future", "es": "futuro" },
+    { "en": "plans", "es": "planes" },
+    { "en": "skills", "es": "habilidades" },
+    { "en": "team", "es": "equipo" },
+    { "en": "company", "es": "empresa" },
+    { "en": "customer service", "es": "atención al cliente" }
   ],
   "phrases": [
-    {
-      "en": "I have five years of experience.",
-      "es": "Tengo cinco años de experiencia."
-    },
-    {
-      "en": "My goal is to improve my English.",
-      "es": "Mi meta es mejorar mi inglés."
-    },
-    {
-      "en": "I work in customer service.",
-      "es": "Trabajo en atención al cliente."
-    },
-    {
-      "en": "In the future, I want to travel.",
-      "es": "En el futuro, quiero viajar."
-    },
-    {
-      "en": "I enjoy working with my team.",
-      "es": "Disfruto trabajar con mi equipo."
-    }
+    { "en": "I have five years of experience.", "es": "Tengo cinco años de experiencia." },
+    { "en": "My goal is to improve my English.", "es": "Mi meta es mejorar mi inglés." },
+    { "en": "I work in customer service.", "es": "Trabajo en atención al cliente." },
+    { "en": "In the future, I want to travel.", "es": "En el futuro, quiero viajar." },
+    { "en": "I enjoy working with my team.", "es": "Disfruto trabajar con mi equipo." }
+  ],
+  "exercises": [
+    { "type": "mcq", "prompt": "¿Qué significa “goal”?", "options": ["meta", "trabajo", "habilidad", "equipo"], "answer": 0 },
+    { "type": "translate", "prompt": "Traduce al inglés: “Tengo cinco años de experiencia.”", "answer": "I have five years of experience." },
+    { "type": "gapfill", "prompt": "Completa: I enjoy ___ with my team.", "options": ["working", "work", "works"], "answer": 0 },
+    { "type": "order", "prompt": "Ordena la frase: “En el futuro, quiero viajar.”", "words": ["the", "In", "I", "travel", "future", "to", "want"], "answer": [1, 0, 4, 2, 6, 5, 3] }
   ],
   "speak": "Entrevista corta: preséntate, habla de tu trabajo y tus planes futuros. 90 segundos.",
   "challenge": "Graba una entrevista de 90 segundos respondiendo 4 preguntas.",
@@ -70,13 +54,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
 }

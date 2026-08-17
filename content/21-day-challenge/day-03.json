@@ -7,6 +7,23 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "like / don't like + sustantivo/verbo-ing",
+  "lesson": {
+    "title": "Like / don't like + sustantivo o -ing",
+    "rule": "Para gustos se usa 'like' + sustantivo (I like coffee) o + verbo en -ing (I like listening to music). Negativo: don't like. Pregunta: Do you like...? Con he/she/it se añade -s: She likes. Para amor fuerte: I love.",
+    "examples": [
+      "I like coffee.",
+      "I don't like traffic.",
+      "Do you like pizza?",
+      "I love music.",
+      "She likes reading."
+    ],
+    "commonMistakes": [
+      "I like play → I like playing / I like to play",
+      "I don't like pizza? (afirmativo) → I don't like pizza (punto)",
+      "Do you like pizza? → NO 'You like pizza?'"
+    ]
+  },
+  "pronunciationTip": "En 'don't' el sonido es /əʊ/ (como 'dou-n-t'). No digas 'dont' corto: estira la vocal: DOHNT.",
   "vocabulary": [
     {
       "en": "I like...",
@@ -15,6 +32,14 @@
     {
       "en": "I don't like...",
       "es": "No me gusta..."
+    },
+    {
+      "en": "I love...",
+      "es": "Me encanta..."
+    },
+    {
+      "en": "Do you like...?",
+      "es": "¿Te gusta...?"
     },
     {
       "en": "food",
@@ -31,14 +56,6 @@
     {
       "en": "sports",
       "es": "deportes"
-    },
-    {
-      "en": "Do you like...?",
-      "es": "¿Te gusta...?"
-    },
-    {
-      "en": "I love...",
-      "es": "Me encanta..."
     }
   ],
   "phrases": [
@@ -61,6 +78,31 @@
     {
       "en": "I like to read at night.",
       "es": "Me gusta leer por la noche."
+    }
+  ],
+  "exercises": [
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “I don't like...”?",
+      "options": ["Me gusta...", "No me gusta...", "Me encanta...", "Odio..."],
+      "answer": 1
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I like ___ music.",
+      "options": ["listen", "listening", "listens"],
+      "answer": 1
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “¿Te gusta la pizza?”",
+      "answer": "Do you like pizza?"
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la frase: “Me encanta la música.”",
+      "words": ["music", "I", "love"],
+      "answer": [1, 2, 0]
     }
   ],
   "speak": "Di 3 cosas que te gustan y 2 que no te gustan. 45 segundos.",

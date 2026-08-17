@@ -4,65 +4,43 @@
   "title": "Repaso y mini-examen",
   "topic": "review-1",
   "goal": "Repasa y refuerza lo aprendido en la semana 1.",
-  "estimatedTime": 10,
+  "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "repetición de la semana 1",
+  "pronunciationTip": "Repasa los sonidos de la semana: el sonido largo de 'meet', -teen vs -ty (thirteen/thirty) y la -s de la tercera persona (works /s/, plays /z/, watches /iz/).",
   "vocabulary": [
-    {
-      "en": "revision",
-      "es": "revisión"
-    },
-    {
-      "en": "practice",
-      "es": "práctica"
-    },
-    {
-      "en": "remember",
-      "es": "recordar"
-    },
-    {
-      "en": "mistake",
-      "es": "error"
-    },
-    {
-      "en": "again",
-      "es": "otra vez"
-    },
-    {
-      "en": "perfect",
-      "es": "perfecto"
-    },
-    {
-      "en": "improve",
-      "es": "mejorar"
-    },
-    {
-      "en": "progress",
-      "es": "progreso"
-    }
+    { "en": "name", "es": "nombre" },
+    { "en": "age", "es": "edad" },
+    { "en": "married", "es": "casado(a)" },
+    { "en": "wake up", "es": "despertarse" },
+    { "en": "usually", "es": "usualmente" },
+    { "en": "what", "es": "qué" },
+    { "en": "where", "es": "dónde" },
+    { "en": "hobby", "es": "pasatiempo" }
   ],
   "phrases": [
-    {
-      "en": "Let's review.",
-      "es": "Repasemos."
-    },
-    {
-      "en": "I want to improve.",
-      "es": "Quiero mejorar."
-    },
-    {
-      "en": "One more time, please.",
-      "es": "Una vez más, por favor."
-    },
-    {
-      "en": "I remember this word.",
-      "es": "Recuerdo esta palabra."
-    },
-    {
-      "en": "Practice makes perfect.",
-      "es": "La práctica hace al maestro."
-    }
+    { "en": "My name is Ana.", "es": "Mi nombre es Ana." },
+    { "en": "I am from Mexico.", "es": "Soy de México." },
+    { "en": "I usually wake up at 7:00.", "es": "Usualmente me despierto a las 7:00." },
+    { "en": "I like listening to music.", "es": "Me gusta escuchar música." },
+    { "en": "Where do you live?", "es": "¿Dónde vives?" }
   ],
+  "review": {
+    "title": "Mini-examen de la semana 1",
+    "passScore": 70,
+    "questions": [
+      { "type": "mcq", "prompt": "¿Qué significa “I don't like...”?", "options": ["Me gusta...", "No me gusta...", "Me encanta...", "Odio..."], "answer": 1 },
+      { "type": "gapfill", "prompt": "Completa: She ___ a teacher.", "options": ["am", "is", "are"], "answer": 1 },
+      { "type": "translate", "prompt": "Traduce al inglés: “Me gusta la música.”", "answer": "I like music." },
+      { "type": "mcq", "prompt": "¿Qué significa “Where are you from?”", "options": ["¿Dónde trabajas?", "¿De dónde eres?", "¿Cómo te llamas?", "¿Cuántos años tienes?"], "answer": 1 },
+      { "type": "gapfill", "prompt": "Completa: ___ do you live?", "options": ["Where", "What", "When"], "answer": 0 },
+      { "type": "translate", "prompt": "Traduce al inglés: “Soy de Colombia.”", "answer": "I am from Colombia." },
+      { "type": "mcq", "prompt": "¿Qué significa “usually”?", "options": ["usualmente", "siempre", "nunca", "a veces"], "answer": 0 },
+      { "type": "gapfill", "prompt": "Completa: I ___ up at 7:00.", "options": ["wake", "wakes", "waking"], "answer": 0 },
+      { "type": "mcq", "prompt": "¿Qué significa “hobby”?", "options": ["pasatiempo", "trabajo", "edad", "país"], "answer": 0 },
+      { "type": "translate", "prompt": "Traduce al inglés: “¿Cómo te llamas?”", "answer": "What is your name?" }
+    ]
+  },
   "speak": "Repite 5 frases clave de la semana 1 en voz alta.",
   "challenge": "Mini-examen: completa el cuestionario de repaso de la semana 1.",
   "xpReward": 30,
@@ -70,13 +48,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "speak", "challenge", "complete"]
 }

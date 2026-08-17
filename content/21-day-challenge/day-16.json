@@ -7,61 +7,45 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "present simple + vocabulario de trabajo",
+  "lesson": {
+    "title": "Hablar de tu trabajo: work as / in / for",
+    "rule": "Para describir tu trabajo: work AS + profesión (I work as a developer), work IN + lugar o sector (I work in a hospital), work FOR + empresa (I work for a bank). La pregunta clave: What do you do? (¿A qué te dedicas?).",
+    "examples": [
+      "I work as a developer.",
+      "I work in a hospital.",
+      "I work for a tech company.",
+      "I have a meeting at 10:00.",
+      "What do you do for a living?"
+    ],
+    "commonMistakes": [
+      "I work of developer → I work AS a developer",
+      "What do you do? → NO 'What are you do?'",
+      "My colleagues is nice → My colleagues ARE nice"
+    ]
+  },
+  "pronunciationTip": "'Colleague' tiene dos sílabas: CO-llague /ˈkɒliːɡ/. No digas 'col-league' con /ei/ ni tres sílabas.",
   "vocabulary": [
-    {
-      "en": "job",
-      "es": "trabajo/empleo"
-    },
-    {
-      "en": "I work as...",
-      "es": "Trabajo como..."
-    },
-    {
-      "en": "colleague",
-      "es": "compañero de trabajo"
-    },
-    {
-      "en": "meeting",
-      "es": "reunión"
-    },
-    {
-      "en": "boss",
-      "es": "jefe"
-    },
-    {
-      "en": "office",
-      "es": "oficina"
-    },
-    {
-      "en": "What do you do?",
-      "es": "¿A qué te dedicas?"
-    },
-    {
-      "en": "I work in...",
-      "es": "Trabajo en..."
-    }
+    { "en": "job", "es": "trabajo/empleo" },
+    { "en": "colleague", "es": "compañero de trabajo" },
+    { "en": "meeting", "es": "reunión" },
+    { "en": "boss", "es": "jefe" },
+    { "en": "office", "es": "oficina" },
+    { "en": "team", "es": "equipo" },
+    { "en": "department", "es": "departamento" },
+    { "en": "company", "es": "empresa" }
   ],
   "phrases": [
-    {
-      "en": "I work as a developer.",
-      "es": "Trabajo como desarrollador."
-    },
-    {
-      "en": "I work in a hospital.",
-      "es": "Trabajo en un hospital."
-    },
-    {
-      "en": "I have a meeting at 10:00.",
-      "es": "Tengo una reunión a las 10:00."
-    },
-    {
-      "en": "My colleagues are very friendly.",
-      "es": "Mis compañeros son muy amables."
-    },
-    {
-      "en": "What do you do for a living?",
-      "es": "¿A qué te dedicas?"
-    }
+    { "en": "I work as a developer.", "es": "Trabajo como desarrollador." },
+    { "en": "I work in a hospital.", "es": "Trabajo en un hospital." },
+    { "en": "I have a meeting at 10:00.", "es": "Tengo una reunión a las 10:00." },
+    { "en": "My colleagues are very friendly.", "es": "Mis compañeros son muy amables." },
+    { "en": "What do you do for a living?", "es": "¿A qué te dedicas?" }
+  ],
+  "exercises": [
+    { "type": "mcq", "prompt": "¿Qué significa “boss”?", "options": ["jefe", "reunión", "compañero", "oficina"], "answer": 0 },
+    { "type": "gapfill", "prompt": "Completa: I work ___ a developer.", "options": ["as", "in", "for"], "answer": 0 },
+    { "type": "translate", "prompt": "Traduce al inglés: “¿A qué te dedicas?”", "answer": "What do you do?" },
+    { "type": "order", "prompt": "Ordena la frase: “Tengo una reunión a las 10:00.”", "words": ["a", "I", "at", "meeting", "have", "10:00"], "answer": [1, 4, 0, 3, 5, 2] }
   ],
   "speak": "Describe tu trabajo: rol, empresa y tareas diarias. 60 segundos.",
   "challenge": "Preséntate en una reunión: nombre, rol y departamento.",
@@ -70,13 +54,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
 }

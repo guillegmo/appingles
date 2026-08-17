@@ -4,65 +4,43 @@
   "title": "Repaso y mini-examen",
   "topic": "review-2",
   "goal": "Repasa y refuerza lo aprendido en la semana 2.",
-  "estimatedTime": 10,
+  "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "repetición de la semana 2",
+  "pronunciationTip": "Repasa los sonidos de la semana: /ei/ en 'straight', 'price' vs 'prize', el acento de 'reservation' y el pasado -ed (worked /t/, played /d/, visited /id/).",
   "vocabulary": [
-    {
-      "en": "review",
-      "es": "repaso"
-    },
-    {
-      "en": "quiz",
-      "es": "prueba"
-    },
-    {
-      "en": "score",
-      "es": "puntuación"
-    },
-    {
-      "en": "check",
-      "es": "revisar"
-    },
-    {
-      "en": "learn",
-      "es": "aprender"
-    },
-    {
-      "en": "ready",
-      "es": "listo"
-    },
-    {
-      "en": "answer",
-      "es": "respuesta"
-    },
-    {
-      "en": "question",
-      "es": "pregunta"
-    }
+    { "en": "turn left", "es": "gira a la izquierda" },
+    { "en": "go straight", "es": "sigue recto" },
+    { "en": "next to", "es": "al lado de" },
+    { "en": "How much is this?", "es": "¿Cuánto cuesta esto?" },
+    { "en": "I would like...", "es": "Quisiera..." },
+    { "en": "the bill", "es": "la cuenta" },
+    { "en": "reservation", "es": "reservación" },
+    { "en": "yesterday", "es": "ayer" }
   ],
   "phrases": [
-    {
-      "en": "I am ready for the quiz.",
-      "es": "Estoy listo para la prueba."
-    },
-    {
-      "en": "Let me check my answers.",
-      "es": "Déjame revisar mis respuestas."
-    },
-    {
-      "en": "I learned a lot this week.",
-      "es": "Aprendí mucho esta semana."
-    },
-    {
-      "en": "What is the correct answer?",
-      "es": "¿Cuál es la respuesta correcta?"
-    },
-    {
-      "en": "Great progress!",
-      "es": "¡Gran progreso!"
-    }
+    { "en": "Turn left at the corner.", "es": "Gira a la izquierda en la esquina." },
+    { "en": "How much is this shirt?", "es": "¿Cuánto cuesta esta camisa?" },
+    { "en": "I would like a coffee, please.", "es": "Quisiera un café, por favor." },
+    { "en": "I have a reservation.", "es": "Tengo una reservación." },
+    { "en": "Yesterday I went to the supermarket.", "es": "Ayer fui al supermercado." }
   ],
+  "review": {
+    "title": "Mini-examen de la semana 2",
+    "passScore": 70,
+    "questions": [
+      { "type": "mcq", "prompt": "¿Qué significa “go straight”?", "options": ["sigue recto", "gira a la derecha", "cerca de", "la cuenta"], "answer": 0 },
+      { "type": "gapfill", "prompt": "Completa: How much ___ this shirt?", "options": ["is", "are", "am"], "answer": 0 },
+      { "type": "translate", "prompt": "Traduce al inglés: “Quisiera un café, por favor.”", "answer": "I would like a coffee, please." },
+      { "type": "mcq", "prompt": "¿Qué significa “a refund”?", "options": ["un reembolso", "una talla", "un vuelo", "un registro"], "answer": 0 },
+      { "type": "gapfill", "prompt": "Completa: I ___ a reservation.", "options": ["have", "has", "had"], "answer": 0 },
+      { "type": "translate", "prompt": "Traduce al inglés: “¿Dónde está el banco?”", "answer": "Where is the bank?" },
+      { "type": "gapfill", "prompt": "Completa: Turn left ___ the corner.", "options": ["at", "in", "on"], "answer": 0 },
+      { "type": "translate", "prompt": "Traduce al inglés: “Perdí mi equipaje.”", "answer": "My luggage is lost." },
+      { "type": "mcq", "prompt": "¿Qué significa “yesterday”?", "options": ["ayer", "hoy", "mañana", "anoche"], "answer": 0 },
+      { "type": "gapfill", "prompt": "Completa: I ___ to the supermarket yesterday.", "options": ["went", "go", "gone"], "answer": 0 }
+    ]
+  },
   "speak": "Repite 5 frases clave de la semana 2 en voz alta.",
   "challenge": "Mini-examen: completa el cuestionario de repaso de la semana 2.",
   "xpReward": 30,
@@ -70,13 +48,5 @@
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": [
-    "learn",
-    "listen",
-    "pronounce",
-    "practice",
-    "speak",
-    "challenge",
-    "complete"
-  ]
+  "steps": ["learn", "listen", "pronounce", "speak", "challenge", "complete"]
 }

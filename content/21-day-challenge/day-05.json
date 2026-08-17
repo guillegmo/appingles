@@ -7,38 +7,55 @@
   "estimatedTime": 15,
   "skill": "mixed",
   "grammarFocus": "preguntas WH (what, where, when…)",
+  "lesson": {
+    "title": "Preguntas WH con do/does",
+    "rule": "Para preguntar por información usa una palabra WH + do/does + sujeto + verbo: Where do you work? / What does she do? WH más usadas: what (qué), where (dónde), when (cuándo), who (quién), why (por qué), how (cómo). Con he/she/it usamos 'does' y el verbo sin -s: What does she do? (no 'does she does').",
+    "examples": [
+      "What is your name?",
+      "Where do you work?",
+      "When do you finish?",
+      "Who is your friend?",
+      "How much is this?"
+    ],
+    "commonMistakes": [
+      "Where you work? → Where do you work?",
+      "What does she does? → What does she do?",
+      "How much cost? → How much is it?"
+    ]
+  },
+  "pronunciationTip": "Las preguntas WH bajan la entonación al final: Where do you work? (el 'work' baja, no sube).",
   "vocabulary": [
     {
-      "en": "What",
-      "es": "Qué"
+      "en": "what",
+      "es": "qué"
     },
     {
-      "en": "Where",
-      "es": "Dónde"
+      "en": "where",
+      "es": "dónde"
     },
     {
-      "en": "When",
-      "es": "Cuándo"
+      "en": "when",
+      "es": "cuándo"
     },
     {
-      "en": "Who",
-      "es": "Quién"
+      "en": "who",
+      "es": "quién"
     },
     {
-      "en": "Why",
-      "es": "Por qué"
+      "en": "why",
+      "es": "por qué"
     },
     {
-      "en": "How",
-      "es": "Cómo"
+      "en": "how",
+      "es": "cómo"
     },
     {
-      "en": "How much",
-      "es": "Cuánto cuesta"
+      "en": "how much",
+      "es": "cuánto"
     },
     {
-      "en": "How often",
-      "es": "Con qué frecuencia"
+      "en": "how often",
+      "es": "con qué frecuencia"
     }
   ],
   "phrases": [
@@ -61,6 +78,31 @@
     {
       "en": "How much is this?",
       "es": "¿Cuánto cuesta esto?"
+    }
+  ],
+  "exercises": [
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “where”?",
+      "options": ["dónde", "qué", "cuándo", "por qué"],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: ___ do you work?",
+      "options": ["Where", "What", "When"],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “¿Dónde trabajas?”",
+      "answer": "Where do you work?"
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la pregunta: “¿Dónde trabajas?”",
+      "words": ["you", "work", "Where", "do"],
+      "answer": [2, 3, 0, 1]
     }
   ],
   "speak": "Haz 5 preguntas WH diferentes en voz alta. 45 segundos.",

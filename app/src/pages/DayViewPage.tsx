@@ -41,7 +41,7 @@ export function DayViewPage() {
   const { day: dayParam } = useParams();
   const dayNumber = Number(dayParam);
   const navigate = useNavigate();
-  const { refreshAll, setError, entitlements } = useAppStore();
+  const { refreshAll, entitlements } = useAppStore();
 
   const [day, setDay] = useState<DayContent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -84,10 +84,10 @@ export function DayViewPage() {
     try {
       await completeDay(dayNumber);
       trackAnalyticsEvent('day_completed', { day: dayNumber }).catch(() => {});
-      await refreshAll();
       navigate('/home');
+      refreshAll().catch(() => {});
     } catch (e) {
-      setError((e as Error).message);
+      setErr((e as any).response?.data?.error || (e as Error).message);
       setBusy(false);
     }
   };
@@ -105,7 +105,7 @@ export function DayViewPage() {
       setStepIdx(Math.min(stepIdx + 1, steps.length - 1));
       await refreshAll();
     } catch (e) {
-      setError((e as Error).message);
+      setErr((e as any).response?.data?.error || (e as Error).message);
     } finally {
       setBusy(false);
     }
@@ -123,7 +123,7 @@ export function DayViewPage() {
       trackAnalyticsEvent('exercise_completed', { day: dayNumber, correct }).catch(() => {});
       await refreshAll();
     } catch (e) {
-      setError((e as Error).message);
+      setErr((e as Error).message);
     } finally {
       setBusy(false);
     }
@@ -138,7 +138,7 @@ export function DayViewPage() {
       await refreshAll();
       setStepIdx(Math.min(stepIdx + 1, steps.length - 1));
     } catch (e) {
-      setError((e as Error).message);
+      setErr((e as any).response?.data?.error || (e as Error).message);
     } finally {
       setBusy(false);
     }
@@ -173,17 +173,20 @@ export function DayViewPage() {
 
   if (loading) return <LoadingScreen label="Cargando día…" />;
   if (error) {
+    const isPremium = error === 'premium_required';
     return (
       <div className="p-8">
         <Button variant="ghost" onClick={() => navigate('/home')} className="mb-4">
           <ArrowLeft className="h-4 w-4" /> Volver
         </Button>
         <Card>
-          <p className="font-bold text-rose-600">Este contenido está en Premium IA</p>
+          <p className="font-bold text-rose-600">{isPremium ? 'Este contenido está en Premium IA' : 'Algo salió mal'}</p>
           <p className="mt-2 text-sm text-slate-600">{error}</p>
-          <Button className="mt-4 w-full" variant="secondary" onClick={() => navigate('/premium')}>
-            VER PREMIUM IA
-          </Button>
+          {isPremium && (
+            <Button className="mt-4 w-full" variant="secondary" onClick={() => navigate('/premium')}>
+              VER PREMIUM IA
+            </Button>
+          )}
         </Card>
       </div>
     );

@@ -59,7 +59,7 @@ export function DayViewPage() {
       .then((d) => {
         setDay(d);
         setStepIdx(0);
-        setCompletedSteps(d.completed ? d.steps : []);
+        setCompletedSteps(d.completed ? (d.steps ?? []) : []);
         setSaidCorrect(new Set());
       })
       .catch((e) => setErr(e.response?.data?.error || e.message))
@@ -71,7 +71,7 @@ export function DayViewPage() {
   const progressPct = useMemo(() => (steps.length ? Math.round((completedSteps.length / steps.length) * 100) : 0), [completedSteps, steps]);
 
   const markStep = (step: string) => {
-    setCompletedSteps((prev) => (prev.includes(step) ? prev : [...prev, step]));
+    setCompletedSteps((prev) => ((prev ?? []).includes(step) ? prev ?? [] : [...(prev ?? []), step]));
   };
 
   const next = async () => {
@@ -214,7 +214,7 @@ export function DayViewPage() {
 
       <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1">
         {steps.map((s, i) => {
-          const done = completedSteps.includes(s) || i < stepIdx;
+          const done = (completedSteps ?? []).includes(s) || i < stepIdx;
           const current = i === stepIdx;
           return (
             <div key={s} className="flex shrink-0 items-center gap-1.5">

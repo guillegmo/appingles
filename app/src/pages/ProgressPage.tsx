@@ -52,15 +52,15 @@ export function ProgressPage() {
             <p className="text-xs text-slate-500">Puntos XP · {progress.level}</p>
           </div>
           <div className="text-right">
-            <p className="num text-3xl font-bold text-orange-500">🔥 {progress.streaks.currentStreak}</p>
+            <p className="num text-3xl font-bold text-orange-500">🔥 {progress.streaks?.currentStreak ?? 0}</p>
             <p className="text-xs text-slate-500">días seguidos</p>
           </div>
         </div>
-        {progress.levelProgress.next && (
+        {progress.levelProgress?.next && (
           <div className="mt-4">
-            <ProgressBar value={progress.levelProgress.pct} />
+            <ProgressBar value={progress.levelProgress?.pct ?? 0} />
             <p className="mt-1 text-xs text-slate-500">
-              {progress.level} → {progress.levelProgress.next.label}
+              {progress.level} → {progress.levelProgress?.next?.label}
             </p>
           </div>
         )}
@@ -71,7 +71,7 @@ export function ProgressPage() {
         <DayRoute
           days={Array.from({ length: 21 }, (_, i) => i + 1).map((d) => ({
             day: d,
-            completed: progress.completedDays.includes(d),
+            completed: (progress.completedDays ?? []).includes(d),
             locked: false,
           }))}
           currentDay={isChampion ? undefined : progress.daysCompleted + 1}
@@ -87,8 +87,8 @@ export function ProgressPage() {
           <Award className="h-4 w-4 text-amber-500" /> Insignias
         </p>
         <div className="flex flex-wrap gap-2">
-          {progress.allBadges.map((b) => {
-            const earned = progress.badges.includes(b.id);
+          {(progress.allBadges ?? []).map((b) => {
+            const earned = (progress.badges ?? []).includes(b.id);
             return (
               <div
                 key={b.id}

@@ -1,5 +1,5 @@
 // Service Worker: AppIngles — caché de la app shell para uso offline.
-const CACHE = 'appingles-v1';
+const CACHE = 'appingles-v2';
 const SHELL = [
   '/',
   '/index.html',
@@ -23,6 +23,10 @@ self.addEventListener('activate', (event) => {
 // Estrategia: network-first para navegaciones y API; fallback al caché si offline.
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+
+  // Solo cacheamos GET (los POST/PUT no son cacheables y el navegador lanza error).
+  if (request.method !== 'GET') return;
+
   const url = new URL(request.url);
 
   // API: network-only (si falla, devuelve error; el frontend lo maneja).

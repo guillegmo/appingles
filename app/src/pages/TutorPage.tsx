@@ -78,6 +78,7 @@ export function TutorPage() {
   const send = async (text?: string) => {
     const value = (text ?? input).trim();
     if (!value || sendingRef.current) return;
+    if (!premium && remaining === 0) return;
     sendingRef.current = true;
     setSending(true);
     setError(null);
@@ -218,8 +219,8 @@ export function TutorPage() {
 
       <Card className="mt-3 flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
-          {messages.length === 0 && !premium && remaining === 0 && (
-            <div className="flex flex-col items-center py-8 text-center">
+          {!premium && remaining === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center py-8 text-center">
               <Lock className="h-8 w-8 text-slate-300" />
               <p className="mt-3 font-bold">Se acabaron tus mensajes gratis de hoy</p>
               <p className="mt-1 text-sm text-slate-500">
@@ -229,36 +230,39 @@ export function TutorPage() {
                 DESBLOQUEAR IA
               </Button>
             </div>
-          )}
-          {messages.length === 0 && !(premium || remaining === 0) && (
-            <div className="py-8 text-center text-sm text-slate-400">
-              {stuck
-                ? '¿Qué te tiene atascado? Cuéntamelo y te lo explico paso a paso.'
-                : modes.find((m) => m.id === mode)?.description ?? 'Empieza a practicar.'}
-            </div>
-          )}
-          {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm ${
-                  m.role === 'user' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-800'
-                }`}
-              >
-                <p className="whitespace-pre-wrap">{m.content}</p>
-                {m.role === 'assistant' && (
-                  <button onClick={() => speak(m.content)} className="mt-1.5 flex items-center gap-1 text-xs text-primary-600" aria-label="Escuchar">
-                    <Volume2 className="h-3.5 w-3.5" /> escuchar
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-          {sending && (
-            <div className="flex justify-start">
-              <div className="flex items-center gap-2 rounded-2xl bg-slate-100 px-3.5 py-2.5 text-sm text-slate-500">
-                <Loader2 className="h-4 w-4 animate-spin" /> escribiendo…
-              </div>
-            </div>
+          ) : (
+            <>
+              {messages.length === 0 && (
+                <div className="py-8 text-center text-sm text-slate-400">
+                  {stuck
+                    ? '¿Qué te tiene atascado? Cuéntamelo y te lo explico paso a paso.'
+                    : modes.find((m) => m.id === mode)?.description ?? 'Empieza a practicar.'}
+                </div>
+              )}
+              {messages.map((m, i) => (
+                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm ${
+                      m.role === 'user' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-800'
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap">{m.content}</p>
+                    {m.role === 'assistant' && (
+                      <button onClick={() => speak(m.content)} className="mt-1.5 flex items-center gap-1 text-xs text-primary-600" aria-label="Escuchar">
+                        <Volume2 className="h-3.5 w-3.5" /> escuchar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {sending && (
+                <div className="flex justify-start">
+                  <div className="flex items-center gap-2 rounded-2xl bg-slate-100 px-3.5 py-2.5 text-sm text-slate-500">
+                    <Loader2 className="h-4 w-4 animate-spin" /> escribiendo…
+                  </div>
+                </div>
+              )}
+            </>
           )}
           <div ref={bottomRef} />
         </div>
@@ -266,48 +270,61 @@ export function TutorPage() {
         {error && <p className="px-4 pb-1 text-xs text-rose-600">{error}</p>}
 
         <div className="shrink-0 border-t border-slate-100 p-3">
-          <div className="flex items-center gap-2">
-            {speech.supported && (
-              <div className="flex shrink-0 items-center gap-1.5">
-                <button
-                  onClick={toggleLang}
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border text-[11px] font-bold transition-colors ${
-                    recognitionLang === 'es-CO'
-                      ? 'border-primary-300 bg-primary-50 text-primary-700'
-                      : 'border-slate-300 bg-white text-slate-500'
-                  }`}
-                  aria-label="Cambiar idioma de la voz (español colombiano / inglés)"
-                  title={recognitionLang === 'es-CO' ? 'Escucha español colombiano' : 'Escucha inglés'}
-                >
-                  {recognitionLang === 'es-CO' ? 'ES' : 'EN'}
-                </button>
-                <button
-                  onClick={toggleVoice}
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                    voiceMode
-                      ? speech.listening
-                        ? 'bg-orange-500 text-white animate-pulse'
-                        : 'bg-primary-600 text-white'
-                      : 'bg-slate-100 text-slate-600'
-                  }`}
-                  aria-label={voiceMode ? 'Detener conversación por voz' : 'Iniciar conversación por voz'}
-                  title={voiceMode ? 'Detener conversación por voz' : 'Iniciar conversación por voz'}
-                >
-                  <Mic className="h-5 w-5" />
-                </button>
-              </div>
-            )}
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && send()}
-              placeholder={stuck ? 'Escribe con qué necesitas ayuda…' : 'Responde en inglés… (español si te atascas)'}
-              className="h-11 min-w-0 flex-1 rounded-xl border border-slate-300 px-4 text-sm outline-none focus:border-primary-500"
-            />
-            <Button className="h-11 shrink-0 px-4" onClick={() => send()} disabled={sending || !input.trim()}>
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
+          {!premium && remaining === 0 ? (
+            <div className="flex flex-col items-center rounded-xl bg-rose-50 px-4 py-5 text-center">
+              <Lock className="h-6 w-6 text-rose-400" />
+              <p className="mt-2 text-sm font-bold text-rose-700">Se acabaron tus mensajes gratis hoy</p>
+              <p className="mt-1 text-xs text-slate-500">
+                Con Premium IA conversas sin límite, con voz y con corrección al momento.
+              </p>
+              <Button className="mt-3 w-full" size="lg" onClick={() => (window.location.href = '/premium')}>
+                Desbloquear Premium IA
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              {speech.supported && (
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <button
+                    onClick={toggleLang}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border text-[11px] font-bold transition-colors ${
+                      recognitionLang === 'es-CO'
+                        ? 'border-primary-300 bg-primary-50 text-primary-700'
+                        : 'border-slate-300 bg-white text-slate-500'
+                    }`}
+                    aria-label="Cambiar idioma de la voz (español colombiano / inglés)"
+                    title={recognitionLang === 'es-CO' ? 'Escucha español colombiano' : 'Escucha inglés'}
+                  >
+                    {recognitionLang === 'es-CO' ? 'ES' : 'EN'}
+                  </button>
+                  <button
+                    onClick={toggleVoice}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                      voiceMode
+                        ? speech.listening
+                          ? 'bg-orange-500 text-white animate-pulse'
+                          : 'bg-primary-600 text-white'
+                        : 'bg-slate-100 text-slate-600'
+                    }`}
+                    aria-label={voiceMode ? 'Detener conversación por voz' : 'Iniciar conversación por voz'}
+                    title={voiceMode ? 'Detener conversación por voz' : 'Iniciar conversación por voz'}
+                  >
+                    <Mic className="h-5 w-5" />
+                  </button>
+                </div>
+              )}
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && send()}
+                placeholder={stuck ? 'Escribe con qué necesitas ayuda…' : 'Responde en inglés… (español si te atascas)'}
+                className="h-11 min-w-0 flex-1 rounded-xl border border-slate-300 px-4 text-sm outline-none focus:border-primary-500"
+              />
+              <Button className="h-11 shrink-0 px-4" onClick={() => send()} disabled={sending || !input.trim()}>
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
           {voiceMode && (
             <p className="mt-1 text-[10px] text-slate-400">
               {speech.listening

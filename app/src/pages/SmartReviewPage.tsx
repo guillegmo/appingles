@@ -40,7 +40,14 @@ export function SmartReviewPage() {
     setSaving(true);
     try {
       await submitReviewResult(current.id, quality);
-      if (idx + 1 >= cards.length) {
+      const isLast = idx + 1 >= cards.length;
+      // Fallo: la misma tarjeta vuelve al final de la cola para reintentarla hoy
+      // (repetición espaciada estilo Anki: no se avanza sin aprobarla).
+      if (quality < 3 && isLast) {
+        setCards((prev) => [...prev, prev[idx]]);
+        setIdx(idx + 1);
+        setRevealed(false);
+      } else if (isLast) {
         setDone(true);
       } else {
         setIdx(idx + 1);
@@ -59,7 +66,7 @@ export function SmartReviewPage() {
         <Sparkles className="h-12 w-12 text-emerald-500" />
         <h1 className="mt-3 text-xl font-bold">¡Repaso completado! 🎉</h1>
         <p className="mt-1 text-sm text-slate-500">Repetición espaciada programada. Vuelve cuando te avise.</p>
-        <Button className="mt-6" onClick={() => { setDone(false); setIdx(0); setCards([]); load(); }}>
+        <Button className="mt-6" onClick={() => { setDone(false); setIdx(0); setRevealed(false); setCards([]); load(); }}>
           <RotateCcw className="mr-1 h-4 w-4" /> Más tarjetas
         </Button>
         <Button className="mt-2" variant="ghost" onClick={() => navigate('/progress')}>Ir a Progreso</Button>

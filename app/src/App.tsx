@@ -23,6 +23,7 @@ import { VocabularyPage } from './pages/VocabularyPage';
 import { LeaderboardPage } from './pages/LeaderboardPage';
 import { ListeningPage } from './pages/ListeningPage';
 import { CertificatePage } from './pages/CertificatePage';
+import { StatsPage } from './pages/StatsPage';
 import { AdminPage } from './pages/AdminPage';
 import { SeasonsPage } from './pages/SeasonsPage';
 import { PrivacyPage } from './pages/PrivacyPage';
@@ -132,6 +133,7 @@ export default function App() {
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/listening" element={<ListeningPage />} />
           <Route path="/certificate" element={<CertificatePage />} />
+          <Route path="/stats" element={<StatsPage />} />
           <Route path="/admin" element={<AdminPage />} />
         </Route>
         <Route path="*" element={<Navigate to={user ? '/home' : '/login'} replace />} />

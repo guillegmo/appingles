@@ -84,6 +84,7 @@ entitlements: Record<string, boolean | number>
 - `GET /subscription/status` — estado de suscripción/entitlements
 - `GET /subscription/checkout` — link de pago Hotmart (o dev: null)
 - `POST /analytics/event` — registro de eventos de producto
+- `GET /analytics/advanced` — analytics avanzados del usuario (Premium IA): precisión, pronunciación, uso de IA, vocabulario, perfil
 - `GET /analytics/dashboard` — métricas de negocio (admin): MRR, churn, trial conversion, AI cost
 - `POST /webhooks/hotmart` — webhook de pagos (firma HMAC + idempotencia)
 - `GET /review/smart` — tarjetas por día (recomendadas)

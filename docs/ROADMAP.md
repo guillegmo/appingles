@@ -75,7 +75,7 @@
 - **Entitlements re-definidos:** Free = reto 21 días + Daily Practice + post-21 + Smart Review + temporadas + streaks + reportes + analytics básicos + **3 mensajes IA/día** de muestra. Premium IA = Tutor IA completo (8 modos + voz bilingüe) + lecciones IA on-demand + score de pronunciación IA + banco de vocabulario IA + analytics avanzados.
 - **Hotmart recurrente en producción:** checkout con `custom=userId`; resolución de usuario en webhook por `custom` o índice `email→userId`; `mapEventToSubscription` con estados reales (`data.subscription.status`/`data.purchase.status`); eventos plan_changed, reactivación y overdue; renovación → `subscription_renewed` + `nextBillingDate`; planes mensual/anual con MRR = precio/12; config real + sandbox.
 - **Paywall de beneficios IA:** PremiumPage vende los beneficios concretos de la IA (comparativa Free vs Premium IA) y comunica las funciones adicionales al suscribirse.
-- **Features IA premium:** score de pronunciación por fonema, lecciones IA on-demand (usa `contentGenerator.js`), banco de vocabulario personal (de errores y del tutor).
+- **Features IA premium:** score de pronunciación por fonema, lecciones IA on-demand (usa `contentGenerator.js`), banco de vocabulario personal (de errores y del tutor), **analytics avanzados** (`/api/analytics/advanced` + `StatsPage`): precisión global y por día (7/30), promedio/mejor score de pronunciación + frases recientes, uso del tutor IA (sesiones/tokens, sin costo), vocabulario capturado, speaking, XP/racha/freezes y perfil de habilidades.
 - **Features de retención (gratis):** listening premium (audios nativos + quizzes), ligas/leaderboard semanal, streak freeze, certificado Día 21 + tarjetas de progreso compartibles.
 
 ### V8 — Escalado (siguiente)

@@ -21,6 +21,7 @@ const EVENTS = [
   'subscription_started',
   'subscription_canceled',
   'subscription_renewed',
+  'stats_viewed',
 ];
 
 // Registra un evento de usuario. at es opcional (permite rejugar en tests).

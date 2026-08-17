@@ -307,3 +307,37 @@ export interface Leaderboard {
   weekly: LeaderboardRow[];
   me: LeaderboardRow | null;
 }
+
+export interface AdvancedStats {
+  period: { days: number; end: string };
+  overview: {
+    totalXp: number;
+    exercisesCompleted: number;
+    speakingSessions: number;
+    daysCompleted: number;
+    vocabularyCount: number;
+    practiceThisWeek: number;
+    currentStreak: number;
+    longestStreak: number;
+    streakFreezes: number;
+    badges: string[];
+  };
+  accuracy: {
+    overall: { attempts: number; correct: number; accuracyPct: number };
+    lastN: { attempts: number; correct: number; accuracyPct: number };
+  };
+  series: { date: string; attempts: number; correct: number; accuracyPct: number; xp: number }[];
+  pronunciation: {
+    attempts: number;
+    averageScore: number;
+    bestScore: number;
+    recent: { target: string; score: number; at: string }[];
+  };
+  ai: { totalSessions: number; totalTokens: number; usedToday: number };
+  skills: {
+    level: string;
+    strongestSkill: string;
+    needsImprovement: string[];
+    averageScore: number;
+  } | null;
+}

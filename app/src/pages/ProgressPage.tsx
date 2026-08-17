@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Award, TrendingUp, Clock, Target, Percent } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Award, TrendingUp, Clock, Target, Percent, BarChart3 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { getAssessment, completeAssessment, getWeeklyReport } from '../services/api';
 import { Button } from '../components/ui/Button';
@@ -19,6 +20,7 @@ const SKILL_LABELS: Record<string, string> = {
 };
 
 export function ProgressPage() {
+  const navigate = useNavigate();
   const { progress, refreshAll } = useAppStore();
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [result, setResult] = useState<AssessmentResult | null>(null);
@@ -75,6 +77,10 @@ export function ProgressPage() {
           currentDay={isChampion ? undefined : progress.daysCompleted + 1}
         />
       </Card>
+
+      <Button className="mt-4 w-full" variant="secondary" onClick={() => navigate('/stats')}>
+        <BarChart3 className="h-4 w-4" /> Ver estadísticas avanzadas
+      </Button>
 
       <Card className="mt-4">
         <p className="mb-2 flex items-center gap-2 font-semibold">

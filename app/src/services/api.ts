@@ -254,4 +254,9 @@ export async function generateLesson(payload: { skill: string; situation: string
   return data;
 }
 
+export async function getAdvancedStats(days = 7): Promise<import('../types').AdvancedStats> {
+  const { data } = await api.get(`/analytics/advanced?days=${days}`);
+  return data;
+}
+
 export default api;

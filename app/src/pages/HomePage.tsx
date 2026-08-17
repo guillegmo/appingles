@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Flame, Zap, Award, Repeat, Loader2, Headphones, Trophy, BookOpen, Snowflake } from 'lucide-react';
+import { Flame, Zap, Award, Repeat, Loader2, Headphones, Trophy, BookOpen, Snowflake, BarChart3 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { getReviewCount } from '../services/api';
 import { greeting } from '../utils/dates';
@@ -176,6 +176,13 @@ export function HomePage() {
             <Award className="h-5 w-5 text-amber-500" />
             <p className="mt-2 text-sm font-semibold">Certificado</p>
             <p className="text-xs text-slate-500">{isChampion ? 'Descarga tu logro' : '21 días para ganarlo'}</p>
+          </Card>
+        </Link>
+        <Link to="/stats">
+          <Card className="p-4">
+            <BarChart3 className="h-5 w-5 text-violet-600" />
+            <p className="mt-2 text-sm font-semibold">Estadísticas</p>
+            <p className="text-xs text-slate-500">{entitlements?.canAccessAdvancedStats ? 'Analytics avanzados' : 'Premium IA'}</p>
           </Card>
         </Link>
       </div>

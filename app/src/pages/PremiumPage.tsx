@@ -109,7 +109,7 @@ export function PremiumPage() {
             ) : (
               <div className="mt-3 rounded-xl bg-amber-50 p-3">
                 <p className="text-xs font-semibold text-amber-800">
-                  ¿Seguro? {status === 'active' && 'Si la cancelas, seguirás con acceso hasta el fin del período ya pagado. Después volverás a Free.'}
+                  ¿Seguro? Tu acceso Premium se revocará de inmediato y volverás a la versión Free (conservas el reto de 21 días y tu progreso).
                 </p>
                 <div className="mt-2 flex gap-2">
                   <Button className="flex-1" variant="secondary" onClick={() => setConfirmingCancel(false)} disabled={canceling}>

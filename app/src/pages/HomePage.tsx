@@ -237,8 +237,11 @@ export function HomePage() {
             Imagina un tutor IA que practique contigo cada día: conversación, roleplays, correcciones y puntaje de
             pronunciación. Tu reto de 21 días es gratis para siempre; la IA se desbloquea con Premium IA.
           </p>
-          <Link to="/premium">
-            <Button className="mt-3 w-full" variant="secondary">Desbloquear Premium IA</Button>
+          <Link
+            to="/premium"
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-primary-700"
+          >
+            Desbloquear Premium IA
           </Link>
         </Card>
       )}

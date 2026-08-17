@@ -87,9 +87,19 @@ async function handleMessage(req, res, modeId) {
   const context = await userContext(req.user.id);
   const modelMessages = buildModelMessages(modeId, history, message.trim(), context);
 
-  const result = await aiClient.chat(modelMessages);
+  // Reserva el mensaje ANTES de llamar a la IA (el check anterior queda pegado al
+  // incremento, sin la carrera de check-then-act con la llamada lenta de red).
+  // Si la IA falla, se revierte la reserva para no penalizar al usuario.
+  await aiUsage.addUsage(req.user.id, MODE_PARAM, { count: 1 });
+  let result;
+  try {
+    result = await aiClient.chat(modelMessages);
+  } catch (err) {
+    await aiUsage.addUsage(req.user.id, MODE_PARAM, { count: -1 }).catch(() => {});
+    throw err;
+  }
 
-  await aiUsage.incrementUsage(req.user.id, MODE_PARAM, {
+  await aiUsage.addUsage(req.user.id, MODE_PARAM, {
     tokens: result.usage?.total_tokens || 0,
     estimatedCost: aiClient.estimateCost(result.usage),
   });

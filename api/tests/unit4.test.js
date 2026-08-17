@@ -84,6 +84,14 @@ test('Hotmart: eventos sin efecto devuelven null', () => {
   assert.equal(hotmart.mapEventToSubscription({}), null);
 });
 
+test('Hotmart: START_SUBSCRIPTION_CREATION se ignora aunque traiga subscription.status=started', () => {
+  const sub = hotmart.mapEventToSubscription({
+    event: 'START_SUBSCRIPTION_CREATION',
+    data: { subscription: { status: 'started' } },
+  });
+  assert.equal(sub, null);
+});
+
 test('Hotmart: firma HMAC válida/inválida', () => {
   const secret = 's3cret';
   process.env.HOTMART_WEBHOOK_SECRET = secret;

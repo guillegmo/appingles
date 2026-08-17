@@ -93,7 +93,7 @@ export function Post21LessonPage() {
   if (error) return <div className="p-8 text-center text-slate-500">{error}</div>;
   if (!lesson) return <LoadingScreen label="Cargando lección…" />;
 
-  const total = lesson.vocabulary.length;
+  const total = lesson.vocabulary?.length ?? 0;
 
   // Compara lo dicho con la frase objetivo (normalizada).
   const phraseMatches = (target: string, spoken: string) => {
@@ -260,7 +260,14 @@ export function Post21LessonPage() {
 
           <Card className="mt-4">
             <p className="text-sm font-semibold">Repaso rápido</p>
-            {!revealed ? (
+            {total === 0 ? (
+              <div className="mt-2">
+                <p className="text-sm text-slate-500">Esta lección no trae tarjetas de repaso.</p>
+                <Button className="mt-3 w-full" onClick={finishLesson}>
+                  COMPLETAR LECCIÓN
+                </Button>
+              </div>
+            ) : !revealed ? (
               <div className="mt-2">
                 <p className="text-base font-semibold">{lesson.vocabulary[quizIndex].es}</p>
                 <p className="text-xs text-slate-500">¿Cómo se dice en inglés?</p>

@@ -54,7 +54,8 @@ router.get('/checkout', (req, res) => {
 router.post('/cancel', async (req, res) => {
   try {
     const current = req.subscription || { status: 'free', plan: 'free' };
-    if (current.status !== 'active' && current.status !== 'trialing') {
+    const effective = subscriptionService.effectiveStatus(current);
+    if (effective !== 'active' && effective !== 'trialing') {
       return res.status(400).json({ error: 'no_active_subscription', message: 'No tienes una suscripción activa.' });
     }
     const next = {

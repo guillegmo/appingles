@@ -91,23 +91,44 @@ function verifyWebhook({ headers = {}, rawBody = '' }) {
   return { valid: true, payload: safeJsonParse(rawBody) || {} };
 }
 
+// Estados reales autoritativos (los eventos que sí cambian la suscripción).
+// Los eventos de "creación/activación" (sin cobro) NO están aquí: se ignoran
+// aunque el body traiga data.subscription.status (p.ej. 'started'), porque un
+// webhook sin pago no debe activar Premium.
+const STATUS_EVENTS = new Set([
+  'PURCHASE_APPROVED',
+  'PURCHASE_APPROVED_BY_CARD',
+  'PURCHASE_CANCELED',
+  'PURCHASE_REFUNDED',
+  'PURCHASE_EXPIRED',
+  'SUBSCRIPTION_CANCELED',
+  'SUBSCRIPTION_SUSPENDED',
+  'SUBSCRIPTION_DEBT_RECOVERY',
+  'SUBSCRIPTION_STATUS_UPDATE',
+  'SUBSCRIPTION_REACTIVATION',
+  'SUBSCRIPTION_PLAN_CHANGED',
+]);
+
 // Mapea un evento Hotmart a una suscripción AppIngles.
 function mapEventToSubscription(event) {
   const eventName = event?.event;
   const data = event?.data || {};
 
-  // Estado real: prioridad al estado de la suscripción, luego al de la compra.
+  // Estado real: prioridad al estado de la suscripción, luego al de la compra,
+  // pero SOLO para eventos que afectan la suscripción (ver STATUS_EVENTS).
   let status = normalizeStatus(eventName);
-  const subStatusRaw = data?.subscription?.status || data?.subscription_status;
-  if (subStatusRaw && SUB_STATUS[String(subStatusRaw).toLowerCase()]) {
-    status = SUB_STATUS[String(subStatusRaw).toLowerCase()];
-  }
-  if (!status && data?.purchase?.status) {
-    const pStatus = String(data.purchase.status).toLowerCase();
-    if (pStatus === 'approved' || pStatus === 'complete' || pStatus === 'active') status = 'active';
-    else if (pStatus === 'canceled' || pStatus === 'cancelled') status = 'canceled';
-    else if (pStatus === 'refunded' || pStatus === 'chargeback') status = 'expired';
-    else if (pStatus === 'overdue' || pStatus === 'delayed' || pStatus === 'expired') status = 'past_due';
+  if (STATUS_EVENTS.has(eventName)) {
+    const subStatusRaw = data?.subscription?.status || data?.subscription_status;
+    if (subStatusRaw && SUB_STATUS[String(subStatusRaw).toLowerCase()]) {
+      status = SUB_STATUS[String(subStatusRaw).toLowerCase()];
+    }
+    if (!status && data?.purchase?.status) {
+      const pStatus = String(data.purchase.status).toLowerCase();
+      if (pStatus === 'approved' || pStatus === 'complete' || pStatus === 'active') status = 'active';
+      else if (pStatus === 'canceled' || pStatus === 'cancelled') status = 'canceled';
+      else if (pStatus === 'refunded' || pStatus === 'chargeback') status = 'expired';
+      else if (pStatus === 'overdue' || pStatus === 'delayed' || pStatus === 'expired') status = 'past_due';
+    }
   }
   if (!status) return null;
 

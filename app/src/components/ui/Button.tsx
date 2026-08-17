@@ -1,7 +1,7 @@
 import { cn } from '../../utils/cn';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
 };
 
@@ -10,6 +10,7 @@ const variants = {
   secondary: 'bg-slate-900 text-white hover:bg-slate-800 shadow-soft',
   outline: 'border border-slate-300 text-slate-700 hover:bg-slate-50',
   ghost: 'text-primary-600 hover:bg-primary-50',
+  danger: 'bg-rose-600 text-white hover:bg-rose-700 shadow-soft',
 };
 
 const sizes = {

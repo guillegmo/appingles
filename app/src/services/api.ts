@@ -119,6 +119,11 @@ export async function getPlans(): Promise<{ plans: import('../types').PlanOption
   return data;
 }
 
+export async function cancelSubscription(): Promise<{ subscription: import('../types').SubscriptionStatus; entitlements: import('../types').Entitlements }> {
+  const { data } = await api.post('/subscription/cancel');
+  return data;
+}
+
 export async function activatePremiumDev(plan = 'premium', trialDays = 7) {
   const { data } = await api.post('/subscription/activate', { plan, trialDays });
   return data;

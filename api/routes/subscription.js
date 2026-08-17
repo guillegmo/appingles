@@ -4,8 +4,10 @@
 
 const express = require('express');
 const router = express.Router();
+const store = require('../lib/store');
 const entitlement = require('../services/entitlement');
 const subscriptionService = require('../services/subscriptionService');
+const analytics = require('../services/analytics');
 const hotmart = require('../services/payments/hotmart');
 const { authenticate } = require('../middleware/auth');
 
@@ -45,6 +47,33 @@ router.get('/checkout', (req, res) => {
     cancelUrl: process.env.HOTMART_CANCEL_URL,
   });
   res.json(result);
+});
+
+// POST /subscription/cancel -> el usuario vuelve a la versión Free.
+// Conserva el reto de 21 días (gratis para siempre); pierde los beneficios de IA.
+router.post('/cancel', async (req, res) => {
+  try {
+    const current = req.subscription || { status: 'free', plan: 'free' };
+    if (current.status !== 'active' && current.status !== 'trialing') {
+      return res.status(400).json({ error: 'no_active_subscription', message: 'No tienes una suscripción activa.' });
+    }
+    const next = {
+      ...current,
+      status: 'canceled',
+      canceledBy: 'user',
+      canceledAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    await store.setDoc('subscriptions', req.user.id, next);
+    await analytics.trackEvent({
+      userId: req.user.id,
+      event: 'subscription_canceled',
+      meta: { source: 'paywall', plan: current.plan },
+    });
+    res.json({ subscription: next, entitlements: entitlement.serializableEntitlements(next) });
+  } catch (err) {
+    res.status(500).json({ error: 'cancel_failed', message: err.message });
+  }
 });
 
 // POST /subscription/activate -> SOLO dev/seed (en producción lo hace el webhook).

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Check, Shield, Zap, Gift, AlertTriangle, Bot, Sparkles, Mic, BookOpen, BarChart3 } from 'lucide-react';
+import { Check, Shield, Zap, Gift, AlertTriangle, Bot, Sparkles, Mic, BookOpen, BarChart3, Undo2, Loader2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
-import { getPlans, getCheckoutForPlan, trackAnalyticsEvent } from '../services/api';
+import { getPlans, getCheckoutForPlan, cancelSubscription, trackAnalyticsEvent } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import type { PlanOption } from '../types';
@@ -35,6 +35,9 @@ export function PremiumPage() {
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [upgrading, setUpgrading] = useState(false);
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
+  const [canceling, setCanceling] = useState(false);
+  const [cancelMsg, setCancelMsg] = useState<string | null>(null);
 
   const status = subscription?.status ?? 'free';
   const isPremium = entitlements?.plan === 'premium';
@@ -50,6 +53,20 @@ export function PremiumPage() {
   useEffect(() => {
     getCheckoutForPlan(billing).then((c) => setCheckoutUrl(c.url)).catch(() => setCheckoutUrl(null));
   }, [billing]);
+
+  const handleCancel = async () => {
+    setCanceling(true);
+    try {
+      await cancelSubscription();
+      await refreshAll();
+      setCancelMsg('Listo. Volviste a la versión Free: tu reto de 21 días sigue disponible para siempre.');
+    } catch (e) {
+      setCancelMsg((e as Error).message || 'No se pudo cancelar. Intenta de nuevo.');
+    } finally {
+      setCanceling(false);
+      setConfirmingCancel(false);
+    }
+  };
 
   // Premium activo (trialing o active)
   if (isPremium && (status === 'trialing' || status === 'active')) {
@@ -74,6 +91,35 @@ export function PremiumPage() {
           ))}
         </ul>
         <Button className="mt-6" onClick={refreshAll}>Volver al Inicio</Button>
+
+        <details className="mt-8 w-full max-w-md rounded-xl border border-slate-200 bg-white p-4 text-left">
+            <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-600">
+              <Undo2 className="h-4 w-4 text-slate-400" /> ¿Quieres volver a la versión Free?
+            </summary>
+            <p className="mt-2 text-xs text-slate-500">
+              Conservas para siempre el reto de 21 días, Daily Practice, Smart Review, ligas y certificado. Solo pierdes las
+              funciones de IA (tutor, lecciones on-demand, pronunciación, banco de vocabulario y analytics avanzados).
+            </p>
+            {!confirmingCancel ? (
+              <Button className="mt-3 w-full" variant="secondary" onClick={() => setConfirmingCancel(true)}>
+                Cancelar mi suscripción
+              </Button>
+            ) : (
+              <div className="mt-3 rounded-xl bg-amber-50 p-3">
+                <p className="text-xs font-semibold text-amber-800">
+                  ¿Seguro? {status === 'active' && 'Si la cancelas, seguirás con acceso hasta el fin del período ya pagado. Después volverás a Free.'}
+                </p>
+                <div className="mt-2 flex gap-2">
+                  <Button className="flex-1" variant="secondary" onClick={() => setConfirmingCancel(false)} disabled={canceling}>
+                    Mantener Premium
+                  </Button>
+                  <Button className="flex-1" variant="danger" onClick={handleCancel} disabled={canceling}>
+                    {canceling ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Sí, volver a Free'}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </details>
       </div>
     );
   }
@@ -107,6 +153,15 @@ export function PremiumPage() {
           <h1 className="mt-3 text-2xl font-bold">PREMIUM IA</h1>
           <p className="mt-1 text-sm text-slate-500">Tu tutor de inglés con IA. Pago recurrente, cancela cuando quieras.</p>
         </div>
+
+        {cancelMsg && (
+          <Card className="mt-6 border-emerald-200 bg-emerald-50 p-4">
+            <p className="flex items-center gap-2 font-semibold text-emerald-800">
+              <Check className="h-4 w-4" /> Volviste a la versión Free
+            </p>
+            <p className="mt-1 text-sm text-emerald-700">{cancelMsg}</p>
+          </Card>
+        )}
 
         {status === 'past_due' && (
           <Card className="mt-6 border-amber-200 bg-amber-50">

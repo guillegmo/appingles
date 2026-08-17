@@ -149,7 +149,7 @@ export function PremiumPage() {
     <div className="flex min-h-screen flex-col p-6">
       <div className="mx-auto w-full max-w-md">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/home')}
           className="mb-2 flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-semibold text-slate-600 hover:bg-slate-100"
           aria-label="Volver"
         >

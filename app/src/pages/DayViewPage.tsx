@@ -636,6 +636,12 @@ function QuestionCard({
   const [input, setInput] = useState('');
   const [ok, setOk] = useState(false);
 
+  useEffect(() => {
+    if (!answered) return;
+    const t = setTimeout(onContinue, 900);
+    return () => clearTimeout(t);
+  }, [answered]);
+
   const check = () => {
     if (answered) return;
     let correct = false;

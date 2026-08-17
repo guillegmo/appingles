@@ -29,14 +29,14 @@ export function LoginPage() {
     }
     if (token) localStorage.setItem('appingles_token', token);
     localStorage.setItem('appingles_user', user.uid);
-    const displayName = user.displayName || user.email?.split('@')[0] || 'Student';
-    login(user.uid, displayName, token ?? undefined);
     clearKicked();
-    trackAnalyticsEvent('user_registered', { source: mode }).catch(() => {});
     try {
       const { replaced } = await registerSession();
       if (replaced) setNotice('Se cerró tu sesión en el otro dispositivo.');
     } catch {}
+    const displayName = user.displayName || user.email?.split('@')[0] || 'Student';
+    login(user.uid, displayName, token ?? undefined);
+    trackAnalyticsEvent('user_registered', { source: mode }).catch(() => {});
     navigate('/home');
   };
 

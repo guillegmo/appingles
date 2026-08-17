@@ -91,11 +91,11 @@ export default function App() {
         if (!localStorage.getItem('appingles_user')) {
           localStorage.setItem('appingles_user', fbUser.uid);
           login(fbUser.uid, fbUser.displayName || fbUser.email?.split('@')[0] || 'Student', token ?? undefined);
-          try {
-            const { replaced } = await registerSession();
-            if (replaced) useAppStore.getState().setNotice('Se cerró tu sesión en el otro dispositivo.');
-          } catch {}
         }
+        try {
+          const { replaced } = await registerSession();
+          if (replaced) useAppStore.getState().setNotice('Se cerró tu sesión en el otro dispositivo.');
+        } catch {}
         useAppStore.getState().refreshAll();
       } else {
         logout();

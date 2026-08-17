@@ -131,7 +131,7 @@ export function StatsPage() {
         </p>
         <div className="flex h-32 items-end gap-1.5">
           {stats.series.map((d) => (
-            <div key={d.date} className="flex flex-1 flex-col items-center gap-1">
+            <div key={d.date} className="flex h-full flex-1 flex-col items-center gap-1">
               <div className="flex w-full flex-1 items-end">
                 <div
                   className={`w-full rounded-t ${d.attempts === 0 ? 'bg-slate-100' : d.accuracyPct >= 80 ? 'bg-emerald-400' : d.accuracyPct >= 50 ? 'bg-amber-400' : 'bg-rose-400'}`}

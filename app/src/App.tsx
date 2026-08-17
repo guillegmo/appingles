@@ -40,13 +40,12 @@ function OnboardingGate({ children }: { children: React.ReactNode }) {
   const user = useAppStore((s) => s.user);
   const challenge = useAppStore((s) => s.challenge);
   const progress = useAppStore((s) => s.progress);
-  const loading = useAppStore((s) => s.loading);
   const hasSeen = localStorage.getItem('appingles_onboarded');
   const onboardingCompleted =
     challenge?.onboardingCompleted ||
     (progress && (progress.daysCompleted > 0 || progress.totalXp > 0)) ||
     !!hasSeen;
-  if (user && loading && !onboardingCompleted) return <LoadingScreen label="Cargando tu progreso…" />;
+  if (user && !challenge && !progress) return <LoadingScreen label="Cargando tu progreso…" />;
   if (user && !onboardingCompleted) return <Navigate to="/onboarding" replace />;
   return <>{children}</>;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Headphones, MessageCircle, PenLine, MessageSquare, Sparkles, Loader2 } from 'lucide-react';
+import { BookOpen, Headphones, MessageCircle, PenLine, MessageSquare, Sparkles, Loader2, ChevronRight } from 'lucide-react';
 import { getPost21, generateLesson } from '../services/api';
 import { useAppStore } from '../store/useAppStore';
 import { Button } from '../components/ui/Button';
@@ -150,9 +150,7 @@ export function Post21Page() {
                   {SITUATION_LABELS[l.situation] ?? l.situation} · {l.estimatedTime} min
                 </p>
               </div>
-              <Button variant="ghost" size="sm">
-                Abrir
-              </Button>
+              <ChevronRight className="h-5 w-5 shrink-0 text-slate-400" />
             </button>
           );
         })}

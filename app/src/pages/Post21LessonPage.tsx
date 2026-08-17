@@ -69,24 +69,6 @@ export function Post21LessonPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (error) return <div className="p-8 text-center text-slate-500">{error}</div>;
-  if (!lesson) return <LoadingScreen label="Cargando lección…" />;
-
-  const total = lesson.vocabulary.length;
-
-  // Compara lo dicho con la frase objetivo (normalizada).
-  const phraseMatches = (target: string, spoken: string) => {
-    const norm = (s: string) =>
-      s.toLowerCase().replace(/[.,!?¡¿'’]/g, '').split(/\s+/).filter(Boolean);
-    const t = norm(target);
-    const sp = norm(spoken);
-    if (!t.length || !sp.length) return false;
-    const set = new Set(t);
-    let hits = 0;
-    for (const w of sp) if (set.has(w)) hits++;
-    return hits / t.length >= 0.8;
-  };
-
   useEffect(() => {
     if (!speech.transcript || !lesson) return;
     const spoken = speech.transcript;
@@ -107,6 +89,24 @@ export function Post21LessonPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speech.transcript, lesson]);
+
+  if (error) return <div className="p-8 text-center text-slate-500">{error}</div>;
+  if (!lesson) return <LoadingScreen label="Cargando lección…" />;
+
+  const total = lesson.vocabulary.length;
+
+  // Compara lo dicho con la frase objetivo (normalizada).
+  const phraseMatches = (target: string, spoken: string) => {
+    const norm = (s: string) =>
+      s.toLowerCase().replace(/[.,!?¡¿'’]/g, '').split(/\s+/).filter(Boolean);
+    const t = norm(target);
+    const sp = norm(spoken);
+    if (!t.length || !sp.length) return false;
+    const set = new Set(t);
+    let hits = 0;
+    for (const w of sp) if (set.has(w)) hits++;
+    return hits / t.length >= 0.8;
+  };
 
   const finishLesson = async () => {
     await recordSpeaking(21);

@@ -16,24 +16,25 @@ router.use(authenticate);
 // POST /exercises/attempt
 // body: { day, exerciseId, type, answer, correct }
 // Registra el intento, otorga XP por acierto y actualiza contador de ejercicios.
+// La actualización de progreso es transaccional: dos intentos simultáneos no
+// pierden XP ni conteos (read->modify->write atómico).
 router.post('/attempt', async (req, res) => {
   const { day, exerciseId, type, answer, correct } = req.body || {};
   if (!day || !exerciseId || typeof correct !== 'boolean') {
     return res.status(400).json({ error: 'day, exerciseId y correct son requeridos' });
   }
 
-  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
   const todayKey = new Date().toISOString().slice(0, 10);
-  if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);
+  const xpEarned = correct ? scoring.XP.exerciseCorrect : 0;
 
-  let xpEarned = 0;
-  if (correct) {
-    xpEarned = scoring.XP.exerciseCorrect;
+  const totalXp = await store.runTransaction(async (tx) => {
+    const progress = normalizeProgress(await tx.get('progress', req.user.id));
+    if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);
     progress.totalXp += xpEarned;
-  }
-  progress.exercisesCompleted += 1;
-
-  await store.setDoc('progress', req.user.id, progress);
+    progress.exercisesCompleted += 1;
+    tx.set('progress', req.user.id, progress);
+    return progress.totalXp;
+  });
 
   await store.setDoc('exerciseAttempts', `${req.user.id}_${day}_${exerciseId}`, {
     userId: req.user.id,
@@ -46,32 +47,35 @@ router.post('/attempt', async (req, res) => {
     at: new Date().toISOString(),
   });
 
-  // Smart Review: un fallo crea/actualiza la tarjeta de repaso del día.
+  // Smart Review: un fallo crea/actualiza las tarjetas de repaso del día.
   if (!correct) {
-    await reviewService.ensureCard(req.user.id, day).catch(() => {});
+    await reviewService.ensureCards(req.user.id, day).catch(() => {});
   }
 
-  res.json({ correct, xpEarned, totalXp: progress.totalXp });
+  res.json({ correct, xpEarned, totalXp });
 });
 
 // POST /exercises/speaking
 // Registra una sesión de speaking (V1: sin transcripción de IA).
 router.post('/speaking', async (req, res) => {
   const { day } = req.body || {};
-  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
-
   const todayKey = new Date().toISOString().slice(0, 10);
-  if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);
-  progress.speakingSessions += 1;
-  progress.totalXp += scoring.XP.speakingSession;
 
-  await store.setDoc('progress', req.user.id, progress);
+  const result = await store.runTransaction(async (tx) => {
+    const progress = normalizeProgress(await tx.get('progress', req.user.id));
+    if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);
+    progress.speakingSessions += 1;
+    progress.totalXp += scoring.XP.speakingSession;
+    tx.set('progress', req.user.id, progress);
+    return { speakingSessions: progress.speakingSessions, totalXp: progress.totalXp };
+  });
+
   await store.setDoc('speakingSessions', `${req.user.id}_${todayKey}`, {
     userId: req.user.id,
     day: day || null,
     at: new Date().toISOString(),
   });
-  res.json({ speakingSessions: progress.speakingSessions, xpEarned: scoring.XP.speakingSession, totalXp: progress.totalXp });
+  res.json({ speakingSessions: result.speakingSessions, xpEarned: scoring.XP.speakingSession, totalXp: result.totalXp });
 });
 
 // POST /exercises/pronunciation

@@ -39,7 +39,12 @@
     { "en": "Do you have this in a larger size?", "es": "¿Tienes esto en una talla más grande?" },
     { "en": "Can I pay by card?", "es": "¿Puedo pagar con tarjeta?" },
     { "en": "It is too expensive.", "es": "Es demasiado caro." },
-    { "en": "I am just looking, thank you.", "es": "Solo estoy mirando, gracias." }
+    { "en": "I am just looking, thank you.", "es": "Solo estoy mirando, gracias." },
+    { "en": "Can I have the receipt, please?", "es": "¿Me da el recibo, por favor?" },
+    { "en": "The price is very good.", "es": "El precio es muy bueno." },
+    { "en": "This shirt is cheap.", "es": "Esta camisa es barata." },
+    { "en": "I want a refund.", "es": "Quiero un reembolso." },
+    { "en": "Can I pay in cash?", "es": "¿Puedo pagar en efectivo?" }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “a refund”?", "options": ["un reembolso", "una talla", "un precio", "una oferta"], "answer": 0 },

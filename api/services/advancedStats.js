@@ -52,7 +52,7 @@ function dailySeries(attempts, n, base = new Date()) {
 // Uso de IA total y de hoy (sin exponer costo al usuario).
 async function aiUsage(userId, today = new Date(), deps = {}) {
   const s = deps.store || store;
-  const docs = await s.listDocs('aiUsage');
+  const docs = await s.queryDocs('aiUsage', { filters: [{ field: 'userId', op: '==', value: userId }] });
   const mine = docs.filter((d) => d.userId === userId);
   const todayKey = today.toISOString().slice(0, 10);
   let totalSessions = 0;
@@ -72,8 +72,10 @@ async function aiUsage(userId, today = new Date(), deps = {}) {
 
 // Puntaje de pronunciación: promedio, mejor, últimas N y resumen por frase.
 async function pronunciationStats(userId, limit = 10, deps = {}) {
-  const s = deps.store || store;
-  const docs = await s.listDocs('pronunciationScores');
+const s = deps.store || store;
+  // Sin orderBy en la query: filtrar + ordenar por 'at' exige un índice compuesto
+  // en Firestore. Se ordena en memoria (abajo) con el mismo criterio.
+  const docs = await s.queryDocs('pronunciationScores', { filters: [{ field: 'userId', op: '==', value: userId }] });
   const mine = docs.filter((d) => d.userId === userId).sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
   const scores = mine.map((m) => m.score || 0);
   const avg = scores.length ? Math.round((scores.reduce((s, x) => s + x, 0) / scores.length) * 10) / 10 : 0;
@@ -102,17 +104,22 @@ async function advancedStats(userId, opts = {}) {
   const today = opts.today ? new Date(opts.today) : new Date();
   const s = (opts.deps && opts.deps.store) || store;
 
-  const progress = (await s.getDoc('progress', userId)) || { completedDays: [], practiceDays: [], totalXp: 0, exercisesCompleted: 0, speakingSessions: 0 };
-  const streaks = (await s.getDoc('streaks', userId)) || { currentStreak: 0, longestStreak: 0 };
-  const badges = (await s.getDoc('badges', userId)) || { earned: [] };
-  const profileDoc = await s.getDoc('profiles', userId);
+  const [progressRaw, streaks, badges, profileDoc, attempts, vocabDoc, ai, pron] = await Promise.all([
+    s.getDoc('progress', userId),
+    s.getDoc('streaks', userId),
+    s.getDoc('badges', userId),
+    s.getDoc('profiles', userId),
+    s.queryDocs('exerciseAttempts', { filters: [{ field: 'userId', op: '==', value: userId }] }),
+    s.getDoc('vocabulary', userId),
+    aiUsage(userId, today, { store: s }),
+    pronunciationStats(userId, 10, { store: s }),
+  ]);
 
-  const attempts = (await s.listDocs('exerciseAttempts')).filter((a) => a.userId === userId);
+  const progress = progressRaw || { completedDays: [], practiceDays: [], totalXp: 0, exercisesCompleted: 0, speakingSessions: 0 };
+  const streakDoc = streaks || { currentStreak: 0, longestStreak: 0 };
+  const badgeDoc = badges || { earned: [] };
+  const vocab = vocabDoc || { items: [] };
   const lastN = attempts.filter((a) => (a.at || '').slice(0, 10) >= dayKey(days - 1, today));
-
-  const vocabDoc = (await s.getDoc('vocabulary', userId)) || { items: [] };
-  const ai = await aiUsage(userId, today, { store: s });
-  const pron = await pronunciationStats(userId, 10, { store: s });
 
   return {
     period: { days, end: today.toISOString().slice(0, 10) },
@@ -121,12 +128,12 @@ async function advancedStats(userId, opts = {}) {
       exercisesCompleted: progress.exercisesCompleted || 0,
       speakingSessions: progress.speakingSessions || 0,
       daysCompleted: progress.completedDays?.length || 0,
-      vocabularyCount: vocabDoc.items?.length || 0,
+      vocabularyCount: vocab.items?.length || 0,
       practiceThisWeek: (progress.practiceDays || []).filter((d) => d >= dayKey(6, today)).length,
-      currentStreak: streaks.currentStreak || 0,
-      longestStreak: streaks.longestStreak || 0,
+      currentStreak: streakDoc.currentStreak || 0,
+      longestStreak: streakDoc.longestStreak || 0,
       streakFreezes: progress.streakFreezes || 0,
-      badges: badges.earned || [],
+      badges: badgeDoc.earned || [],
     },
     accuracy: {
       overall: accuracy(attempts),
@@ -140,3 +147,5 @@ async function advancedStats(userId, opts = {}) {
 }
 
 module.exports = { advancedStats, dailySeries, accuracy, pronunciationStats, DAYS_KEYS };
+
+

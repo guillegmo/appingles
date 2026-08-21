@@ -12,22 +12,39 @@ router.use(authenticate);
 
 // GET /leaderboard — ranking por XP total + días activos esta semana
 router.get('/', async (req, res) => {
-  const progresses = await store.listDocs('progress');
+  const progresses = await store.queryDocs('progress', { orderBy: { field: 'totalXp', direction: 'desc' }, limit: 100 });
   const season = seasons.currentSeason();
 
-  const rows = await Promise.all(
-    progresses.map(async (p) => {
-      const user = (await store.getDoc('users', p.id)) || {};
-      const weeklyDays = (p.practiceDays || []).filter((d) => seasons.inWindow(d, season)).length;
-      return {
-        userId: p.id,
-        name: user.name || 'Estudiante',
-        totalXp: p.totalXp || 0,
-        weeklyDays,
-        daysCompleted: (p.completedDays || []).length,
-      };
-    }),
-  );
+  // Nombres en lote (evita N+1 de getDoc por cada top-100 sin name back-filleado).
+  const missingIds = progresses.filter((p) => !p.name).map((p) => p.id);
+  const usersById = new Map();
+  if (missingIds.length) {
+    const users = await store.getDocs('users', missingIds);
+    for (const u of users) usersById.set(u.id, u);
+  }
+
+  const rows = progresses.map((p) => {
+    let name = p.name;
+    if (!name) {
+      name = usersById.get(p.id)?.name || 'Estudiante';
+    }
+    const weeklyDays = (p.practiceDays || []).filter((d) => seasons.inWindow(d, season)).length;
+    return {
+      userId: p.id,
+      name,
+      totalXp: p.totalXp || 0,
+      weeklyDays,
+      daysCompleted: (p.completedDays || []).length,
+    };
+  });
+
+  // Back-fill de nombres en un solo batch (1 round-trip en Firestore).
+  if (missingIds.length) {
+    const backfills = missingIds
+      .filter((id) => usersById.has(id))
+      .map((id) => ({ type: 'update', collection: 'progress', id, data: { name: usersById.get(id).name } }));
+    if (backfills.length) await store.batchWrite(backfills);
+  }
 
   const byXp = rows
     .filter((r) => r.totalXp > 0)

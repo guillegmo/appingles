@@ -39,7 +39,10 @@
     { "en": "I was at the office at 9:00.", "es": "Estaba en la oficina a las 9:00." },
     { "en": "Last week I visited my family.", "es": "La semana pasada visité a mi familia." },
     { "en": "I went to the supermarket.", "es": "Fui al supermercado." },
-    { "en": "It was a good day.", "es": "Fue un buen día." }
+    { "en": "It was a good day.", "es": "Fue un buen día." },
+    { "en": "Last night I watched a movie.", "es": "Anoche vi una película." },
+    { "en": "I had a good breakfast.", "es": "Tuve un buen desayuno." },
+    { "en": "I saw my friends yesterday.", "es": "Vi a mis amigos ayer." }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “yesterday”?", "options": ["ayer", "hoy", "mañana", "la semana pasada"], "answer": 0 },

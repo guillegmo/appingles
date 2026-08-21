@@ -9,7 +9,7 @@ const entitlement = require('../services/entitlement');
 const subscriptionService = require('../services/subscriptionService');
 const analytics = require('../services/analytics');
 const hotmart = require('../services/payments/hotmart');
-const { authenticate } = require('../middleware/auth');
+const { authenticate, invalidateSubscriptionCache } = require('../middleware/auth');
 
 router.use(authenticate);
 
@@ -66,6 +66,7 @@ router.post('/cancel', async (req, res) => {
       updatedAt: new Date().toISOString(),
     };
     await store.setDoc('subscriptions', req.user.id, next);
+    invalidateSubscriptionCache(req.user.id);
     await analytics.trackEvent({
       userId: req.user.id,
       event: 'subscription_canceled',

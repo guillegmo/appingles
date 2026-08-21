@@ -39,7 +39,11 @@
     { "en": "Can I have the menu, please?", "es": "¿Me trae el menú, por favor?" },
     { "en": "The bill, please.", "es": "La cuenta, por favor." },
     { "en": "Where is the nearest restaurant?", "es": "¿Dónde está el restaurante más cercano?" },
-    { "en": "Turn left at the corner.", "es": "Gira a la izquierda en la esquina." }
+    { "en": "Turn left at the corner.", "es": "Gira a la izquierda en la esquina." },
+    { "en": "Can I have some water, please?", "es": "¿Me trae un poco de agua, por favor?" },
+    { "en": "The restaurant is on this street.", "es": "El restaurante está en esta calle." },
+    { "en": "Turn right at the corner.", "es": "Gira a la derecha en la esquina." },
+    { "en": "The bank is straight ahead.", "es": "El banco está todo recto." }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “the bill”?", "options": ["la cuenta", "el menú", "el agua", "la calle"], "answer": 0 },

@@ -13,22 +13,27 @@ router.use(authenticate);
 // POST /vocabulary/items — body: { words: [{ en, es }] }
 // Guarda palabras nuevas (deduplicadas). Disponible para todos: así el banco
 // se arma mientras el usuario avanza aunque aún no sea Premium.
+// Transaccional: dos capturas simultáneas no pierden palabras.
 router.post('/items', async (req, res) => {
   const { words } = req.body || {};
   const items = Array.isArray(words) ? words.filter((w) => w && String(w.en).trim()) : [];
   if (!items.length) return res.status(400).json({ error: 'words requerido (array de { en, es })' });
 
-  const doc = (await store.getDoc('vocabulary', req.user.id)) || { items: [] };
-  const existing = new Set(doc.items.map((i) => String(i.en).toLowerCase()));
-  for (const w of items) {
-    const key = String(w.en).trim().toLowerCase();
-    if (!existing.has(key)) {
-      doc.items.push({ en: String(w.en).trim(), es: String(w.es || '').trim(), addedAt: new Date().toISOString() });
-      existing.add(key);
+  const total = await store.runTransaction(async (tx) => {
+    const doc = (await tx.get('vocabulary', req.user.id)) || { items: [] };
+    const existing = new Set(doc.items.map((i) => String(i.en).toLowerCase()));
+    for (const w of items) {
+      const key = String(w.en).trim().toLowerCase();
+      if (!existing.has(key)) {
+        doc.items.push({ en: String(w.en).trim(), es: String(w.es || '').trim(), addedAt: new Date().toISOString() });
+        existing.add(key);
+      }
     }
-  }
-  await store.setDoc('vocabulary', req.user.id, doc);
-  res.json({ ok: true, total: doc.items.length });
+    tx.set('vocabulary', req.user.id, doc);
+    return doc.items.length;
+  });
+
+  res.json({ ok: true, total });
 });
 
 // GET /vocabulary — lista el banco (Premium IA)

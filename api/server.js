@@ -8,6 +8,15 @@ const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 
+// Errores del backend (p.ej. cuota de Firestore agotada, red) NO deben tumbar
+// el proceso entero: se registran y la petición afectada recibe 500.
+process.on('unhandledRejection', (reason) => {
+  console.error('UNHANDLED REJECTION:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err);
+});
+
 const app = express();
 
 const PORT = process.env.PORT || 3001;
@@ -25,10 +34,13 @@ app.use(express.json({
   verify: (req, res, buf) => { req.rawBody = buf.toString('utf8'); },
 }));
 
-// Rate limiting básico (OWASP)
+// Rate limiting básico (OWASP). En desarrollo permitimos más margen para no
+// bloquear el uso real (StrictMode duplica efectos + suites E2E). Configurable
+// con RATE_LIMIT_MAX.
+const rateLimitMax = Number(process.env.RATE_LIMIT_MAX) || (process.env.NODE_ENV === 'production' ? 300 : 1000);
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 300,
+  max: rateLimitMax,
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -53,6 +65,7 @@ app.use('/api/vocabulary', require('./routes/vocabulary'));
 app.use('/api/leaderboard', require('./routes/leaderboard'));
 app.use('/api/tutor', require('./routes/tutor'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/memory', require('./routes/memory'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/webhooks', require('./routes/webhooks'));
 

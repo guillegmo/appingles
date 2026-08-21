@@ -39,7 +39,14 @@
     { "en": "I work in a hospital.", "es": "Trabajo en un hospital." },
     { "en": "I have a meeting at 10:00.", "es": "Tengo una reunión a las 10:00." },
     { "en": "My colleagues are very friendly.", "es": "Mis compañeros son muy amables." },
-    { "en": "What do you do for a living?", "es": "¿A qué te dedicas?" }
+    { "en": "What do you do for a living?", "es": "¿A qué te dedicas?" },
+    { "en": "I love my job.", "es": "Amo mi trabajo." },
+    { "en": "My colleague is very helpful.", "es": "Mi compañero es muy servicial." },
+    { "en": "My boss is very kind.", "es": "Mi jefe es muy amable." },
+    { "en": "I work in an office.", "es": "Trabajo en una oficina." },
+    { "en": "I enjoy working with my team.", "es": "Disfruto trabajar con mi equipo." },
+    { "en": "She works in the sales department.", "es": "Ella trabaja en el departamento de ventas." },
+    { "en": "I work for a big company.", "es": "Trabajo para una empresa grande." }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “boss”?", "options": ["jefe", "reunión", "compañero", "oficina"], "answer": 0 },

@@ -46,4 +46,12 @@ router.delete('/session', verifyToken, async (req, res) => {
   res.json({ ok: true });
 });
 
+// Consulta la sesión activa (solo lectura). El front lo usa al restaurar una
+// sesión automática para saber si este dispositivo/pestaña sigue teniendo el
+// control, sin reclamarlo (evita el ping-pong entre pestañas).
+router.get('/session', verifyToken, async (req, res) => {
+  const existing = await store.getDoc('sessions', req.user.id);
+  res.json({ activeSessionId: existing?.activeSessionId || null });
+});
+
 module.exports = router;

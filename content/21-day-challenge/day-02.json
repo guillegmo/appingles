@@ -76,6 +76,26 @@
     {
       "en": "Where do you live?",
       "es": "¿Dónde vives?"
+    },
+    {
+      "en": "What is your age?",
+      "es": "¿Cuál es tu edad?"
+    },
+    {
+      "en": "My email address is maria@gmail.com.",
+      "es": "Mi correo electrónico es maria@gmail.com."
+    },
+    {
+      "en": "What is your address?",
+      "es": "¿Cuál es tu dirección?"
+    },
+    {
+      "en": "Are you married?",
+      "es": "¿Estás casado(a)?"
+    },
+    {
+      "en": "I am single.",
+      "es": "Soy soltero(a)."
     }
   ],
   "exercises": [

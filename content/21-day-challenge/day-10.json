@@ -39,7 +39,10 @@
     { "en": "I would like a coffee, please.", "es": "Quisiera un café, por favor." },
     { "en": "Is this dish vegetarian?", "es": "¿Este platillo es vegetariano?" },
     { "en": "Can I have the bill, please?", "es": "¿Me trae la cuenta, por favor?" },
-    { "en": "The food was delicious.", "es": "La comida estaba deliciosa." }
+    { "en": "The food was delicious.", "es": "La comida estaba deliciosa." },
+    { "en": "Can I have some water, please?", "es": "¿Me trae un poco de agua, por favor?" },
+    { "en": "A table for two, please.", "es": "Una mesa para dos, por favor." },
+    { "en": "Do you want anything else?", "es": "¿Quieres algo más?" }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “the bill”?", "options": ["la cuenta", "el menú", "la propina", "la mesa"], "answer": 0 },

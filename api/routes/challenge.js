@@ -79,36 +79,44 @@ router.post('/day/:n/complete', async (req, res) => {
   if (!day) return res.status(404).json({ error: 'Día no encontrado' });
 
   const todayKey = streak.toDayKey();
-  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
 
-  const alreadyDone = progress.completedDays.includes(n);
-  if (!alreadyDone) progress.completedDays.push(n);
-  if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);
-  if (!alreadyDone) progress.totalXp += day.xpReward;
+  // Transaccional: dos completados simultáneos no pierden XP, días ni badges.
+  const outcome = await store.runTransaction(async (tx) => {
+    const progress = normalizeProgress(await tx.get('progress', req.user.id));
 
-  // Streak freeze: puentea un hueco de un día si el usuario tiene freezes.
-  const { keys: streakKeys, usedFreeze } = streak.applyStreakFreeze(progress.practiceDays, new Date(), progress.streakFreezes);
-  if (usedFreeze) progress.streakFreezes = Math.max(0, (progress.streakFreezes || 0) - 1);
-  // Recompensa: 1 freeze por semana con racha >= 7 (máx 3 acumulados).
-  const rawStreak = streak.computeStreaks(progress.practiceDays).currentStreak;
-  const weekKey = seasons.currentSeason().key;
-  if (rawStreak >= 7 && progress.streakFreezeAwardedWeek !== weekKey) {
-    progress.streakFreezes = Math.min(3, (progress.streakFreezes || 0) + 1);
-    progress.streakFreezeAwardedWeek = weekKey;
-  }
+    const alreadyDone = progress.completedDays.includes(n);
+    if (!alreadyDone) progress.completedDays.push(n);
+    if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);
+    if (!alreadyDone) progress.totalXp += day.xpReward;
 
-  const { currentStreak, longestStreak } = streak.computeStreaks(streakKeys);
-  const stats = {
-    daysCompleted: streak.daysCompleted(progress.completedDays),
-    currentStreak,
-    speakingSessions: progress.speakingSessions,
-    exercisesCompleted: progress.exercisesCompleted,
-  };
-  const badges = scoring.evaluateBadges(stats);
+    // Streak freeze: puentea un hueco de un día si el usuario tiene freezes.
+    const { keys: streakKeys, usedFreeze } = streak.applyStreakFreeze(progress.practiceDays, new Date(), progress.streakFreezes);
+    if (usedFreeze) progress.streakFreezes = Math.max(0, (progress.streakFreezes || 0) - 1);
+    // Recompensa: 1 freeze por semana con racha >= 7 (máx 3 acumulados).
+    const rawStreak = streak.computeStreaks(progress.practiceDays).currentStreak;
+    const weekKey = seasons.currentSeason().key;
+    if (rawStreak >= 7 && progress.streakFreezeAwardedWeek !== weekKey) {
+      progress.streakFreezes = Math.min(3, (progress.streakFreezes || 0) + 1);
+      progress.streakFreezeAwardedWeek = weekKey;
+    }
 
-  await store.setDoc('progress', req.user.id, progress);
-  await store.setDoc('streaks', req.user.id, { currentStreak, longestStreak, updatedAt: todayKey });
-  await store.setDoc('badges', req.user.id, { earned: badges });
+    const { currentStreak, longestStreak } = streak.computeStreaks(streakKeys);
+    const stats = {
+      daysCompleted: streak.daysCompleted(progress.completedDays),
+      currentStreak,
+      speakingSessions: progress.speakingSessions,
+      exercisesCompleted: progress.exercisesCompleted,
+    };
+    const badges = scoring.evaluateBadges(stats);
+
+    tx.set('progress', req.user.id, progress);
+    tx.set('streaks', req.user.id, { currentStreak, longestStreak, updatedAt: todayKey });
+    tx.set('badges', req.user.id, { earned: badges });
+
+    return { progress, currentStreak, longestStreak, badges, alreadyDone };
+  });
+
+  const { progress, currentStreak, longestStreak, badges, alreadyDone } = outcome;
 
   const level = scoring.levelForXp(progress.totalXp);
   res.json({
@@ -139,23 +147,29 @@ router.post('/assessment/complete', async (req, res) => {
   const plan = plans ? scoring.pickPlanVariant(plans, profile) : null;
 
   const data = { userId: req.user.id, profile, plan, completedAt: new Date().toISOString() };
-  await store.setDoc('profiles', req.user.id, data);
-  if (plan) await store.setDoc('plans', req.user.id, { plan, assignedAt: new Date().toISOString() });
+  const ops = [{ collection: 'profiles', id: req.user.id, data }];
+  if (plan) ops.push({ collection: 'plans', id: req.user.id, data: { plan, assignedAt: new Date().toISOString() } });
+  await store.batchWrite(ops);
 
   res.json(data);
 });
 
 // GET /progress -> resumen de progreso del usuario
 router.get('/progress', async (req, res) => {
-  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
-  const streaks = (await store.getDoc('streaks', req.user.id)) || { currentStreak: 0, longestStreak: 0 };
-  const badges = (await store.getDoc('badges', req.user.id)) || { earned: [] };
-  const profile = await store.getDoc('profiles', req.user.id);
+  const [progressRaw, streaks, badges, profile] = await Promise.all([
+    store.getDoc('progress', req.user.id),
+    store.getDoc('streaks', req.user.id),
+    store.getDoc('badges', req.user.id),
+    store.getDoc('profiles', req.user.id),
+  ]);
+  const progress = normalizeProgress(progressRaw);
+  const streakDoc = streaks || { currentStreak: 0, longestStreak: 0 };
+  const badgeDoc = badges || { earned: [] };
 
   const stats = {
     daysCompleted: streak.daysCompleted(progress.completedDays),
-    currentStreak: streaks.currentStreak,
-    longestStreak: streaks.longestStreak,
+    currentStreak: streakDoc.currentStreak,
+    longestStreak: streakDoc.longestStreak,
     speakingSessions: progress.speakingSessions,
     exercisesCompleted: progress.exercisesCompleted,
   };
@@ -169,9 +183,9 @@ router.get('/progress', async (req, res) => {
     totalXp: progress.totalXp,
     level: level.label,
     levelProgress,
-    streaks,
+    streaks: streakDoc,
     streakFreezes: progress.streakFreezes || 0,
-    badges: badges.earned,
+    badges: badgeDoc.earned,
     allBadges: scoring.BADGES,
     profile: profile ? profile.profile : null,
   });

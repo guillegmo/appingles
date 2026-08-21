@@ -9,6 +9,7 @@ const XP = {
   speakingSession: 10,
   challengeComplete: 15,
   streakBonus: 5,
+  reviewCorrect: 10,
 };
 
 // ---------- Niveles (competencias, no etiquetas) ----------

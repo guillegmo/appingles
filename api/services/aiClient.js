@@ -4,15 +4,16 @@
 // poder desarrollar/testear sin gastar tokens. En producción exige la key.
 
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 
 // Precios estimados por millón de tokens (USD), por modelo. Ajustar en V4.
 const PRICING = {
-  'llama-3.3-70b-versatile': { input: 0.59, output: 0.79 },
-  'llama-3.1-8b-instant': { input: 0.05, output: 0.08 },
+  'openai/gpt-oss-20b': { input: 0.19, output: 0.69 },
+  'openai/gpt-oss-120b': { input: 0.4, output: 1.4 },
+  'qwen/qwen3.6-27b': { input: 0.2, output: 0.75 },
 };
-const PRICE = PRICING[GROQ_MODEL] || PRICING['llama-3.3-70b-versatile'];
+const PRICE = PRICING[GROQ_MODEL] || PRICING['openai/gpt-oss-20b'];
 
 function estimateCost(usage) {
   if (!usage) return 0;
@@ -98,6 +99,12 @@ async function chat(messages, { temperature = 0.7, maxTokens = 400 } = {}) {
 
   if (!res.ok) {
     const body = await res.text().catch(() => '');
+    // Modelo desactualizado/removido por Groq (404 model_not_found): en lugar de
+    // romper el tutor, volvemos al mock de desarrollo y avisamos en consola.
+    if (res.status === 404 && /model_not_found/.test(body)) {
+      console.warn(`[aiClient] El modelo "${GROQ_MODEL}" no está disponible en Groq (model_not_found). Usando mock de desarrollo.`);
+      return mockChat(messages);
+    }
     throw new Error(`Groq error ${res.status}: ${body.slice(0, 200)}`);
   }
 

@@ -39,7 +39,10 @@
     { "en": "I will call you tomorrow.", "es": "Te llamaré mañana." },
     { "en": "What are you going to do this weekend?", "es": "¿Qué vas a hacer este fin de semana?" },
     { "en": "Maybe I will stay home.", "es": "Quizás me quede en casa." },
-    { "en": "We are going to start soon.", "es": "Vamos a empezar pronto." }
+    { "en": "We are going to start soon.", "es": "Vamos a empezar pronto." },
+    { "en": "I am going to study tomorrow.", "es": "Voy a estudiar mañana." },
+    { "en": "What is your plan for the weekend?", "es": "¿Cuál es tu plan para el fin de semana?" },
+    { "en": "I will see you next week.", "es": "Te veré la próxima semana." }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “maybe”?", "options": ["quizás", "pronto", "plan", "mañana"], "answer": 0 },

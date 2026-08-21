@@ -77,6 +77,14 @@
     {
       "en": "I am a student.",
       "es": "Soy estudiante."
+    },
+    {
+      "en": "Good morning, how are you?",
+      "es": "Buenos días, ¿cómo estás?"
+    },
+    {
+      "en": "I am fine, thanks.",
+      "es": "Estoy bien, gracias."
     }
   ],
   "exercises": [

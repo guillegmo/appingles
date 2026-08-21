@@ -39,7 +39,10 @@
     { "en": "My goal is to improve my English.", "es": "Mi meta es mejorar mi inglés." },
     { "en": "I work in customer service.", "es": "Trabajo en atención al cliente." },
     { "en": "In the future, I want to travel.", "es": "En el futuro, quiero viajar." },
-    { "en": "I enjoy working with my team.", "es": "Disfruto trabajar con mi equipo." }
+    { "en": "I enjoy working with my team.", "es": "Disfruto trabajar con mi equipo." },
+    { "en": "I have plans for the weekend.", "es": "Tengo planes para el fin de semana." },
+    { "en": "I am improving my English skills.", "es": "Estoy mejorando mis habilidades de inglés." },
+    { "en": "I work for a big company.", "es": "Trabajo para una empresa grande." }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “goal”?", "options": ["meta", "trabajo", "habilidad", "equipo"], "answer": 0 },

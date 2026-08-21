@@ -5,6 +5,7 @@
 const store = require('../lib/store');
 const entitlement = require('./entitlement');
 const analytics = require('./analytics');
+const { invalidateSubscriptionCache } = require('../middleware/auth');
 
 // Estados válidos según spec.
 const STATUSES = ['free', 'trialing', 'active', 'past_due', 'canceled', 'expired'];
@@ -80,6 +81,7 @@ async function applyPaymentEvent({ userId, email, mapped }, { providerEventId } 
   }
 
   await store.setDoc('subscriptions', userId, next);
+  invalidateSubscriptionCache(userId);
 
   const idToSave = mapped.providerEventId || providerEventId;
   if (idToSave) {
@@ -117,18 +119,23 @@ async function activateTrial(userId, { plan = 'premium', trialDays = 7 } = {}) {
     updatedAt: now.toISOString(),
   };
   await store.setDoc('subscriptions', userId, subscription);
+  invalidateSubscriptionCache(userId);
   await analytics.trackEvent({ userId, event: 'trial_started', meta: { plan, trialDays } });
   return subscription;
 }
 
 // Expira suscripciones vencidas (trial) — lazy-check al leer status y opcional cron.
+// Query filtrada por status='trialing': effectiveStatus solo puede degradar
+// trials, así que el resto de documentos nunca cambia (antes se leían TODAS
+// las suscripciones de todos los usuarios).
 async function expireTrials(now = new Date()) {
-  const subs = await store.listDocs('subscriptions');
+  const subs = await store.queryDocs('subscriptions', { filters: [{ field: 'status', op: '==', value: 'trialing' }] });
   let expired = 0;
   for (const s of subs) {
     const status = effectiveStatus(s);
     if (status !== s.status) {
       await store.updateDoc('subscriptions', s.id, { status: 'expired', updatedAt: now.toISOString() });
+      invalidateSubscriptionCache(s.id);
       expired++;
     }
   }

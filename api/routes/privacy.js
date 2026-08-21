@@ -41,9 +41,22 @@ function docBelongsToUser(docId, userId) {
 
 async function allDocsOfUser(userId) {
   const out = {};
+  const prefixStart = userId;
+  const prefixEnd = userId + '\uffff';
   for (const coll of USER_COLLECTIONS) {
-    const docs = (await store.listDocs(coll)).filter((d) => docBelongsToUser(d.id, userId));
-    if (docs.length) out[coll] = docs;
+    try {
+      const docs = await store.queryDocs(coll, {
+        filters: [
+          { field: '__name__', op: '>=', value: prefixStart },
+          { field: '__name__', op: '<', value: prefixEnd },
+        ],
+      });
+      if (docs.length) out[coll] = docs;
+    } catch (e) {
+      // fallback to old method for safety
+      const docs = (await store.listDocs(coll)).filter((d) => docBelongsToUser(d.id, userId));
+      if (docs.length) out[coll] = docs;
+    }
   }
   return out;
 }
@@ -60,11 +73,26 @@ router.get('/data/export', async (req, res) => {
 
 // DELETE /privacy/data -> elimina todos los datos del usuario (GDPR "derecho al olvido")
 router.delete('/data', async (req, res) => {
+  const prefixStart = req.user.id;
+  const prefixEnd = req.user.id + '\uffff';
   for (const coll of USER_COLLECTIONS) {
-    const docs = await store.listDocs(coll);
-    for (const d of docs) {
-      if (docBelongsToUser(d.id, req.user.id)) {
+    try {
+      const docs = await store.queryDocs(coll, {
+        filters: [
+          { field: '__name__', op: '>=', value: prefixStart },
+          { field: '__name__', op: '<', value: prefixEnd },
+        ],
+      });
+      for (const d of docs) {
         await store.deleteDoc(coll, d.id);
+      }
+    } catch (e) {
+      // fallback
+      const docs = await store.listDocs(coll);
+      for (const d of docs) {
+        if (docBelongsToUser(d.id, req.user.id)) {
+          await store.deleteDoc(coll, d.id);
+        }
       }
     }
   }

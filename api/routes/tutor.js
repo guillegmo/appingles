@@ -78,31 +78,31 @@ async function handleMessage(req, res, modeId) {
   }
 
   const ent = entitlementsOf(req);
-  const used = await aiUsage.usedToday(req.user.id, MODE_PARAM);
-  if (used >= ent.aiMessagesPerDay) {
-    return res.status(429).json({ error: 'ai_limit_reached', message: 'Alcanzaste tu límite diario de mensajes IA.', used, limit: ent.aiMessagesPerDay });
+
+  // Reserva atómica del mensaje ANTES de cualquier otra lectura: si el límite
+  // diario ya se alcanzó, respondemos 429 con UNA sola lectura (check+incremento
+  // dentro de la transacción), sin leer historial ni perfil. Peticiones
+  // simultáneas no pueden exceder aiMessagesPerDay.
+  const reservation = await aiUsage.reserve(req.user.id, MODE_PARAM, ent.aiMessagesPerDay);
+  if (!reservation.ok) {
+    return res.status(429).json({ error: 'ai_limit_reached', message: 'Alcanzaste tu límite diario de mensajes IA.', used: reservation.used, limit: ent.aiMessagesPerDay });
   }
 
-  const history = await getConversation(req.user.id, modeId);
-  const context = await userContext(req.user.id);
+  // Historial y contexto en paralelo (1 round trip).
+  const [history, context] = await Promise.all([
+    getConversation(req.user.id, modeId),
+    userContext(req.user.id),
+  ]);
   const modelMessages = buildModelMessages(modeId, history, message.trim(), context);
 
-  // Reserva el mensaje ANTES de llamar a la IA (el check anterior queda pegado al
-  // incremento, sin la carrera de check-then-act con la llamada lenta de red).
   // Si la IA falla, se revierte la reserva para no penalizar al usuario.
-  await aiUsage.addUsage(req.user.id, MODE_PARAM, { count: 1 });
   let result;
   try {
     result = await aiClient.chat(modelMessages);
   } catch (err) {
-    await aiUsage.addUsage(req.user.id, MODE_PARAM, { count: -1 }).catch(() => {});
+    await aiUsage.release(req.user.id, MODE_PARAM).catch(() => {});
     throw err;
   }
-
-  await aiUsage.addUsage(req.user.id, MODE_PARAM, {
-    tokens: result.usage?.total_tokens || 0,
-    estimatedCost: aiClient.estimateCost(result.usage),
-  });
 
   const now = new Date().toISOString();
   const nextHistory = [
@@ -110,12 +110,21 @@ async function handleMessage(req, res, modeId) {
     { role: 'user', content: message.trim(), at: now },
     { role: 'assistant', content: result.content, at: now },
   ];
-  await saveConversation(req.user.id, modeId, nextHistory);
+
+  // Tokens/coste reales (incremento atómico sin lectura) + guardado del
+  // historial, en paralelo (independientes entre sí).
+  await Promise.all([
+    aiUsage.addTokens(req.user.id, MODE_PARAM, {
+      tokens: result.usage?.total_tokens || 0,
+      estimatedCost: aiClient.estimateCost(result.usage),
+    }),
+    saveConversation(req.user.id, modeId, nextHistory),
+  ]);
 
   res.json({
     reply: result.content,
     mode: modeId,
-    used: used + 1,
+    used: reservation.used,
     limit: ent.aiMessagesPerDay,
     mock: result.mock,
   });

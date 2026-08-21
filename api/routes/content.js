@@ -15,9 +15,10 @@ const { authenticate } = require('../middleware/auth');
 router.use(authenticate);
 
 // Lecciones IA publicadas (colección contentDrafts, status published).
+// Query filtrada en el store: no se leen los borradores ni documentos de
+// otras colecciones (antes: listDocs completo + filtro en Node).
 async function publishedAiLessons() {
-  const all = await store.listDocs('contentDrafts');
-  return all.filter((d) => d.status === 'published');
+  return store.queryDocs('contentDrafts', { filters: [{ field: 'status', op: '==', value: 'published' }] });
 }
 
 function summarize(l) {

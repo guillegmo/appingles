@@ -39,7 +39,11 @@
     { "en": "My phone doesn't work.", "es": "Mi teléfono no funciona." },
     { "en": "Can you help me with this?", "es": "¿Puedes ayudarme con esto?" },
     { "en": "There is a problem with the internet.", "es": "Hay un problema con el internet." },
-    { "en": "Please, wait a moment.", "es": "Por favor, espera un momento." }
+    { "en": "Please, wait a moment.", "es": "Por favor, espera un momento." },
+    { "en": "It doesn't work.", "es": "No funciona." },
+    { "en": "My computer is broken.", "es": "Mi computadora está rota." },
+    { "en": "Call me in an emergency.", "es": "Llámame en una emergencia." },
+    { "en": "I lost my phone.", "es": "Perdí mi teléfono." }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “broken”?", "options": ["roto", "perdido", "abierto", "pesado"], "answer": 0 },

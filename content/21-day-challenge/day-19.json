@@ -39,7 +39,10 @@
     { "en": "In my opinion, English is useful.", "es": "En mi opinión, el inglés es útil." },
     { "en": "What do you think about it?", "es": "¿Qué opinas al respecto?" },
     { "en": "I agree with you.", "es": "Estoy de acuerdo contigo." },
-    { "en": "In my experience, practice helps.", "es": "En mi experiencia, la práctica ayuda." }
+    { "en": "In my experience, practice helps.", "es": "En mi experiencia, la práctica ayuda." },
+    { "en": "I disagree with you.", "es": "No estoy de acuerdo contigo." },
+    { "en": "Maybe you are right.", "es": "Quizás tengas razón." },
+    { "en": "That is a good point.", "es": "Ese es un buen punto." }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “I agree”?", "options": ["Estoy de acuerdo", "No estoy de acuerdo", "Creo que", "Opino"], "answer": 0 },

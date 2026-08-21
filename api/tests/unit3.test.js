@@ -45,18 +45,48 @@ test('AI client: estimateCost con usage vacío es 0', () => {
   assert.equal(aiClient.estimateCost({}), 0);
 });
 
-test('AI usage: incremento y lectura diaria', async () => {
-  const originalGetDoc = aiUsage.store.getDoc;
-  const originalSetDoc = aiUsage.store.setDoc;
-  let calls = {};
-  aiUsage.store.getDoc = async (c, id) => calls[id] || null;
-  aiUsage.store.setDoc = async (c, id, data) => { calls[id] = data; return data; };
+test('AI usage: incremento atómico y lectura diaria (store real, doc temporal)', async () => {
+  const U = 'unit3-usage';
+  const { id } = (() => {
+    const date = new Date().toISOString().slice(0, 10);
+    return { id: `${U}_${date}` };
+  })();
 
-  assert.equal(await aiUsage.usedToday('u1'), 0);
-  await aiUsage.incrementUsage('u1', 'tutor', { tokens: 100, estimatedCost: 0.001 });
-  await aiUsage.incrementUsage('u1', 'tutor', { tokens: 50 });
-  assert.equal(await aiUsage.usedToday('u1'), 2);
+  await aiUsage.store.deleteDoc('aiUsage', id);
+  try {
+    assert.equal(await aiUsage.usedToday(U), 0);
+    await aiUsage.incrementUsage(U, 'tutor', { tokens: 100, estimatedCost: 0.001 });
+    await aiUsage.incrementUsage(U, 'tutor', { tokens: 50 });
+    assert.equal(await aiUsage.usedToday(U), 2);
 
-  aiUsage.store.getDoc = originalGetDoc;
-  aiUsage.store.setDoc = originalSetDoc;
+    const doc = await aiUsage.store.getDoc('aiUsage', id);
+    assert.equal(doc.tutor.tokens, 150);
+    assert.equal(doc.userId, U);
+  } finally {
+    await aiUsage.store.deleteDoc('aiUsage', id);
+  }
+});
+
+test('AI usage: reserve aplica el límite diario de forma atómica', async () => {
+  const U = 'unit3-reserve';
+  const date = new Date().toISOString().slice(0, 10);
+  const id = `${U}_${date}`;
+  await aiUsage.store.deleteDoc('aiUsage', id);
+  try {
+    const results = await Promise.all(
+      Array.from({ length: 10 }, () => aiUsage.reserve(U, 'tutor', 3)),
+    );
+    const ok = results.filter((r) => r.ok).length;
+    assert.equal(ok, 3);
+    assert.equal(await aiUsage.usedToday(U), 3);
+
+    // Liberar una reserva devuelve el cupo
+    await aiUsage.release(U, 'tutor');
+    assert.equal(await aiUsage.usedToday(U), 2);
+    const again = await aiUsage.reserve(U, 'tutor', 3);
+    assert.equal(again.ok, true);
+    assert.equal(again.used, 3);
+  } finally {
+    await aiUsage.store.deleteDoc('aiUsage', id);
+  }
 });

@@ -23,7 +23,11 @@
     { "en": "I am from Mexico.", "es": "Soy de México." },
     { "en": "I usually wake up at 7:00.", "es": "Usualmente me despierto a las 7:00." },
     { "en": "I like listening to music.", "es": "Me gusta escuchar música." },
-    { "en": "Where do you live?", "es": "¿Dónde vives?" }
+    { "en": "Where do you live?", "es": "¿Dónde vives?" },
+    { "en": "What is your age?", "es": "¿Cuál es tu edad?" },
+    { "en": "Are you married?", "es": "¿Estás casado(a)?" },
+    { "en": "What do you do?", "es": "¿A qué te dedicas?" },
+    { "en": "My hobby is reading.", "es": "Mi pasatiempo es leer." }
   ],
   "review": {
     "title": "Mini-examen de la semana 1",

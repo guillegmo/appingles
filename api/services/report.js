@@ -19,11 +19,14 @@ function dateKey(offset, base = new Date()) {
 // Reporte de los últimos 7 días (incluye hoy).
 async function weeklyReport(userId, today = new Date(), deps = {}) {
   const s = deps.store || store;
-  const progress = (await s.getDoc('progress', userId)) || {};
-  const profileDoc = await s.getDoc('profiles', userId);
+  const [progressRaw, profileDoc, attempts] = await Promise.all([
+    s.getDoc('progress', userId),
+    s.getDoc('profiles', userId),
+    s.queryDocs('exerciseAttempts', { filters: [{ field: 'userId', op: '==', value: userId }] }),
+  ]);
+  const progress = progressRaw || {};
   const profile = profileDoc?.profile || null;
   const practiceDays = progress.practiceDays || [];
-  const attempts = (await s.listDocs('exerciseAttempts')).filter((a) => a.userId === userId);
 
   const weekStart = dateKey(-6, today);
   const weekKeys = new Set(Array.from({ length: 7 }, (_, i) => dateKey(i - 6, today)));
@@ -63,3 +66,4 @@ async function weeklyReport(userId, today = new Date(), deps = {}) {
 }
 
 module.exports = { weeklyReport, MINUTES_PER_PRACTICE_DAY, MINUTES_PER_SPEAKING_SESSION, VOCAB_PER_DAY, WEEKLY_GOAL_DAYS };
+

@@ -20,6 +20,7 @@ router.get('/today', async (req, res) => {
   const champion = progress.completedDays.includes(21);
   if (!champion) return res.status(403).json({ error: 'post21_required', message: 'Completa el reto de 21 días para desbloquear Daily Practice.' });
 
+  // Solo los campeones pagan la segunda lectura (no champions = 403 con 1 lectura).
   const profileDoc = await store.getDoc('profiles', req.user.id);
   const curriculum = content.getPost21('curriculum');
 
@@ -37,25 +38,40 @@ router.get('/today', async (req, res) => {
 });
 
 // POST /practice/complete -> marcar práctica diaria completada (+XP)
+// Transaccional: completados simultáneos no duplican XP ni pierden el mapa
+// dailyPractice (read->modify->write atómico).
 router.post('/complete', async (req, res) => {
-  const progress = normalizeProgress(await store.getDoc('progress', req.user.id));
-  if (!progress.completedDays.includes(21)) return res.status(403).json({ error: 'post21_required' });
-
   const todayKey = new Date().toISOString().slice(0, 10);
-  const alreadyDone = Boolean(progress.dailyPractice?.[todayKey]);
 
-  if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);
-  if (!alreadyDone) progress.totalXp += scoring.XP.challengeComplete;
+  const result = await store.runTransaction(async (tx) => {
+    const progress = normalizeProgress(await tx.get('progress', req.user.id));
+    if (!progress.completedDays.includes(21)) {
+      return { forbidden: true };
+    }
 
-  progress.dailyPractice = progress.dailyPractice || {};
-  progress.dailyPractice[todayKey] = {
-    topic: req.body?.topic || 'Conversación diaria',
-    xp: alreadyDone ? 0 : scoring.XP.challengeComplete,
-    completedAt: new Date().toISOString(),
-  };
+    const alreadyDone = Boolean(progress.dailyPractice?.[todayKey]);
+    if (!progress.practiceDays.includes(todayKey)) progress.practiceDays.push(todayKey);
+    if (!alreadyDone) progress.totalXp += scoring.XP.challengeComplete;
 
-  await store.setDoc('progress', req.user.id, progress);
-  res.json({ done: true, xpEarned: alreadyDone ? 0 : scoring.XP.challengeComplete, totalXp: progress.totalXp, date: todayKey });
+    progress.dailyPractice = progress.dailyPractice || {};
+    progress.dailyPractice[todayKey] = {
+      topic: req.body?.topic || 'Conversación diaria',
+      xp: alreadyDone ? 0 : scoring.XP.challengeComplete,
+      completedAt: new Date().toISOString(),
+    };
+    tx.set('progress', req.user.id, progress);
+
+    return {
+      forbidden: false,
+      done: true,
+      xpEarned: alreadyDone ? 0 : scoring.XP.challengeComplete,
+      totalXp: progress.totalXp,
+      date: todayKey,
+    };
+  });
+
+  if (result.forbidden) return res.status(403).json({ error: 'post21_required' });
+  res.json(result);
 });
 
 module.exports = router;

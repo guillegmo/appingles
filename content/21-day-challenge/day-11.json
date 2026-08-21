@@ -39,7 +39,10 @@
     { "en": "Where is the check-in counter?", "es": "¿Dónde está el mostrador de registro?" },
     { "en": "I need to go to the airport.", "es": "Necesito ir al aeropuerto." },
     { "en": "What time is my flight?", "es": "¿A qué hora es mi vuelo?" },
-    { "en": "My luggage is lost.", "es": "Perdí mi equipaje." }
+    { "en": "My luggage is lost.", "es": "Perdí mi equipaje." },
+    { "en": "The hotel is near the airport.", "es": "El hotel está cerca del aeropuerto." },
+    { "en": "Here is my boarding pass.", "es": "Aquí está mi pase de abordar." },
+    { "en": "I have my passport.", "es": "Tengo mi pasaporte." }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “boarding pass”?", "options": ["pase de abordar", "equipaje", "pasaporte", "vuelo"], "answer": 0 },

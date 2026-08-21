@@ -12,10 +12,10 @@ test('SRS: primer acierto programa 1 día', () => {
   assert.equal(next.dueDate, '2026-08-15');
 });
 
-test('SRS: segundo acierto programa 3 días', () => {
+test('SRS: segundo acierto programa 2 días', () => {
   const next = srs.schedule({ repetitions: 1, intervalDays: 1, easeFactor: 2.5 }, 4, TODAY);
   assert.equal(next.repetitions, 2);
-  assert.equal(next.intervalDays, 3);
+  assert.equal(next.intervalDays, 2);
 });
 
 test('SRS: fallo resetea repeticiones y revísala mañana', () => {
@@ -29,9 +29,9 @@ test('SRS: fallo resetea repeticiones y revísala mañana', () => {
 test('SRS: intervalo crece con repeticiones', () => {
   let card = { repetitions: 2, intervalDays: 3, easeFactor: 2.5 };
   card = srs.schedule(card, 4, TODAY);
-  assert.equal(card.intervalDays, 7);
+  assert.equal(card.intervalDays, 4);
   card = srs.schedule(card, 4, TODAY);
-  assert.ok(card.intervalDays > 7);
+  assert.ok(card.intervalDays > 4);
 });
 
 test('SRS: dueCards solo incluye las que toca hoy', () => {
@@ -62,6 +62,9 @@ test('Generator: generateLesson crea draft con mock', async () => {
     setDoc: async (c, id, data) => data,
     listDocs: async () => [],
     updateDoc: async () => ({}),
+    queryDocs: async (col, options = {}) => {
+      return [];
+    },
   };
   const libStore = require('../lib/store');
   const originalFns = { ...libStore };

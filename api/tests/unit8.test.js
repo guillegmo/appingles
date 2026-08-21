@@ -17,6 +17,38 @@ function fakeStore() {
     async listDocs(col) {
       return Object.values(cols[col] || {});
     },
+    async queryDocs(col, options = {}) {
+      const { filters = [], orderBy = null, limit = null } = options;
+      let docs = Object.values(cols[col] || {});
+      // apply filters
+      if (filters.length > 0) {
+        docs = docs.filter(doc => {
+          return filters.every(f => {
+            // For simplicity, we only support equality on string fields as used in the tests.
+            // In the real queryDocs, we have more operators, but the tests only use equality.
+            if (f.op === '==') return doc[f.field] == f.value;
+            // default to equality
+            return doc[f.field] == f.value;
+          });
+        });
+      }
+      // apply orderBy
+      if (orderBy) {
+        const direction = orderBy.direction || 'asc';
+        docs.sort((a, b) => {
+          const av = a[orderBy.field];
+          const bv = b[orderBy.field];
+          if (av < bv) return direction === 'asc' ? -1 : 1;
+          if (av > bv) return direction === 'asc' ? 1 : -1;
+          return 0;
+        });
+      }
+      // apply limit
+      if (limit !== null && limit !== undefined) {
+        docs = docs.slice(0, limit);
+      }
+      return docs;
+    },
   };
 }
 

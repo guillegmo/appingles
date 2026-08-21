@@ -11,11 +11,13 @@ const { authenticate } = require('../middleware/auth');
 
 router.use(authenticate);
 
-async function loadSeasonStats(userId, season) {
-  const progress = (await store.getDoc('progress', userId)) || {};
-  const attempts = (await store.listDocs('exerciseAttempts')).filter((a) => a.userId === userId);
-  const speaking = (await store.listDocs('speakingSessions')).filter((s) => s.userId === userId);
-  const reviews = (await store.listDocs('reviewResults')).filter((r) => r.userId === userId);
+async function loadSeasonStats(userId, season, progress) {
+  progress = progress || (await store.getDoc('progress', userId)) || {};
+  const [attempts, speaking, reviews] = await Promise.all([
+    store.queryDocs('exerciseAttempts', { filters: [{ field: 'userId', op: '==', value: userId }] }),
+    store.queryDocs('speakingSessions', { filters: [{ field: 'userId', op: '==', value: userId }] }),
+    store.queryDocs('reviewResults', { filters: [{ field: 'userId', op: '==', value: userId }] }),
+  ]);
   return {
     practiceDays: progress.practiceDays || [],
     exerciseAttempts: attempts,
@@ -39,7 +41,7 @@ router.get('/current', async (req, res) => {
   if (!seasonConfig?.season) return res.status(404).json({ error: 'no_season_config' });
 
   const season = seasons.currentSeason();
-  const stats = await loadSeasonStats(req.user.id, season);
+  const stats = await loadSeasonStats(req.user.id, season, progress);
   const claimed = await loadClaim(req.user.id, season.key);
   const state = await seasons.buildSeason({
     season,
@@ -66,7 +68,7 @@ router.post('/claim', async (req, res) => {
 
   const seasonConfig = content.getContinuous('seasons');
   const season = seasons.currentSeason();
-  const stats = await loadSeasonStats(req.user.id, season);
+  const stats = await loadSeasonStats(req.user.id, season, progress);
   const claimed = await loadClaim(req.user.id, season.key);
   if (claimed.total) return res.status(409).json({ error: 'already_claimed' });
 
@@ -79,13 +81,19 @@ router.post('/claim', async (req, res) => {
   if (state.reward <= 0) return res.status(400).json({ error: 'nothing_to_claim' });
 
   progress.totalXp = (progress.totalXp || 0) + state.reward;
-  await store.setDoc('progress', req.user.id, progress);
-  await store.setDoc('seasonClaims', `${req.user.id}_${season.key}`, {
-    userId: req.user.id,
-    seasonKey: season.key,
-    total: state.reward,
-    claimedAt: new Date().toISOString(),
-  });
+  await store.batchWrite([
+    { collection: 'progress', id: req.user.id, data: progress },
+    {
+      collection: 'seasonClaims',
+      id: `${req.user.id}_${season.key}`,
+      data: {
+        userId: req.user.id,
+        seasonKey: season.key,
+        total: state.reward,
+        claimedAt: new Date().toISOString(),
+      },
+    },
+  ]);
 
   res.json({ ok: true, xpEarned: state.reward, totalXp: progress.totalXp });
 });

@@ -23,7 +23,10 @@
     { "en": "How much is this shirt?", "es": "¿Cuánto cuesta esta camisa?" },
     { "en": "I would like a coffee, please.", "es": "Quisiera un café, por favor." },
     { "en": "I have a reservation.", "es": "Tengo una reservación." },
-    { "en": "Yesterday I went to the supermarket.", "es": "Ayer fui al supermercado." }
+    { "en": "Yesterday I went to the supermarket.", "es": "Ayer fui al supermercado." },
+    { "en": "Go straight for two blocks.", "es": "Sigue recto dos cuadras." },
+    { "en": "The bank is next to the park.", "es": "El banco está al lado del parque." },
+    { "en": "Can I have the bill, please?", "es": "¿Me trae la cuenta, por favor?" }
   ],
   "review": {
     "title": "Mini-examen de la semana 2",

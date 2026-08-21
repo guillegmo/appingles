@@ -39,7 +39,11 @@
     { "en": "Turn left at the corner.", "es": "Gira a la izquierda en la esquina." },
     { "en": "Go straight for two blocks.", "es": "Sigue recto dos cuadras." },
     { "en": "It is next to the supermarket.", "es": "Está al lado del supermercado." },
-    { "en": "Excuse me, how do I get to...?", "es": "Disculpe, ¿cómo llego a...?" }
+    { "en": "Excuse me, how do I get to...?", "es": "Disculpe, ¿cómo llego a...?" },
+    { "en": "Turn right at the bank.", "es": "Gira a la derecha en el banco." },
+    { "en": "The hotel is near the station.", "es": "El hotel está cerca de la estación." },
+    { "en": "It is not far from here.", "es": "No está lejos de aquí." },
+    { "en": "The bank is between the park and the school.", "es": "El banco está entre el parque y la escuela." }
   ],
   "exercises": [
     { "type": "mcq", "prompt": "¿Qué significa “go straight”?", "options": ["sigue recto", "gira a la izquierda", "gira a la derecha", "detente"], "answer": 0 },

@@ -70,6 +70,7 @@ export interface Entitlements {
   canUseVoice: boolean;
   canUseRoleplay: boolean;
   canAccessSmartReview: boolean;
+  canAccessSmartReviewFull: boolean; // nuevo: acceso total al repaso inteligente
   canAccessAdvancedStats: boolean;
   canGenerateLessons: boolean;
   canScorePronunciation: boolean;
@@ -225,24 +226,38 @@ export interface ReviewItem {
   word: string;
   es: string;
   attempts: number;
+  qualityHistory?: number[]; // historial opcional para el modo "mis fallas"
 }
 
 export interface SmartReview {
   items: ReviewItem[];
   total: number;
+  mode: 'due' | 'difficult' | 'pool'; // modo actual de visualización
+  filter: 'all' | 'dueToday' | 'difficult'; // filtro aplicado
 }
 
 export interface ReviewCard {
   id: string;
   key: string;
   day: number;
+  wordIndex: number; // índice dentro del vocabulary del día
   word: string;
   es: string;
   repetitions: number;
-  intervalDays: number;
+  qualityHistory: number[]; // últimos 5 quality (0-5)
   easeFactor: number;
   dueDate: string;
   lastResult: number | null;
+  dominant: boolean; // true después de 3 quality-5 consecutivas
+  example?: string | null;
+  exampleEs?: string | null;
+}
+
+export interface ReviewResult {
+  ok: boolean;
+  card: ReviewCard;
+  xpEarned: number;
+  totalXp: number;
 }
 
 export interface DueCards {

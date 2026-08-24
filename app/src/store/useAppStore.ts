@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { getChallenge, getProgress, getSubscriptionStatus, activatePremiumDev } from '../services/api';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { getChallenge, getProgress, getSubscriptionStatus, activatePremiumDev, clearApiCache } from '../services/api';
+import { clearFreshTab } from '../services/tabState';
 import type { ChallengeIndex, Entitlements, ProgressResponse, SubscriptionStatus } from '../types';
 
 interface AppState {
@@ -11,8 +12,8 @@ interface AppState {
   subscription: SubscriptionStatus['subscription'] | null;
   loading: boolean;
   error: string | null;
-  setError: (msg: string | null) => void;
   notice: string | null;
+  setError: (msg: string | null) => void;
   setNotice: (msg: string | null) => void;
 
   login: (id: string, name: string, token?: string) => void;
@@ -20,10 +21,23 @@ interface AppState {
   loadChallenge: () => Promise<void>;
   loadProgress: () => Promise<void>;
   loadSubscription: () => Promise<void>;
-  refreshAll: () => Promise<void>;
+  refreshAll: (force?: boolean) => Promise<void>;
   setEntitlements: (e: Entitlements) => void;
   upgradePremium: () => Promise<void>;
+  applyXp: (totalXp: number, completedDay?: number) => void;
+  applyDayComplete: (res: { dayCompleted: number; totalXp: number; currentStreak: number; longestStreak: number; streakFreezes: number; badges: string[] }) => void;
+  setSubscription: (subscription: SubscriptionStatus['subscription'], entitlements: Entitlements) => void;
 }
+
+// Evita lanzar refreshAll en paralelo (StrictMode en dev + varios callers en
+// ráfaga generan llamadas duplicadas al backend).
+let refreshInFlight = false;
+
+// Los datos del store se consideran frescos durante esta ventana: navegar entre
+// pantallas (Home -> Día -> Home) no re-dispara las 3 llamadas de refreshAll;
+// las mutaciones (XP, días completados) actualizan el store directamente.
+const FRESH_MS = 30_000;
+let lastRefreshAt = 0;
 
 export const useAppStore = create<AppState>()(
   persist(
@@ -41,17 +55,26 @@ export const useAppStore = create<AppState>()(
       setNotice: (msg) => set({ notice: msg }),
 
       login: (id, name, token) => {
-        localStorage.setItem('appingles_user', id);
-        if (token) localStorage.setItem('appingles_token', token);
-        set({ user: { id, name }, error: null });
+        sessionStorage.setItem('appingles_user', id);
+        if (token) sessionStorage.setItem('appingles_token', token);
+        clearApiCache();
+        // A partir de aquí hay una sesión real en ESTA pestaña: se levanta el
+        // bloqueo de "pestaña fresca" para que onAuthStateChanged pueda hacer
+        // el bootstrap normal (token + registerSession + refreshAll).
+        clearFreshTab();
+        lastRefreshAt = 0;
+        set({ user: { id, name }, error: null, challenge: null, progress: null, entitlements: null, subscription: null });
       },
 
       logout: () => {
         if (import.meta.env.VITE_AUTH_MODE === 'firebase') {
           import('../services/firebase').then(({ auth }) => auth.signOut().catch(() => {}));
         }
-        localStorage.removeItem('appingles_user');
-        localStorage.removeItem('appingles_token');
+        sessionStorage.removeItem('appingles_user');
+        sessionStorage.removeItem('appingles_token');
+        sessionStorage.removeItem('appingles-store');
+        clearApiCache();
+        lastRefreshAt = 0;
         set({ user: null, challenge: null, progress: null, entitlements: null, subscription: null, notice: null });
       },
 
@@ -85,10 +108,19 @@ export const useAppStore = create<AppState>()(
         }
       },
 
-      refreshAll: async () => {
-        const { user } = get();
+      refreshAll: async (force = false) => {
+        const { user, challenge, progress, subscription } = get();
         if (!user) return;
-        await Promise.all([get().loadChallenge(), get().loadProgress(), get().loadSubscription()]);
+        // Datos frescos: saltar el refetch (navegación entre pantallas).
+        if (!force && challenge && progress && subscription && Date.now() - lastRefreshAt < FRESH_MS) return;
+        if (refreshInFlight) return;
+        refreshInFlight = true;
+        try {
+          await Promise.all([get().loadChallenge(), get().loadProgress(), get().loadSubscription()]);
+          lastRefreshAt = Date.now();
+        } finally {
+          refreshInFlight = false;
+        }
       },
 
       setEntitlements: (e) => set({ entitlements: e }),
@@ -97,7 +129,65 @@ export const useAppStore = create<AppState>()(
         const res = await activatePremiumDev();
         set({ subscription: res.subscription, entitlements: res.entitlements });
       },
+
+      setSubscription: (subscription, entitlements) => set({ subscription, entitlements }),
+
+      applyXp: (totalXp, completedDay) => {
+        const { progress, challenge } = get();
+        const patch: Partial<AppState> = {};
+        if (progress && typeof totalXp === 'number') {
+          patch.progress = {
+            ...progress,
+            totalXp,
+            ...(completedDay
+              ? {
+                  completedDays: [...new Set([...(progress.completedDays ?? []), completedDay])],
+                  daysCompleted: progress.daysCompleted + (progress.completedDays?.includes(completedDay) ? 0 : 1),
+                }
+              : {}),
+          };
+        }
+        if (challenge && completedDay) {
+          patch.challenge = {
+            ...challenge,
+            days: challenge.days.map((d) => (d.day === completedDay ? { ...d, completed: true } : d)),
+          };
+        }
+        if (patch.progress || patch.challenge) set(patch);
+      },
+
+      applyDayComplete: (res) => {
+        const { progress, challenge } = get();
+        const patch: Partial<AppState> = {};
+        const already = progress?.completedDays?.includes(res.dayCompleted) ?? false;
+        if (progress) {
+          patch.progress = {
+            ...progress,
+            totalXp: res.totalXp,
+            daysCompleted: progress.daysCompleted + (already ? 0 : 1),
+            completedDays: [...new Set([...(progress.completedDays ?? []), res.dayCompleted])],
+            streakFreezes: res.streakFreezes ?? progress.streakFreezes,
+            streaks: {
+              ...(progress.streaks ?? { todayPracticed: false }),
+              currentStreak: res.currentStreak,
+              longestStreak: res.longestStreak,
+            },
+            badges: res.badges ?? progress.badges,
+          };
+        }
+        if (challenge) {
+          patch.challenge = {
+            ...challenge,
+            days: challenge.days.map((d) => (d.day === res.dayCompleted ? { ...d, completed: true } : d)),
+          };
+        }
+        if (patch.progress || patch.challenge) set(patch);
+      },
     }),
-    { name: 'appingles-store', partialize: (s) => ({ user: s.user }) },
+    {
+      name: 'appingles-store',
+      storage: createJSONStorage(() => sessionStorage),
+      partialize: (s) => ({ user: s.user }),
+    },
   ),
 );

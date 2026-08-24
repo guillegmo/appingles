@@ -34,7 +34,7 @@ const SKILL_LABELS: Record<string, string> = {
 
 export function DailyPracticePage() {
   const navigate = useNavigate();
-  const { refreshAll } = useAppStore();
+  const { applyXp } = useAppStore();
   const [data, setData] = useState<DailyPracticeToday | null>(null);
   const [activeBlock, setActiveBlock] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -43,18 +43,21 @@ export function DailyPracticePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
     (async () => {
       try {
-        const d = await getDailyPracticeToday();
+        const d = await getDailyPracticeToday(controller.signal);
         setData(d);
         setCompleted(d.mission.done);
         setActiveBlock(d.mission.done ? 3 : 0);
       } catch (e) {
-        setError((e as Error).message);
+        if ((e as { code?: string })?.code === 'ERR_CANCELED') return;
+        setError((e as any).response?.data?.message || (e as Error).message);
       } finally {
         setLoading(false);
       }
     })();
+    return () => controller.abort();
   }, []);
 
   if (loading) return <LoadingScreen label="Cargando práctica diaria…" />;
@@ -78,18 +81,21 @@ export function DailyPracticePage() {
   const Icon = block ? BLOCK_ICONS[block.block] ?? BookOpen : BookOpen;
 
   const finishBlock = async (isSpeaking = false) => {
-    if (isSpeaking) await recordSpeaking(21);
+    if (isSpeaking) {
+      const res = await recordSpeaking(21);
+      applyXp(res.totalXp);
+    }
     setActiveBlock((a) => a + 1);
   };
 
   const completeAll = async () => {
     setSaving(true);
     try {
-      await completeDailyPractice(mission.topic);
+      const res = await completeDailyPractice(mission.topic);
       setCompleted(true);
-      await refreshAll();
+      applyXp(res.totalXp);
     } catch (e) {
-      setError((e as Error).message);
+      setError((e as any).response?.data?.message || (e as Error).message);
     } finally {
       setSaving(false);
     }

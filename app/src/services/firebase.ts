@@ -1,13 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  updateProfile,
-  type User,
-} from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, type User } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -27,21 +19,10 @@ export async function signInEmail(email: string, password: string): Promise<User
   return cred.user;
 }
 
-export async function signUpEmail(email: string, password: string, name: string): Promise<User> {
-  const cred = await createUserWithEmailAndPassword(auth, email, password);
-  if (name) await updateProfile(cred.user, { displayName: name }).catch(() => {});
-  return cred.user;
-}
-
-export async function signInGoogle(): Promise<User> {
-  const cred = await signInWithPopup(auth, new GoogleAuthProvider());
-  return cred.user;
-}
-
-export async function getToken(): Promise<string | null> {
+export async function getToken(forceRefresh = false): Promise<string | null> {
   const user = auth.currentUser;
   if (!user) return null;
-  return user.getIdToken();
+  return user.getIdToken(forceRefresh);
 }
 
 export default app;

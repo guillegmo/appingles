@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CalendarDays, Gift, Lock, Trophy } from 'lucide-react';
 import { getCurrentSeason, claimSeasonReward } from '../services/api';
+import { useAppStore } from '../store/useAppStore';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
@@ -19,12 +20,13 @@ export function SeasonsPage() {
   const [claiming, setClaiming] = useState(false);
   const [claimedXp, setClaimedXp] = useState<number | null>(null);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal?: AbortSignal) => {
     try {
-      const res = await getCurrentSeason();
+      const res = await getCurrentSeason(signal);
       setSeason(res);
       setLocked(null);
     } catch (e) {
+      if ((e as { code?: string })?.code === 'ERR_CANCELED') return;
       const m = (e as Error).message;
       if (m.includes('post21_required')) setLocked(m);
       else setError(m);
@@ -32,7 +34,9 @@ export function SeasonsPage() {
   }, []);
 
   useEffect(() => {
-    load();
+    const controller = new AbortController();
+    load(controller.signal);
+    return () => controller.abort();
   }, [load]);
 
   if (locked) {
@@ -53,6 +57,7 @@ export function SeasonsPage() {
     setClaiming(true);
     try {
       const r = await claimSeasonReward();
+      useAppStore.getState().applyXp(r.totalXp);
       setClaimedXp(r.xpEarned);
       await load();
     } catch (e) {

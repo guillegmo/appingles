@@ -2,8 +2,10 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, getToken } from './services/firebase';
-import { registerSession, getChallenge } from './services/api';
+import { registerSession, validateSession, getSessionId } from './services/api';
 import { isKicked, setKicked } from './services/sessionGuard';
+import { isFreshTab } from './services/tabState';
+import { authLog } from './services/authLog';
 import { useAppStore } from './store/useAppStore';
 import { LoadingScreen } from './components/ui/Spinner';
 import { MainLayout } from './components/layout/MainLayout';
@@ -11,6 +13,7 @@ import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { HomePage } from './pages/HomePage';
 import { PracticePage } from './pages/PracticePage';
+import { QuickPracticePage } from './pages/QuickPracticePage';
 import { DayViewPage } from './pages/DayViewPage';
 import { DailyPracticePage } from './pages/DailyPracticePage';
 import { Post21Page } from './pages/Post21Page';
@@ -28,6 +31,12 @@ import { StatsPage } from './pages/StatsPage';
 import { AdminPage } from './pages/AdminPage';
 import { SeasonsPage } from './pages/SeasonsPage';
 import { PrivacyPage } from './pages/PrivacyPage';
+import { MemoryMenuPage } from './pages/MemoryMenuPage';
+import { MemoryGamePage } from './pages/MemoryGamePage';
+import { ActivatePage } from './pages/ActivatePage';
+import { ResendActivationPage } from './pages/ResendActivationPage';
+import { NoAccessPage } from './pages/NoAccessPage';
+import { hasProductAccess } from './utils/access';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const user = useAppStore((s) => s.user);
@@ -36,25 +45,84 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+// Autorización de acceso al producto: estar autenticado NO basta. Solo entra
+// quien tenga compra vigente (Reto de Inglés en 21 Días o Premium IA). La
+// fuente de verdad es subscriptions/{uid} leída por refreshAll.
+function AccessGate({ children }: { children: React.ReactNode }) {
+  const subscription = useAppStore((s) => s.subscription);
+  const error = useAppStore((s) => s.error);
+  const refreshAll = useAppStore((s) => s.refreshAll);
+  if (!subscription) {
+    if (error) {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center gap-3 p-8">
+          <p className="text-sm text-slate-600">No pudimos verificar tu acceso: {error}</p>
+          <button
+            onClick={() => refreshAll(true)}
+            className="rounded-xl bg-primary-600 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-primary-700"
+          >
+            Reintentar
+          </button>
+        </div>
+      );
+    }
+    return <LoadingScreen label="Verificando tu acceso…" />;
+  }
+  if (!hasProductAccess(subscription)) return <Navigate to="/sin-acceso" replace />;
+  return <>{children}</>;
+}
+
 function OnboardingGate({ children }: { children: React.ReactNode }) {
   const user = useAppStore((s) => s.user);
   const challenge = useAppStore((s) => s.challenge);
   const progress = useAppStore((s) => s.progress);
+  const error = useAppStore((s) => s.error);
+  const refreshAll = useAppStore((s) => s.refreshAll);
   const hasSeen = localStorage.getItem('appingles_onboarded');
   const onboardingCompleted =
     challenge?.onboardingCompleted ||
     (progress && (progress.daysCompleted > 0 || progress.totalXp > 0)) ||
     !!hasSeen;
-  if (user && !challenge && !progress) return <LoadingScreen label="Cargando tu progreso…" />;
+  if (user && !challenge && !progress) {
+    if (error) {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center gap-3 p-8">
+          <p className="text-sm text-slate-600">No pudimos cargar tu progreso: {error}</p>
+          <button
+            onClick={() => refreshAll()}
+            className="rounded-xl bg-primary-600 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-primary-700"
+          >
+            Reintentar
+          </button>
+        </div>
+      );
+    }
+    return <LoadingScreen label="Cargando tu progreso…" />;
+  }
   if (user && !onboardingCompleted) return <Navigate to="/onboarding" replace />;
   return <>{children}</>;
 }
+
+// Pestaña/navegador nuevo: sessionStorage es por-pestaña, así que su ausencia
+// indica un arranque fresco. Se limpia la sesión local para partir siempre del
+// login y nunca restaurar la última vista (aunque sea el mismo navegador).
+// La lógica vive en services/tabState.ts (flag mutable); aquí solo se consume.
 
 export default function App() {
   const user = useAppStore((s) => s.user);
   const login = useAppStore((s) => s.login);
   const logout = useAppStore((s) => s.logout);
   const setError = useAppStore((s) => s.setError);
+
+  useEffect(() => {
+    if (!isFreshTab()) return;
+    // Arranque fresco: se resetea también el store en memoria y la sesión de
+    // Firebase para que ninguna pestaña nueva entre con la sesión anterior.
+    logout();
+    if (import.meta.env.VITE_AUTH_MODE === 'firebase') {
+      import('./services/firebase').then(({ auth }) => auth.signOut().catch(() => {}));
+    }
+  }, [logout]);
 
   useEffect(() => {
     const onSessionExpired = () => {
@@ -70,32 +138,65 @@ export default function App() {
     const AUTH_MODE = import.meta.env.VITE_AUTH_MODE || 'dev';
     if (AUTH_MODE === 'dev') {
       if (user) useAppStore.getState().refreshAll();
-      return;
+      // Sesión única: al volver a esta pestaña, validamos la sesión. Si otra
+      // pestaña tomó el control, la petición devuelve SESSION_EXPIRED y el
+      // interceptor expulsa esta pestaña automáticamente (aunque esté inactiva).
+      // validateSession es más ligera que getChallenge (el backend solo lee el
+      // doc de sesión; getChallenge leía progreso en cada foco de pestaña).
+      const onVisible = () => {
+        if (document.visibilityState === 'visible' && useAppStore.getState().user) {
+          validateSession().catch(() => {});
+        }
+      };
+      document.addEventListener('visibilitychange', onVisible);
+      return () => document.removeEventListener('visibilitychange', onVisible);
     }
 
-    // Sesión única: al volver a esta pestaña, validamos la sesión. Si otro
-    // dispositivo tomó el control, la petición devuelve SESSION_EXPIRED y el
-    // interceptor expulsa el dispositivo automáticamente (aunque esté inactivo).
     const onVisible = () => {
       if (document.visibilityState === 'visible' && useAppStore.getState().user) {
-        getChallenge().catch(() => {});
+        validateSession().catch(() => {});
       }
     };
     document.addEventListener('visibilitychange', onVisible);
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
+      if (fbUser && isFreshTab()) {
+        // Pestaña nueva: no se restaura la sesión anterior; se espera que el
+        // signOut del arranque la cierre y el usuario parta del login. En cuanto
+        // el usuario inicia sesión manualmente, login() limpia este flag y el
+        // handler vuelve a operar con normalidad.
+        return;
+      }
       if (fbUser) {
         if (isKicked()) return;
+        authLog('AUTH_STATE_READY');
         const token = await getToken();
-        if (token) localStorage.setItem('appingles_token', token);
-        if (!localStorage.getItem('appingles_user')) {
-          localStorage.setItem('appingles_user', fbUser.uid);
+        authLog('TOKEN_READY', { hasToken: !!token });
+        // Sesión única: al restaurar una sesión automática (recarga, etc.) solo
+        // se reentra si esta pestaña sigue siendo la sesión activa. Si otra
+        // tomó el control, no se reclama (evita el ping-pong entre pestañas).
+        let activeSessionId: string | null = null;
+        try {
+          ({ activeSessionId } = await validateSession());
+        } catch {}
+        if (activeSessionId && activeSessionId !== getSessionId()) {
+          setKicked(true);
+          logout();
+          setError('Tu sesión se cerró porque iniciaste sesión en otro dispositivo.');
+          return;
+        }
+        if (token) sessionStorage.setItem('appingles_token', token);
+        if (!sessionStorage.getItem('appingles_user')) {
+          sessionStorage.setItem('appingles_user', fbUser.uid);
           login(fbUser.uid, fbUser.displayName || fbUser.email?.split('@')[0] || 'Student', token ?? undefined);
         }
-        try {
-          const { replaced } = await registerSession();
-          if (replaced) useAppStore.getState().setNotice('Se cerró tu sesión en el otro dispositivo.');
-        } catch {}
-        useAppStore.getState().refreshAll();
+        if (!activeSessionId) {
+          try {
+            const { replaced } = await registerSession();
+            if (replaced) useAppStore.getState().setNotice('Se cerró tu sesión en el otro dispositivo.');
+          } catch {}
+        }
+        await useAppStore.getState().refreshAll();
+        authLog('SESSION_READY');
       } else {
         logout();
       }
@@ -104,12 +205,22 @@ export default function App() {
       document.removeEventListener('visibilitychange', onVisible);
       unsub();
     };
-  }, [user, login, logout]);
+  }, [user, login, logout, setError]);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/home" replace /> : <LoginPage />} />
+        <Route path="/activar" element={<ActivatePage />} />
+        <Route path="/activar-acceso" element={<ResendActivationPage />} />
+        <Route
+          path="/sin-acceso"
+          element={
+            <RequireAuth>
+              <NoAccessPage />
+            </RequireAuth>
+          }
+        />
         <Route
           path="/onboarding"
           element={
@@ -129,14 +240,19 @@ export default function App() {
         <Route
           element={
             <RequireAuth>
-              <OnboardingGate>
-                <MainLayout />
-              </OnboardingGate>
+              <AccessGate>
+                <OnboardingGate>
+                  <MainLayout />
+                </OnboardingGate>
+              </AccessGate>
             </RequireAuth>
           }
         >
           <Route path="/home" element={<HomePage />} />
           <Route path="/practice" element={<PracticePage />} />
+          <Route path="/practice/quick" element={<QuickPracticePage />} />
+          <Route path="/practice/memory/menu" element={<MemoryMenuPage />} />
+          <Route path="/practice/memory" element={<MemoryGamePage />} />
           <Route path="/practice/post21" element={<Post21Page />} />
           <Route path="/practice/:id" element={<Post21LessonPage />} />
           <Route path="/daily" element={<DailyPracticePage />} />

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BookOpen, Volume2, Lock } from 'lucide-react';
 import { getVocabulary } from '../services/api';
 import { useAppStore } from '../store/useAppStore';
@@ -9,18 +10,22 @@ import { Card } from '../components/ui/Card';
 type VocabItem = { en: string; es: string; addedAt: string };
 
 export function VocabularyPage() {
+  const navigate = useNavigate();
   const { entitlements } = useAppStore();
   const [items, setItems] = useState<VocabItem[]>([]);
   const [blocked, setBlocked] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getVocabulary()
+    const controller = new AbortController();
+    getVocabulary(controller.signal)
       .then((r) => setItems(r.items))
       .catch((e) => {
+        if ((e as { code?: string })?.code === 'ERR_CANCELED') return;
         if (e.response?.status === 403) setBlocked(true);
       })
       .finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   if (blocked || !entitlements?.canUseVocabularyBank) {
@@ -34,7 +39,7 @@ export function VocabularyPage() {
             <p className="mt-1 text-sm text-slate-500">
               Cada palabra que fallas se guarda aquí automáticamente para repasarla cuando quieras.
             </p>
-            <Button className="mt-4" variant="secondary" onClick={() => (window.location.href = '/premium')}>
+            <Button className="mt-4" variant="secondary" onClick={() => navigate('/premium')}>
               DESBLOQUEAR IA
             </Button>
           </div>

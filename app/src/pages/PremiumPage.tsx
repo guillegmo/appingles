@@ -32,7 +32,7 @@ function planLabel(plan?: string) {
 
 export function PremiumPage() {
   const navigate = useNavigate();
-  const { entitlements, subscription, upgradePremium, refreshAll } = useAppStore();
+  const { entitlements, subscription, upgradePremium, refreshAll, setSubscription } = useAppStore();
   const [plans, setPlans] = useState<PlanOption[]>([]);
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
@@ -59,8 +59,10 @@ export function PremiumPage() {
   const handleCancel = async () => {
     setCanceling(true);
     try {
-      await cancelSubscription();
-      await refreshAll();
+      const res = await cancelSubscription();
+      // Actualiza el store con la respuesta (sin refetch: la API ya invalida
+      // sus cachés internas de suscripción/challenge).
+      setSubscription(res.subscription, res.entitlements);
       setCancelMsg('Listo. Volviste a la versión Free: tu reto de 21 días sigue disponible para siempre.');
     } catch (e) {
       setCancelMsg((e as Error).message || 'No se pudo cancelar. Intenta de nuevo.');
@@ -92,7 +94,7 @@ export function PremiumPage() {
             </li>
           ))}
         </ul>
-        <Button className="mt-6" onClick={refreshAll}>Volver al Inicio</Button>
+        <Button className="mt-6" onClick={() => refreshAll()}>Volver al Inicio</Button>
 
         <details className="mt-8 w-full max-w-md rounded-xl border border-slate-200 bg-white p-4 text-left">
             <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-600">
@@ -137,9 +139,8 @@ export function PremiumPage() {
         window.location.href = checkoutUrl;
         return;
       }
-      // Dev: activar trial local
+      // Dev: activar trial local (upgradePremium ya actualiza el store)
       await upgradePremium();
-      await refreshAll();
     } finally {
       setUpgrading(false);
     }

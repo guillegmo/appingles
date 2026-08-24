@@ -46,16 +46,19 @@ export function Post21Page() {
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState<string | null>(null);
 
-  const reload = async (s = skill) => {
+  const reload = async (s = skill, signal?: AbortSignal) => {
     try {
-      setIndex(await getPost21(s === 'all' ? undefined : s));
-    } catch {
+      setIndex(await getPost21(s === 'all' ? undefined : s, undefined, signal));
+    } catch (e) {
+      if ((e as { code?: string })?.code === 'ERR_CANCELED') return;
       setIndex(null);
     }
   };
 
   useEffect(() => {
-    reload(skill);
+    const controller = new AbortController();
+    reload(skill, controller.signal);
+    return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skill]);
 

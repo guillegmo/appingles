@@ -21,6 +21,10 @@ const EVENTS = [
   'subscription_started',
   'subscription_canceled',
   'subscription_renewed',
+  'activation_email_sent',
+  'activation_email_failed',
+  'account_activated',
+  'resend_requested',
   'stats_viewed',
 ];
 

@@ -71,8 +71,6 @@ function mockChat(messages) {
 
   const preview = userText.length > 80 ? `${userText.slice(0, 80)}…` : userText;
   const content =
-    `[DEV MOCK · sin GROQ_API_KEY]\n` +
-    `Great question! Let's practice.\n\n` +
     `You said: "${preview}"\n\n` +
     `Now try this: "What do you like to do on weekends?" — answer me out loud!`;
   const usage = { prompt_tokens: 40, completion_tokens: 30, total_tokens: 70 };

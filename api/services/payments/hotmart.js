@@ -15,8 +15,14 @@
 
 const crypto = require('crypto');
 
-const SECRET = process.env.HOTMART_WEBHOOK_SECRET || '';
-const TOKEN = process.env.HOTMART_WEBHOOK_TOKEN || '';
+// Lectura dinámica (no cacheada al cargar el módulo): permite configurar/rotar
+// las credenciales en tiempo de ejecución y facilita el testing.
+function webhookSecret() {
+  return process.env.HOTMART_WEBHOOK_SECRET || '';
+}
+function webhookToken() {
+  return process.env.HOTMART_WEBHOOK_TOKEN || '';
+}
 
 const CHECKOUT_URLS = {
   monthly: process.env.HOTMART_CHECKOUT_URL_MONTHLY || process.env.HOTMART_CHECKOUT_URL || '',
@@ -41,6 +47,7 @@ function normalizeStatus(event) {
     PURCHASE_CANCELED: 'canceled',
     PURCHASE_REFUNDED: 'expired',
     PURCHASE_EXPIRED: 'expired',
+    PURCHASE_CHARGEBACK: 'expired',
     SUBSCRIPTION_CANCELED: 'canceled',
     SUBSCRIPTION_SUSPENDED: 'past_due',
     SUBSCRIPTION_DEBT_RECOVERY: 'past_due',
@@ -73,6 +80,7 @@ function isRenewal(event, data) {
 // Verifica firma HMAC. En Hotmart, el header puede ser 'x-hotmart-signature' o
 // 'x-hotmart-notification-secret', o el token como query param (legacy).
 function verifyWebhook({ headers = {}, rawBody = '' }) {
+  const SECRET = webhookSecret();
   if (!SECRET) {
     if (process.env.NODE_ENV === 'production') {
       return { valid: false, reason: 'HOTMART_WEBHOOK_SECRET no configurado' };
@@ -85,6 +93,7 @@ function verifyWebhook({ headers = {}, rawBody = '' }) {
 
   const expected = crypto.createHmac('sha256', SECRET).update(rawBody).digest('hex');
   const provided = signature.toLowerCase();
+  const TOKEN = webhookToken();
   const valid = provided === expected || (TOKEN && provided === TOKEN.toLowerCase());
   if (!valid) return { valid: false, reason: 'Firma inválida' };
 
@@ -101,6 +110,7 @@ const STATUS_EVENTS = new Set([
   'PURCHASE_CANCELED',
   'PURCHASE_REFUNDED',
   'PURCHASE_EXPIRED',
+  'PURCHASE_CHARGEBACK',
   'SUBSCRIPTION_CANCELED',
   'SUBSCRIPTION_SUSPENDED',
   'SUBSCRIPTION_DEBT_RECOVERY',
@@ -133,30 +143,50 @@ function mapEventToSubscription(event) {
   if (!status) return null;
 
   const buyerEmail = data?.subscriber?.buyer?.email || data?.buyer?.email || '';
+  const buyerName =
+    data?.subscriber?.buyer?.name || data?.buyer?.name || data?.subscriber?.buyer?.first_name || '';
   const productId = data?.product?.id || data?.product_id || 'premium';
-  const productName = String(data?.product?.name || '').toLowerCase();
+  const productName = String(data?.product?.name || '');
 
-  // Plan: anual si el product id/name coincide, si no mensual (premium).
+  // Filtro opcional de producto: si HOTMART_PRODUCT_IDS está configurado
+  // (lista separada por comas), solo se procesan eventos de esos productos.
+  // Evita que webhooks de otros productos de la misma cuenta Hotmart activen accesos.
+  const allowedIds = (process.env.HOTMART_PRODUCT_IDS || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (allowedIds.length > 0 && !allowedIds.includes(String(productId))) {
+    return null;
+  }
+
+  // Plan: el Reto de Inglés en 21 Días es compra única (plan reto21); los
+  // productos Premium IA siguen siendo suscripción mensual/anual.
   let plan = 'premium-monthly';
-  if (PRODUCT_ANNUAL_ID && String(productId) === PRODUCT_ANNUAL_ID) plan = 'premium-annual';
-  else if (/annual|anual|año|ano/i.test(productName)) plan = 'premium-annual';
+  if (/reto|21\s*d[ií]as/i.test(productName)) plan = 'reto21';
+  else if (PRODUCT_ANNUAL_ID && String(productId) === PRODUCT_ANNUAL_ID) plan = 'premium-annual';
+  else if (/annual|anual|año|ano/i.test(productName.toLowerCase())) plan = 'premium-annual';
 
   const nextCycle = data?.purchase?.next_cycle_date
     ? new Date(data.purchase.next_cycle_date).toISOString()
     : undefined;
   const eventId = event?.id || data?.purchase?.transaction || `${Date.now()}`;
 
-  return {
+  const mapped = {
     provider: 'hotmart',
     providerEventId: String(eventId),
     buyerEmail,
+    buyerName,
     plan,
     status,
+    productId: String(productId),
+    transactionId: String(data?.purchase?.transaction || ''),
     subscriptionId: String(data?.purchase?.subscription || data?.subscription?.id || ''),
     nextBillingDate: nextCycle,
     renewing: isRenewal(eventName, data),
     updatedAt: new Date().toISOString(),
   };
+  // Firestore rechaza valores undefined: los eliminamos antes de persistir.
+  return Object.fromEntries(Object.entries(mapped).filter(([, v]) => v !== undefined));
 }
 
 // Crea un link de checkout Hotmart. El 'custom' transporta el userId para que el

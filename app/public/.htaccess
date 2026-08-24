@@ -1,0 +1,43 @@
+# AppIngles — SPA servida nativamente en /appingles/
+# Este .htaccess va en la carpeta /appingles/ del servidor (junto a index.html)
+# y solo aplica a este directorio y subdirectorios; no afecta otras
+# aplicaciones del dominio (/calma, /menocalma, etc.).
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /appingles/
+
+  # Forzar HTTPS
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+  # Servir archivos y directorios existentes tal cual (assets, sw.js, manifest)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Compatibilidad temporal con la ruta antigua /appingles/app/... (marcadores,
+  # historial y PWAs ya instaladas). La app ya NO vive ahí; esta regla solo
+  # redirige URLs viejas a su equivalente bajo /appingles/. Es prescindible:
+  # elimínala cuando esas URLs dejen de recibir tráfico.
+  RewriteRule ^app/?$ /appingles/ [R=301,L]
+  RewriteRule ^app/(.*)$ /appingles/$1 [R=301,L]
+
+  # Fallback SPA: cualquier ruta interna cae en index.html de esta app
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Compresión
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# Caché largo para assets con hash, corto para lo demás
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>

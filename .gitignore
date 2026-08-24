@@ -8,6 +8,7 @@ dist
 # Artefactos locales (logs de procesos y salidas de tests)
 *.err
 *.out
-app/test-results/
+test-results/
+playwright-report/
 .playwright-mcp/
 loader-nuevo.png

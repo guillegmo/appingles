@@ -34,6 +34,8 @@ export function OnboardingPage() {
       await submitOnboarding({ goal, level });
     } catch {
       // si falla el guardado, seguimos con el flag local para no bloquear al usuario
+    } finally {
+      setSaving(false);
     }
     localStorage.setItem('appingles_onboarded', 'true');
     trackAnalyticsEvent('onboarding_completed', { goal, level }).catch(() => {});

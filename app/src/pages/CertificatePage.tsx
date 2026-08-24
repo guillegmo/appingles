@@ -7,13 +7,25 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 
 export function CertificatePage() {
-  const { user } = useAppStore();
+  const { user, progress } = useAppStore();
   const navigate = useNavigate();
   const [eligible, setEligible] = useState(false);
 
   useEffect(() => {
-    getProgress().then((p) => setEligible(p.completedDays?.includes(21) ?? false)).catch(() => setEligible(false));
-  }, []);
+    // Reutiliza el progreso ya cargado en el store (refreshAll de Home):
+    // evita una llamada duplicada a /challenge/progress en cada visita.
+    if (progress) {
+      setEligible(progress.completedDays?.includes(21) ?? false);
+      return;
+    }
+    let active = true;
+    getProgress()
+      .then((p) => active && setEligible(p.completedDays?.includes(21) ?? false))
+      .catch(() => active && setEligible(false));
+    return () => {
+      active = false;
+    };
+  }, [progress]);
 
   if (!eligible) {
     return (

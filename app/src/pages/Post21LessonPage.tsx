@@ -52,13 +52,16 @@ export function Post21LessonPage() {
 
   useEffect(() => {
     if (!id) return;
+    const controller = new AbortController();
     (async () => {
       try {
-        setLesson(await getPost21Lesson(id));
+        setLesson(await getPost21Lesson(id, controller.signal));
       } catch (e) {
+        if ((e as { code?: string })?.code === 'ERR_CANCELED') return;
         setError((e as Error).message);
       }
     })();
+    return () => controller.abort();
   }, [id]);
 
   useEffect(() => {
@@ -109,11 +112,13 @@ export function Post21LessonPage() {
   };
 
   const finishLesson = async () => {
-    await recordSpeaking(21);
+    const speaking = await recordSpeaking(21);
+    useAppStore.getState().applyXp(speaking.totalXp);
     if (lesson.vocabulary?.length) {
       addVocabularyItems(lesson.vocabulary.map((v) => ({ en: v.en, es: v.es }))).catch(() => {});
     }
-    await submitExercise({ day: 21, exerciseId: lesson.id, type: 'post21', answer: 'lesson', correct: true });
+    const exercise = await submitExercise({ day: 21, exerciseId: lesson.id, type: 'post21', answer: 'lesson', correct: true });
+    useAppStore.getState().applyXp(exercise.totalXp);
     setDone(true);
   };
 

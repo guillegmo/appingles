@@ -1,85 +1,158 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Check, Sun, BookOpen } from 'lucide-react';
+import { Zap, Repeat, BookOpen, Sun, GraduationCap, Trophy, Headphones, Lock, ArrowRight, Brain } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
+import { getReviewCount } from '../services/api';
 import { LoadingScreen } from '../components/ui/Spinner';
 
+type PracticeCard = {
+  to: string;
+  icon: typeof Zap;
+  color: string;
+  bg: string;
+  title: string;
+  subtitle: string;
+  badge?: string;
+  locked?: boolean;
+};
+
+// Centro de práctica: atajos a las herramientas de práctica reales en vez de
+// repetir la lista de 21 días (que vive en Inicio).
 export function PracticePage() {
   const navigate = useNavigate();
-  const { challenge, progress, refreshAll } = useAppStore();
+  const { challenge, progress, entitlements, refreshAll } = useAppStore();
+  const [reviewDue, setReviewDue] = useState(0);
 
   useEffect(() => {
     refreshAll();
+    getReviewCount().then((r) => setReviewDue(r.due)).catch(() => {});
   }, []);
 
-  if (!challenge) return <LoadingScreen label="Cargando reto…" />;
+  if (!challenge) return <LoadingScreen label="Cargando práctica…" />;
 
   const isChampion = (progress?.daysCompleted ?? 0) >= 21;
-  const weeks = Array.from(new Set(challenge.days.map((d) => d.week)));
+  const nextDay = challenge.days.find((d) => !d.completed && !d.locked);
+  const canVocab = entitlements?.canUseVocabularyBank ?? false;
+
+  const cards: PracticeCard[] = [
+    {
+      to: '/practice/quick',
+      icon: Zap,
+      color: 'text-amber-500',
+      bg: 'bg-amber-50',
+      title: 'Práctica rápida',
+      subtitle: 'Ejercicios aleatorios de tus días',
+    },
+    {
+      to: '/review',
+      icon: Repeat,
+      color: 'text-emerald-600',
+      bg: 'bg-emerald-50',
+      title: 'Repaso inteligente',
+      subtitle: reviewDue > 0 ? `${reviewDue} ${reviewDue === 1 ? 'palabra' : 'palabras'} por recordar hoy` : 'Sin tarjetas hoy',
+      badge: reviewDue > 0 ? String(reviewDue) : undefined,
+    },
+    {
+      to: '/vocabulary',
+      icon: BookOpen,
+      color: 'text-sky-600',
+      bg: 'bg-sky-50',
+      title: 'Vocabulario',
+      subtitle: canVocab ? 'Tus palabras falladas' : 'Se arma con tus errores',
+      locked: !canVocab,
+    },
+    {
+      to: '/practice/memory/menu',
+      icon: Brain,
+      color: 'text-violet-600',
+      bg: 'bg-violet-50',
+      title: 'Memory Match',
+      subtitle: 'Juego de parejas y vocabulario',
+    },
+    ...(isChampion
+      ? [
+          {
+            to: '/daily',
+            icon: Sun,
+            color: 'text-orange-500',
+            bg: 'bg-orange-50',
+            title: 'Práctica diaria',
+            subtitle: '15 min · tu misión de hoy',
+          },
+          {
+            to: '/practice/post21',
+            icon: GraduationCap,
+            color: 'text-violet-600',
+            bg: 'bg-violet-50',
+            title: 'Aprendizaje continuo',
+            subtitle: 'Lecciones por habilidad',
+          },
+          {
+            to: '/seasons',
+            icon: Trophy,
+            color: 'text-amber-600',
+            bg: 'bg-amber-50',
+            title: 'Retos de temporada',
+            subtitle: 'Retos semanales con XP',
+          },
+          {
+            to: '/listening',
+            icon: Headphones,
+            color: 'text-primary-600',
+            bg: 'bg-primary-50',
+            title: 'Listening',
+            subtitle: 'Entrena tu oído',
+          },
+        ]
+      : []),
+  ];
 
   return (
     <div className="p-5">
-      <h1 className="text-xl font-bold">Mi primer reto</h1>
-      <p className="text-sm text-slate-500">21 días para empezar a hablar inglés.</p>
+      <h1 className="text-xl font-bold">Practicar</h1>
+      <p className="text-sm text-slate-500">Ejercicios cortos para reforzar lo aprendido.</p>
 
-      {isChampion && (
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <button
-            onClick={() => navigate('/daily')}
-            className="flex flex-col items-center gap-2 rounded-xl border border-primary-200 bg-gradient-to-br from-primary-50 to-white px-4 py-4 text-center"
-          >
-            <Sun className="h-6 w-6 text-primary-600" />
-            <span className="text-sm font-bold text-primary-700">Práctica diaria</span>
-            <span className="text-xs text-slate-500">15 min · tu misión de hoy</span>
-          </button>
-          <button
-            onClick={() => navigate('/practice/post21')}
-            className="flex flex-col items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-4 text-center"
-          >
-            <BookOpen className="h-6 w-6 text-slate-600" />
-            <span className="text-sm font-bold text-slate-700">Aprendizaje continuo</span>
-            <span className="text-xs text-slate-500">Lecciones por habilidad</span>
-          </button>
-        </div>
+      {!isChampion && nextDay && (
+        <button
+          onClick={() => navigate(`/day/${nextDay.day}`)}
+          className="mt-4 flex w-full items-center gap-3 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-4 text-left text-white shadow-soft"
+        >
+          <div className="flex-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary-100">La misión de hoy</p>
+            <p className="text-base font-bold">{nextDay.title}</p>
+            <p className="text-xs text-primary-100">Día {nextDay.day} · {nextDay.weekLabel}</p>
+          </div>
+          <ArrowRight className="h-5 w-5" />
+        </button>
       )}
 
-      {weeks.map((week) => (
-        <div key={week} className="mt-6">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-            Semana {week} · {challenge.days.find((d) => d.week === week)?.weekLabel}
-          </p>
-          <div className="space-y-2">
-            {challenge.days
-              .filter((d) => d.week === week)
-              .map((d) => (
-                <button
-                  key={d.day}
-                  onClick={() => !d.locked && !d.completed && navigate(`/day/${d.day}`)}
-                  className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors ${
-                    d.locked
-                      ? 'border-slate-200 bg-slate-50 opacity-70'
-                      : d.completed
-                        ? 'border-emerald-200 bg-emerald-50'
-                        : 'border-slate-200 bg-white hover:border-primary-300'
-                  }`}
-                >
-                  <div
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
-                      d.completed ? 'bg-emerald-500 text-white' : d.locked ? 'bg-slate-200 text-slate-400' : 'bg-primary-600 text-white'
-                    }`}
-                  >
-                    {d.completed ? <Check className="h-4 w-4" /> : d.locked ? <Lock className="h-4 w-4" /> : d.day}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold">{d.title}</p>
-                    <p className="text-xs text-slate-500">{d.topic}</p>
-                  </div>
-                  {d.locked && <span className="text-[10px] font-bold uppercase text-slate-400">Premium</span>}
-                </button>
-              ))}
-          </div>
-        </div>
-      ))}
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        {cards.map(({ to, icon: Icon, color, bg, title, subtitle, badge, locked }) => (
+          <button
+            key={to}
+            onClick={() => navigate(to)}
+            className="rounded-xl border border-slate-200 bg-white p-4 text-left transition-colors hover:border-primary-300"
+          >
+            <div className="flex items-center justify-between">
+              <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${bg}`}>
+                <Icon className={`h-5 w-5 ${color}`} />
+              </span>
+              {badge && (
+                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-700">{badge}</span>
+              )}
+              {locked && <Lock className="h-4 w-4 text-slate-300" />}
+            </div>
+            <p className="mt-3 text-sm font-bold">{title}</p>
+            <p className="mt-0.5 text-xs text-slate-500">{subtitle}</p>
+          </button>
+        ))}
+      </div>
+
+      <p className="mt-6 text-center">
+        <button onClick={() => navigate('/home')} className="text-xs font-semibold text-slate-400 hover:text-slate-600">
+          Ver tu ruta de 21 días →
+        </button>
+      </p>
     </div>
   );
 }

@@ -55,6 +55,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/challenge', require('./routes/challenge'));
 app.use('/api/exercises', require('./routes/exercises'));
 app.use('/api/subscription', require('./routes/subscription'));
+app.use('/api/access', require('./routes/access'));
 app.use('/api/practice', require('./routes/practice'));
 app.use('/api/content', require('./routes/content'));
 app.use('/api/report', require('./routes/report'));

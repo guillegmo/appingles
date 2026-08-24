@@ -18,7 +18,14 @@ export function LeaderboardPage() {
   const [tab, setTab] = useState<'allTime' | 'weekly'>('allTime');
 
   useEffect(() => {
-    getLeaderboard().then(setData).catch(() => setData(null));
+    const controller = new AbortController();
+    getLeaderboard(controller.signal)
+      .then(setData)
+      .catch((e) => {
+        if ((e as { code?: string })?.code === 'ERR_CANCELED') return;
+        setData(null);
+      });
+    return () => controller.abort();
   }, []);
 
   const rows = (tab === 'allTime' ? data?.allTime : data?.weekly) ?? [];

@@ -1,15 +1,17 @@
 // routes/webhooks.js
-// Webhooks de pagos (Hotmart). Verificación de firma + idempotencia + sync.
+// Webhooks de pagos (Hotmart). Verificación de firma + idempotencia +
+// provisioning + email de activación (services/hotmartProcessor).
 // Montado en /webhooks (fuera de /api y sin auth de usuario).
 
 const express = require('express');
 const router = express.Router();
 const hotmart = require('../services/payments/hotmart');
-const subscriptionService = require('../services/subscriptionService');
+const processor = require('../services/hotmartProcessor');
 
 // POST /webhooks/hotmart
 // Cuerpo firmado por Hotmart. Puede NO tener email si el evento no incluye buyer.
-// En dev (AUTH_MODE=dev) aceptamos un campo "devUserId" para simular el flujo.
+// En dev (sin HOTMART_WEBHOOK_SECRET y NODE_ENV!=production) acepta sin firma
+// para poder simular el flujo.
 router.post('/hotmart', async (req, res) => {
   try {
     // Raw body capturado por express.json({ verify }) en server.js
@@ -19,33 +21,17 @@ router.post('/hotmart', async (req, res) => {
       rawBody,
     });
     if (!valid && !dev) {
+      console.warn(`[hotmart] webhook_rejected reason=${reason}`);
       return res.status(401).json({ error: 'invalid_signature', reason });
     }
 
-    const mapped = hotmart.mapEventToSubscription(payload);
-    if (!mapped) {
-      // Evento que no cambia la suscripción (p.ej. 'START_SUBSCRIPTION_CREATION').
-      return res.json({ ok: true, ignored: true, event: payload?.event });
+    console.log(`[hotmart] webhook_received event=${payload?.event || '?'}`);
+
+    const result = await processor.processHotmartEvent(payload);
+    if (!result.ok) {
+      return res.status(422).json(result);
     }
-
-    // Resolución del usuario: custom=userId (pasa por el checkout), luego el
-    // índice email->userId, y en dev un devUserId para simular.
-    const custom = payload?.data?.custom || payload?.custom || null;
-    const userId = await subscriptionService.resolveUser({
-      userId: custom || req.body?.devUserId || null,
-      email: mapped.buyerEmail,
-    });
-
-    if (!userId) {
-      return res.status(422).json({ error: 'user_not_resolvable', email: mapped.buyerEmail || null });
-    }
-
-    const result = await subscriptionService.applyPaymentEvent(
-      { userId, email: mapped.buyerEmail, mapped },
-      { providerEventId: mapped.providerEventId },
-    );
-
-    res.json({ ok: true, ...result });
+    res.json(result);
   } catch (err) {
     console.error('Webhook error:', err);
     res.status(500).json({ error: 'webhook_failed', message: err.message });

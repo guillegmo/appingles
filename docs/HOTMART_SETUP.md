@@ -201,3 +201,126 @@ curl -X POST http://localhost:3001/webhooks/hotmart \
   -H "Content-Type: application/json" \
   -d '{"event":"PURCHASE_APPROVED","devUserId":"u1","data":{"product":{"name":"AppIngles Premium Mensual"},"purchase":{"status":"approved","recurrency_number":1}}}'
 ```
+
+---
+
+# Compra externa (Reto de Inglés en 21 Días) → activación de cuenta
+
+Este flujo atiende al cliente que **compra en la landing sin tener cuenta previa**:
+no hay registro antes de pagar, y la contraseña se crea después de la compra.
+Funciona junto con el flujo recurrente de `/premium` (más arriba); ambos llegan
+por el mismo webhook y se diferencian por el nombre/id del producto.
+
+```
+Landing (ingresosdigitalesit.com/reto21ingles)
+  → checkout Hotmart (producto "Reto de Inglés en 21 Días")
+  → PURCHASE_APPROVED → https://.../webhooks/hotmart
+  → el backend crea el usuario en Firebase Auth (email del comprador)
+  → envía email desde acceso@ingresosdigitalesit.com con enlace seguro
+  → cliente crea su contraseña en NUESTRA página /appingles/activar
+  → login automático → acceso al Reto (Día 1)
+```
+
+Puntos clave:
+
+- **Sin contraseña en el backend**: el cliente NUNCA se registra antes de comprar
+  y ninguna contraseña se guarda en Firestore ni en el backend. El backend crea
+  una cuenta de Firebase Auth **sin contraseña** y genera un enlace oficial de
+  restablecimiento (`admin.generatePasswordResetLink`), del que extrae el
+  `oobCode` y arma un enlace propio que apunta **directamente a nuestra página**
+  (no a la página alojada de Firebase). La contraseña la crea el usuario en
+  `/appingles/activar` y vive solo en Firebase Auth.
+- **Página de activación propia**: `/appingles/activar` valida el `oobCode` con
+  `verifyPasswordResetCode`, muestra el email destino y recoge la contraseña con
+  reglas de seguridad (≥ 8 caracteres, una mayúscula, una minúscula, un número y
+  un carácter especial). Al crearla (`confirmPasswordReset`), hace
+  **login automático** e ingresa de inmediato a la app.
+- **El webhook es la única fuente de verdad del pago.** El enlace de activación
+  se envía **solo** cuando el evento aplica y deja la suscripción `active`.
+- **Idempotente**: reenvíos/duplicados de Hotmart no duplican usuario, acceso ni
+  email (registro global `hotmartEvents` + `paymentEvents/{uid}.processedIds`).
+- **Reembolso / chargeback** (`PURCHASE_REFUNDED`, `PURCHASE_CHARGEBACK`) pasan la
+  suscripción a `expired` sin borrar la cuenta.
+- **Plan**: el producto con nombre que coincida con `reto|21 días` se registra
+  como plan `reto21` (compra única); los demás se tratan como premium
+  mensual/anual (ver flujo recurrente).
+
+## Eventos de webhook a habilitar (además de los del Paso 3)
+
+Agrega al webhook de Hotmart:
+
+- `PURCHASE_CHARGEBACK` (equivale a reembolso: deja la suscripción `expired`).
+
+## Variables de entorno nuevas (Render)
+
+| Variable | Valor |
+|---|---|
+| `ACTIVATION_URL` | `https://www.ingresosdigitalesit.com/appingles/activar` |
+| `HOTMART_PRODUCT_IDS` | *(opcional)* lista separada por comas de ids de producto; si se define, solo se procesan esos ids |
+| `MAIL_FROM` | `acceso@ingresosdigitalesit.com` |
+| `MAIL_HOST` / `MAIL_PORT` | Host SMTP (p. ej. Hostinger: `smtp.hostinger.com`, `465`/`587`) |
+| `MAIL_SECURE` | `true` (465) o `false` (587 con STARTTLS) |
+| `MAIL_USER` / `MAIL_PASSWORD` | credenciales del **buzón principal** (los alias se envían "en nombre de" el principal, autenticando con él) |
+| `SUPPORT_EMAIL` | `acceso@ingresosdigitalesit.com` |
+| `APP_PUBLIC_URL` | `https://www.ingresosdigitalesit.com` |
+| `RESEND_MAX_PER_HOUR` | `10` (límite de reenvíos por IP/hora en `/activar-acceso`) |
+
+> **Modo dry-run**: si `MAIL_HOST`/`MAIL_USER`/`MAIL_PASSWORD` están vacíos, la
+> API **no envía** correos; los registra en la colección `mailOutbox` (con el
+> enlace) y en logs. Útil para probar el flujo antes de conectar el SMTP real.
+
+## Firebase: dominios autorizados
+
+Con la página de activación propia, extraemos el `oobCode` del enlace oficial y
+armamos un enlace directo a `/appingles/activar`, por lo que **no es obligatorio**
+autorizar el dominio. Aun así conviene añadirlo en **Firebase Console →
+Authentication → Settings → Authorized domains**, como red de seguridad ante el
+fallback al enlace alojado:
+
+- `www.ingresosdigitalesit.com` (producción)
+- `ingresosdigitalesit.com` (sin www, por si acaso)
+
+(`localhost` está siempre autorizado, por eso el flujo E2E local funciona sin
+configuración adicional.)
+
+## Entregabilidad del correo (SPF / DKIM / DMARC)
+
+El remitente `acceso@ingresosdigitalesit.com` (Hostinger) necesita estos
+registros DNS para no caer en spam. En el panel DNS de Hostinger:
+
+- **SPF** (registro TXT en la raíz `@`): si ya tienes el SPF de Hostinger,
+  asegúrate de incluir `include:spf.hostinger.com` (o el que indique tu plan):
+  ```
+  v=spf1 include:spf.hostinger.com ~all
+  ```
+- **DKIM**: activa DKIM para el dominio en Hostinger (se generan un registro TXT
+  `default._domainkey` con la clave pública). Copia el registro exacto que te
+  muestre el panel.
+- **DMARC** (registro TXT `_dmarc`):
+  ```
+  v=DMARC1; p=none; rua=mailto:acceso@ingresosdigitalesit.com; sp=none; adkim=r; aspf=r
+  ```
+
+Después de publicar los registros, verifica con
+`https://www.mail-tester.com` enviando un correo de prueba; apunta a una
+puntuación ≥ 8/10.
+
+## Endpoints de acceso (frontend)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/api/access/status` | (auth) `{ hasAccess, plan, status }` para el gate de acceso |
+| `POST` | `/api/access/activated` | (auth) marca la cuenta como activada + evento `account_activated` |
+| `POST` | `/api/access/resend-activation` | (público, rate-limited) reenvía el enlace; respuesta siempre genérica |
+| `POST` | `/api/access/dev-grant` | *(solo no-prod)* concede acceso de prueba (plan `reto21`) |
+| `GET` | `/api/access/dev-outbox?email=` | *(solo no-prod)* lee el buzón dry-run (`mailOutbox`) |
+
+## Pruebas locales del flujo de compra externa (E2E)
+
+```bash
+# 1. API con .env local (ACTIVATION_URL=http://localhost:5173/activar)
+# 2. Compra simulada firmada (lee HOTMART_WEBHOOK_SECRET de api/.env)
+# 3. Lee el enlace del buzón dry-run:
+curl "http://localhost:3001/api/access/dev-outbox?email=COMPRADOR@example.com"
+# 4. Abre el enlace → crea la contraseña → login (cubierto por e2e/tests/hotmart-flow.spec.ts)
+```

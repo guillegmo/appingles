@@ -1,10 +1,12 @@
 // Service Worker: AppIngles — caché de la app shell para uso offline.
-const CACHE = 'appingles-v2';
+// Rutas relativas al propio sw.js: funcionan igual en raíz (dev) que en
+// subcarpeta de producción (https://www.ingresosdigitalesit.com/appingles/).
+const CACHE = 'appingles-v3';
 const SHELL = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/icons/icon.svg',
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './icons/icon.svg',
 ];
 
 self.addEventListener('install', (event) => {
@@ -39,10 +41,10 @@ self.addEventListener('fetch', (event) => {
       fetch(request)
         .then((res) => {
           const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put('/', copy));
+          caches.open(CACHE).then((c) => c.put('./', copy));
           return res;
         })
-        .catch(() => caches.match('/')),
+        .catch(() => caches.match('./')),
     );
     return;
   }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bot, Lock, Mic, Send, Volume2, Loader2, HelpCircle } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
@@ -10,6 +11,7 @@ import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
 import type { TutorMode, TutorMessage } from '../types';
 
 export function TutorPage() {
+  const navigate = useNavigate();
   const { entitlements, user } = useAppStore();
   const premium = entitlements?.plan === 'premium';
   const [modes, setModes] = useState<TutorMode[]>([]);
@@ -44,18 +46,25 @@ export function TutorPage() {
   }, [sending]);
 
   useEffect(() => {
-    (async () => {
-      const m = await getTutorModes();
-      setModes(m.modes);
-    })().catch(() => {});
+    const controller = new AbortController();
+    getTutorModes(controller.signal)
+      .then((m) => setModes(m.modes))
+      .catch(() => {});
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
-    (async () => {
-      const [h, u] = await Promise.all([getTutorHistory(mode), getTutorUsage()]);
-      setMessages(h.messages);
-      setUsage({ used: u.used, limit: u.limit });
-    })().catch((e) => setError((e as Error).message));
+    const controller = new AbortController();
+    Promise.all([getTutorHistory(mode, controller.signal), getTutorUsage(controller.signal)])
+      .then(([h, u]) => {
+        setMessages(h.messages);
+        setUsage({ used: u.used, limit: u.limit });
+      })
+      .catch((e) => {
+        if ((e as { code?: string })?.code === 'ERR_CANCELED') return;
+        setError((e as Error).message);
+      });
+    return () => controller.abort();
   }, [mode]);
 
   useEffect(() => {
@@ -161,6 +170,8 @@ export function TutorPage() {
       lastSentRef.current = '';
     }
     try {
+      // El historial por modo está cacheado (TTL 15s): cambiar de modo y
+      // volver no repite la petición; el envío de un mensaje invalida la caché.
       const [h, u] = await Promise.all([getTutorHistory(id === 'stuck' ? 'stuck' : id), getTutorUsage()]);
       setMessages(h.messages ?? []);
       setUsage({ used: u.used, limit: u.limit });
@@ -185,7 +196,7 @@ export function TutorPage() {
       <p className="mt-1 text-xs text-slate-500">Hola {user?.name}, conozco tu nivel y tus debilidades.</p>
       {!premium && (
         <button
-          onClick={() => (window.location.href = '/premium')}
+          onClick={() => navigate('/premium')}
           className="mt-2 w-full rounded-xl bg-primary-600 px-3 py-2 text-left text-xs font-semibold text-white"
         >
           Tienes {remaining} mensajes IA gratis hoy. Desbloquea conversaciones ilimitadas con Premium IA →
@@ -262,7 +273,7 @@ export function TutorPage() {
               <p className="mt-1 text-xs text-slate-500">
                 Con Premium IA conversas sin límite, con voz y con corrección al momento.
               </p>
-              <Button className="mt-3 w-full" size="lg" onClick={() => (window.location.href = '/premium')}>
+              <Button className="mt-3 w-full" size="lg" onClick={() => navigate('/premium')}>
                 Desbloquear Premium IA
               </Button>
             </div>

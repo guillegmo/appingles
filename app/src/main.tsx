@@ -12,9 +12,9 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
-// PWA: registra el service worker (solo en build de producción o localhost).
+// PWA: registra el service worker (solo en build de producci??n o localhost).
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(() => {});
   });
 }

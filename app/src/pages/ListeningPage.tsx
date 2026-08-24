@@ -25,19 +25,22 @@ export function ListeningPage() {
   const [finished, setFinished] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
     (async () => {
       try {
-        const index = await getPost21();
+        const index = await getPost21(undefined, undefined, controller.signal);
         const lesson = index.lessons?.[0];
         if (!lesson) return setLoading(false);
-        const detail = await getPost21Lesson(lesson.id);
+        const detail = await getPost21Lesson(lesson.id, controller.signal);
         setPhrases([...(detail.phrases ?? []), ...(detail.vocabulary ?? [])]);
-      } catch {
+      } catch (e) {
+        if ((e as { code?: string })?.code === 'ERR_CANCELED') return;
         setPhrases([]);
       } finally {
         setLoading(false);
       }
     })();
+    return () => controller.abort();
   }, []);
 
   const current = phrases[round];

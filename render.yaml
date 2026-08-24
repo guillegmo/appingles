@@ -24,3 +24,23 @@ services:
         sync: false
       - key: ADMIN_USER_ID
         sync: false
+      - key: ACTIVATION_URL
+        value: https://www.ingresosdigitalesit.com/appingles/activar
+      - key: MAIL_FROM
+        value: acceso@ingresosdigitalesit.com
+      - key: MAIL_HOST
+        value: smtp.hostinger.com
+      - key: MAIL_PORT
+        value: "465"
+      - key: MAIL_SECURE
+        value: "true"
+      - key: MAIL_USER
+        value: ingresosdigitales@ingresosdigitalesit.com
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: SUPPORT_EMAIL
+        value: acceso@ingresosdigitalesit.com
+      - key: APP_PUBLIC_URL
+        value: https://www.ingresosdigitalesit.com
+      - key: RESEND_MAX_PER_HOUR
+        value: "10"

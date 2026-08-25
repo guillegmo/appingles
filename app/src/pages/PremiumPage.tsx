@@ -38,7 +38,7 @@ function fmtUSD(n?: number) {
 
 export function PremiumPage() {
   const navigate = useNavigate();
-  const { entitlements, subscription, upgradePremium, refreshAll, setSubscription } = useAppStore();
+  const { entitlements, subscription, refreshAll, setSubscription } = useAppStore();
   const [plans, setPlans] = useState<PlanOption[]>([]);
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
@@ -46,6 +46,7 @@ export function PremiumPage() {
   const [confirmingCancel, setConfirmingCancel] = useState(false);
   const [canceling, setCanceling] = useState(false);
   const [cancelMsg, setCancelMsg] = useState<string | null>(null);
+  const [upgradeError, setUpgradeError] = useState<string | null>(null);
 
   const status = subscription?.status ?? 'free';
   const isPremium = entitlements?.plan === 'premium';
@@ -137,14 +138,17 @@ export function PremiumPage() {
 
   const handleUpgrade = async () => {
     setUpgrading(true);
+    setUpgradeError(null);
     try {
+      // NUNCA activamos Premium localmente: la única vía de pago es el checkout
+      // de Hotmart. El webhook (PURCHASE_APPROVED) es quien cambia el plan a
+      // premium una vez Hotmart confirma la compra.
       if (checkoutUrl) {
         await trackAnalyticsEvent('checkout_started', { provider: 'hotmart', plan: billing }).catch(() => {});
         window.location.href = checkoutUrl;
         return;
       }
-      // Dev: activar trial local (upgradePremium ya actualiza el store)
-      await upgradePremium();
+      setUpgradeError('El checkout de Hotmart no está configurado todavía. Intenta de nuevo en unos minutos.');
     } finally {
       setUpgrading(false);
     }
@@ -263,6 +267,11 @@ export function PremiumPage() {
           <Button className="mt-4 w-full" size="lg" onClick={handleUpgrade} disabled={upgrading}>
             {upgrading ? 'Redirigiendo…' : `Empezar con AppIngles Premium (${billing === 'monthly' ? 'Mensual' : 'Anual'})`}
           </Button>
+          {upgradeError && (
+            <p role="alert" className="mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-center text-xs font-medium text-amber-800">
+              {upgradeError}
+            </p>
+          )}
           <p className="mt-2 text-center text-[10px] text-slate-400">Incluye hasta 60 mensajes de IA al día. Cancela cuando quieras.</p>
           <p className="mt-1 flex items-center justify-center gap-1 text-center text-xs text-slate-400">
             <Gift className="h-3.5 w-3.5" /> Pago seguro procesado por Hotmart.

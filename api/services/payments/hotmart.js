@@ -24,11 +24,18 @@ function webhookToken() {
   return process.env.HOTMART_WEBHOOK_TOKEN || '';
 }
 
-const CHECKOUT_URLS = {
-  monthly: process.env.HOTMART_CHECKOUT_URL_MONTHLY || process.env.HOTMART_CHECKOUT_URL || '',
-  annual: process.env.HOTMART_CHECKOUT_URL_ANNUAL || process.env.HOTMART_CHECKOUT_URL || '',
-};
-const PRODUCT_ANNUAL_ID = process.env.HOTMART_PRODUCT_ANNUAL_ID || '';
+// Lectura dinámica de los checkouts (no cacheada al cargar el módulo): cada
+// plan apunta a SU producto Hotmart (mensual vs anual). Si el plan específico
+// no está configurado, se cae al checkout genérico HOTMART_CHECKOUT_URL.
+function checkoutUrl(plan = 'monthly') {
+  if (plan === 'annual') {
+    return process.env.HOTMART_CHECKOUT_URL_ANNUAL || process.env.HOTMART_CHECKOUT_URL || '';
+  }
+  return process.env.HOTMART_CHECKOUT_URL_MONTHLY || process.env.HOTMART_CHECKOUT_URL || '';
+}
+function productAnnualId() {
+  return process.env.HOTMART_PRODUCT_ANNUAL_ID || '';
+}
 
 function safeJsonParse(str) {
   try {
@@ -162,8 +169,9 @@ function mapEventToSubscription(event) {
   // Plan: el Reto de Inglés en 21 Días es compra única (plan reto21); los
   // productos Premium IA siguen siendo suscripción mensual/anual.
   let plan = 'premium-monthly';
+  const annualId = productAnnualId();
   if (/reto|21\s*d[ií]as/i.test(productName)) plan = 'reto21';
-  else if (PRODUCT_ANNUAL_ID && String(productId) === PRODUCT_ANNUAL_ID) plan = 'premium-annual';
+  else if (annualId && String(productId) === annualId) plan = 'premium-annual';
   else if (/annual|anual|año|ano/i.test(productName.toLowerCase())) plan = 'premium-annual';
 
   const nextCycle = data?.purchase?.next_cycle_date
@@ -190,9 +198,11 @@ function mapEventToSubscription(event) {
 }
 
 // Crea un link de checkout Hotmart. El 'custom' transporta el userId para que el
-// webhook pueda resolver el usuario en producción.
+// webhook pueda resolver el usuario en producción (y así MIGRAR su plan: una
+// compra premium sobre un usuario reto21 existente reemplaza el plan, no lo
+// duplica, porque el webhook aplica el evento sobre la misma suscripción).
 function createCheckout({ email, userId, plan = 'monthly', successUrl, cancelUrl }) {
-  const base = CHECKOUT_URLS[plan] || CHECKOUT_URLS.monthly;
+  const base = checkoutUrl(plan);
   if (!base) return { url: null, dev: true, reason: 'HOTMART_CHECKOUT_URL no configurado (modo dev)' };
 
   const url = new URL(base);
@@ -204,4 +214,4 @@ function createCheckout({ email, userId, plan = 'monthly', successUrl, cancelUrl
   return { url: url.toString(), dev: false, plan };
 }
 
-module.exports = { verifyWebhook, mapEventToSubscription, createCheckout, normalizeStatus, isRenewal, safeJsonParse };
+module.exports = { verifyWebhook, mapEventToSubscription, createCheckout, normalizeStatus, isRenewal, safeJsonParse, checkoutUrl, productAnnualId };

@@ -84,7 +84,7 @@ export function OnboardingPage() {
       >
         {saving ? (
           <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</>
-        ) : hasHistory ? 'Continuar mi progreso' : 'Empezar Día 1'}
+        ) : hasHistory ? 'Continuar mi progreso' : 'Comenzar Día 1'}
       </Button>
     </div>
   );

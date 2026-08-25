@@ -24,10 +24,14 @@ router.get('/status', async (req, res) => {
 });
 
 // GET /subscription/plans -> precios de los planes (mensual/anual) para el paywall.
+// Fuente única de precios: PRICE_MONTHLY_USD / PRICE_ANNUAL_USD (default 4.99/39.99,
+// alineados con los checkouts reales de Hotmart). El frontend NUNCA hardcodea precios.
 router.get('/plans', (req, res) => {
-  const monthly = Number(process.env.PRICE_MONTHLY_USD || 15);
-  const annual = Number(process.env.PRICE_ANNUAL_USD || 99);
+  const monthly = Number(process.env.PRICE_MONTHLY_USD || 4.99);
+  const annual = Number(process.env.PRICE_ANNUAL_USD || 39.99);
   res.json({
+    currency: 'USD',
+    savingsPct: Math.round((1 - annual / (monthly * 12)) * 100),
     plans: [
       { id: 'monthly', label: 'Mensual', price: monthly, period: 'month', pricePerMonth: monthly },
       { id: 'annual', label: 'Anual', price: annual, period: 'year', pricePerMonth: +(annual / 12).toFixed(2) },

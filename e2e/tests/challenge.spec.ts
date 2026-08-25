@@ -6,7 +6,7 @@ test.describe('Reto de 21 días', () => {
   test('CH-001 Día 1 está disponible desde el dashboard y navega', async ({ page }) => {
     await newOnboardedUser(page, 'ch1');
 
-    await page.getByRole('button', { name: 'Empezar Día 1' }).click();
+    await page.getByRole('button', { name: 'Comenzar Día 1' }).click();
     await expect(page).toHaveURL(/\/day\/1/);
     await expect(page.getByRole('heading', { name: 'Presentaciones' })).toBeVisible();
     await expect(page.getByText('Estación 1 de 21')).toBeVisible();

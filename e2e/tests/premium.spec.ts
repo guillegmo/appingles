@@ -6,10 +6,14 @@ test.describe('Premium / Entitlements', () => {
   test('PREM-001 un usuario Free ve el paywall con planes', async ({ page }) => {
     await newOnboardedUser(page, 'prem1');
     await page.goto('/premium');
-    await expect(page.getByRole('heading', { name: 'PREMIUM IA' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Empezar con la IA/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'APPINGLES PREMIUM' })).toBeVisible();
+    await expect(page.getByText('Tu aprendizaje personalizado con IA.')).toBeVisible();
+    await expect(page.getByRole('button', { name: /Empezar con AppIngles Premium/ })).toBeVisible();
     await expect(page.getByText('Mensual', { exact: true })).toBeVisible();
-    await expect(page.getByText('Anual -45%')).toBeVisible();
+    await expect(page.getByText('Mejor valor')).toBeVisible();
+    // Precios del modelo freemium actual ($4.99/mes, $39.99/año).
+    await expect(page.getByText('$4.99')).toBeVisible();
+    await expect(page.getByText('$39.99')).toBeVisible();
     // El botón "Volver sin comprar" (aria-label="Volver") permite salir del paywall.
     // Nota: el aria-label "Volver" sobrescribe el texto visible en el nombre
     // accesible → hallazgo menor de accesibilidad.
@@ -31,7 +35,10 @@ test.describe('Premium / Entitlements', () => {
     const apiFree = apiAuthed(request, '', tokenFree, sessionFree);
     const { res: freeRes, body: freeBody } = await apiFree.get('/subscription/status');
     expect(freeRes.status()).toBe(200);
-    expect(freeBody.subscription.status).toBe('free');
+    // Con el gate de acceso, provisionUser concede plan 'reto21' (compra única):
+    // la suscripción queda 'active' pero los ENTITLEMENTS son de tier free.
+    expect(freeBody.subscription.plan).toBe('reto21');
+    expect(freeBody.subscription.status).toBe('active');
     expect(freeBody.entitlements.plan).toBe('free');
     expect(freeBody.entitlements.canUseVocabularyBank).toBe(false);
     expect(freeBody.entitlements.canScorePronunciation).toBe(false);

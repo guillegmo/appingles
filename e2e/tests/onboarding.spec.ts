@@ -8,14 +8,14 @@ test.describe('Onboarding', () => {
     await expect(page.getByRole('heading', { name: 'Tu objetivo' })).toBeVisible({ timeout: 30_000 });
     await page.getByRole('button', { name: /Aprender inglés para viajar/ }).click();
     await page.getByRole('button', { name: 'Sé muy pocas palabras' }).click();
-    await page.getByRole('button', { name: 'Empezar Día 1' }).click();
+    await page.getByRole('button', { name: 'Comenzar Día 1' }).click();
     await expect(page).toHaveURL(/\/home/);
-    await expect(page.getByText('Tu ruta de inglés')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText(/Tu (Reto de Inglés en 21 Días|ruta de inglés)/)).toBeVisible({ timeout: 30_000 });
 
     // Persistencia: recargar NO vuelve a pedir onboarding
     await page.reload();
     await expect(page).toHaveURL(/\/home/);
-    await expect(page.getByText('Tu ruta de inglés')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText(/Tu (Reto de Inglés en 21 Días|ruta de inglés)/)).toBeVisible({ timeout: 30_000 });
   });
 
   test('ONB-002 el botón de continuar está deshabilitado sin objetivo y nivel', async ({ page }) => {
@@ -23,7 +23,7 @@ test.describe('Onboarding', () => {
     await signup(page, email);
     await expect(page.getByRole('heading', { name: 'Tu objetivo' })).toBeVisible({ timeout: 30_000 });
 
-    const submit = page.getByRole('button', { name: 'Empezar Día 1' });
+    const submit = page.getByRole('button', { name: 'Comenzar Día 1' });
     await expect(submit).toBeDisabled();
 
     // Solo objetivo (sin nivel) sigue deshabilitado
@@ -41,8 +41,8 @@ test.describe('Onboarding', () => {
     await expect(page.getByRole('heading', { name: 'Tu objetivo' })).toBeVisible({ timeout: 30_000 });
     await page.getByRole('button', { name: /Trabajar en inglés/ }).click();
     await page.getByRole('button', { name: 'Puedo tener conversaciones simples' }).click();
-    await page.getByRole('button', { name: 'Empezar Día 1' }).click();
+    await page.getByRole('button', { name: 'Comenzar Día 1' }).click();
     await expect(page).toHaveURL(/\/home/);
-    await expect(page.getByText('Tu ruta de inglés')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText(/Tu (Reto de Inglés en 21 Días|ruta de inglés)/)).toBeVisible({ timeout: 30_000 });
   });
 });

@@ -122,7 +122,8 @@ async function main() {
 
   r = await call('GET', '/subscription/plans', { user: FREE });
   check('GET /subscription/plans', 200, r.status, `plans=${r.data?.plans?.length ?? '?'}`);
-  check('GET /subscription/plans → monthly 15', 15, r.data?.plans?.find?.((p) => p.id === 'monthly')?.price);
+  check('GET /subscription/plans → monthly 4.99', 4.99, r.data?.plans?.find?.((p) => p.id === 'monthly')?.price);
+  check('GET /subscription/plans → annual 39.99', 39.99, r.data?.plans?.find?.((p) => p.id === 'annual')?.price);
 
   r = await call('GET', '/subscription/checkout?plan=monthly', { user: FREE });
   check('GET /subscription/checkout (dev)', 200, r.status, `dev=${r.data?.dev} url=${r.data?.url ?? 'null'}`);

@@ -19,6 +19,10 @@ process.on('uncaughtException', (err) => {
 
 const app = express();
 
+// Render/proxy termina TLS y añade X-Forwarded-For: sin esto, req.ip es la IP
+// del proxy y TODOS los usuarios compartirían el mismo bucket de rate limit.
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 3001;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
 

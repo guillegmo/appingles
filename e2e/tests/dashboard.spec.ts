@@ -10,10 +10,10 @@ test.describe('Dashboard', () => {
 
     await expect(page).toHaveURL(/\/home/);
     await expect(page.getByRole('heading', { name: 'QA Dashboard' })).toBeVisible();
-    await expect(page.getByText('Tu ruta de inglés')).toBeVisible();
+    await expect(page.getByText(/Tu (Reto de Inglés en 21 Días|ruta de inglés)/)).toBeVisible();
     await expect(page.getByText('La misión de hoy')).toBeVisible();
     await expect(page.getByText('Día 1', { exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Empezar Día 1' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Comenzar Día 1' })).toBeVisible();
 
     // Métricas iniciales en cero
     await expect(page.getByRole('link', { name: '0 días' })).toBeVisible();

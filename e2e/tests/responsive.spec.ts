@@ -12,7 +12,7 @@ test.describe('Responsive', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/login');
     await expect(page.getByPlaceholder('tu@email.com')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Iniciar mi reto' })).toBeVisible();
     expect(await noHorizontalOverflow(page)).toBe(true);
   });
 
@@ -22,7 +22,7 @@ test.describe('Responsive', () => {
     await signup(page, email);
     await completeOnboarding(page);
     await expect(page).toHaveURL(/\/home/);
-    await expect(page.getByText('Tu ruta de inglés')).toBeVisible();
+    await expect(page.getByText(/Tu (Reto de Inglés en 21 Días|ruta de inglés)/)).toBeVisible();
     expect(await noHorizontalOverflow(page)).toBe(true);
   });
 
@@ -31,7 +31,7 @@ test.describe('Responsive', () => {
     const email = uniqueEmail('resp3');
     await signup(page, email);
     await completeOnboarding(page);
-    await page.getByRole('button', { name: 'Empezar Día 1' }).click();
+    await page.getByRole('button', { name: 'Comenzar Día 1' }).click();
     await expect(page).toHaveURL(/\/day\/1/);
     await expect(page.getByRole('heading', { name: 'Presentaciones' })).toBeVisible();
     expect(await noHorizontalOverflow(page)).toBe(true);

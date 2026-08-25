@@ -29,6 +29,7 @@ export function HomePage() {
   const total = challenge?.days.length ?? 21;
   const pct = Math.round((completed / total) * 100);
   const isChampion = completed >= total;
+  const isNewUser = completed === 0 && !isChampion;
   const nextDay = (challenge?.days.find((d) => !d.completed && !d.locked) ?? challenge?.days[0]);
   const currentDay = nextDay?.day ?? completed + 1;
 
@@ -56,7 +57,9 @@ export function HomePage() {
       <Card className="mt-4 overflow-hidden p-0">
         <div className="p-5 pb-4">
           <div className="flex items-center justify-between">
-            <p className="station-label text-primary-600">Tu ruta de inglés</p>
+            <p className="station-label text-primary-600">
+              {isNewUser ? 'Tu Reto de Inglés en 21 Días' : 'Tu ruta de inglés'}
+            </p>
             <p className="num text-[11px] font-semibold text-slate-400">
               {completed}/{total} días
             </p>
@@ -70,7 +73,7 @@ export function HomePage() {
                     {nextDay ? <>Día <span className="num">{nextDay.day}</span></> : 'Ruta completada'}
                   </p>
                   <p className="text-sm text-slate-500">
-                    Estación {nextDay ? nextDay.day : total} de {total}
+                    {isNewUser ? '¡Bienvenido! Hoy comienza tu Día 1.' : `Estación ${nextDay ? nextDay.day : total} de ${total}`}
                   </p>
                 </div>
                 <p className="pb-1 text-xs font-semibold text-slate-400">{pct}%</p>
@@ -121,7 +124,7 @@ export function HomePage() {
             >
               {navigating ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> Cargando…</>
-              ) : completed === 0 ? 'Empezar Día 1' : 'Continuar Día ' + nextDay.day}
+              ) : completed === 0 ? 'Comenzar Día 1 →' : 'Continuar Día ' + nextDay.day}
             </Button>
           ) : isChampion ? (
             <Button className="w-full" size="lg" onClick={() => navigate('/daily')}>

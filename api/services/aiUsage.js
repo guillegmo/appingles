@@ -60,10 +60,14 @@ async function release(userId, feature) {
 }
 
 // Suma tokens/coste reales tras la respuesta de la IA (sin lectura).
+// Métrica técnica separada de la comercial (count): input/output tokens del
+// proveedor + coste estimado, todo con incrementos atómicos.
 async function addTokens(userId, feature, meta = {}) {
   const { date, id } = todayId(userId);
   await store.incrementDoc('aiUsage', id, {
     [`${feature}.tokens`]: meta.tokens || 0,
+    [`${feature}.inputTokens`]: meta.inputTokens || 0,
+    [`${feature}.outputTokens`]: meta.outputTokens || 0,
     [`${feature}.estimatedCost`]: meta.estimatedCost || 0,
     userId,
     date,

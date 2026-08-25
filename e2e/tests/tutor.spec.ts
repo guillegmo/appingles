@@ -11,7 +11,9 @@ test.describe('Tutor IA', () => {
     }
     await expect(page.getByRole('button', { name: 'Estoy Atascado' })).toBeVisible();
     await expect(page.getByPlaceholder('Responde en inglés… (español si te atascas)')).toBeVisible();
-    await expect(page.getByText(/Ilimitado|mensajes hoy/)).toBeVisible();
+    await expect(page.getByText(/Mensajes de IA: \d+ de \d+ hoy/)).toBeVisible();
+    // Barra de progreso discreta del contador.
+    await expect(page.locator('div[aria-hidden="true"].h-1')).toBeVisible();
   });
 
   test('AI-002 enviar un mensaje responde o muestra error elegante (sin crash)', async ({ page }) => {
@@ -26,7 +28,7 @@ test.describe('Tutor IA', () => {
 
     // O el tutor responde (burbuja del asistente) o muestra un error manejado.
     const replied = page.locator('text=escuchar').first();
-    const gracefulError = page.getByText(/El tutor no respondió|Alcanzaste tu límite diario/).first();
+    const gracefulError = page.getByText(/El tutor no respondió|Has utilizado tus/).first();
     await Promise.race([
       replied.waitFor({ timeout: 60_000 }),
       gracefulError.waitFor({ timeout: 60_000 }),
@@ -38,7 +40,7 @@ test.describe('Tutor IA', () => {
     await newOnboardedUser(page, 'tutor3');
     await page.goto('/tutor');
     await expect(page.getByRole('heading', { name: /Tutor IA/ })).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByText(/mensajes IA gratis hoy/)).toBeVisible();
-    await expect(page.getByText(/mensajes hoy/)).toBeVisible();
+    await expect(page.getByText(/Mensajes de IA: \d+ de \d+ hoy/)).toBeVisible();
+    await expect(page.getByText(/Con Premium tienes hasta 60 al día/)).toBeVisible();
   });
 });

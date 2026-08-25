@@ -1,12 +1,17 @@
 // routes/tutor.js
 // Tutor IA: chat por modos + "I'm Stuck".
 // - Acceso: todos los usuarios; Free tiene 3 mensajes IA/día de muestra,
-//   Premium IA (suscripción recurrente) tiene el límite completo.
-// - Límite diario de mensajes según entitlement (aiMessagesPerDay).
-// - Memoria contextual: colección 'conversations' por user+mode.
+//   Premium IA (suscripción recurrente) tiene 60 mensajes IA/día.
+// - Límite diario de mensajes según entitlement (aiMessagesPerDay), aplicado
+//   con reserva atómica (transacción): peticiones simultáneas no lo superan.
+// - Idempotencia: un requestId del cliente deduplica reintentos (doble clic,
+//   retry de red) para que 1 acción del usuario = 1 mensaje consumido.
+// - Rate limit anti-spam por usuario (además del límite diario).
+// - Memoria contextual: colección 'conversations' por user+mode (ventana corta).
 
 const express = require('express');
 const router = express.Router();
+const rateLimit = require('express-rate-limit');
 const store = require('../lib/store');
 const entitlement = require('../services/entitlement');
 const aiUsage = require('../services/aiUsage');
@@ -18,6 +23,67 @@ router.use(authenticate);
 
 const CONTEXT_WINDOW = 12; // últimos N mensajes enviados al modelo
 const MODE_PARAM = 'tutor';
+const MAX_MESSAGE_LENGTH = 2000; // ~350 palabras: varias frases sí, abuso no
+
+// Anti-spam/automatización: 20 mensajes/minuto es muy por encima del uso
+// normal (escribir + leer) y muy por debajo de bots. El tope real sigue
+// siendo el límite diario. Clave por userId (req.user ya está cargado).
+const tutorLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: Number(process.env.TUTOR_RATE_PER_MIN) || 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.user?.id || req.ip,
+  message: { error: 'rate_limited', message: 'Demasiados mensajes seguidos. Espera unos segundos.' },
+});
+
+// Idempotencia: colección 'aiRequests' doc `${userId}_${requestId}`.
+// Estados: processing -> done | (eliminado si la IA falló, permite reintentar).
+const REQUEST_TTL_MS = 10 * 60 * 1000;
+
+function requestIdOf(body) {
+  const raw = body?.requestId;
+  if (typeof raw !== 'string') return null;
+  if (!/^[A-Za-z0-9_-]{8,64}$/.test(raw)) return null;
+  return raw;
+}
+
+// Check-and-create atómico del registro de idempotencia.
+// Devuelve { fresh: true } o { duplicate: true, response } o { inFlight: true }.
+async function beginIdempotentRequest(userId, requestId) {
+  const id = `${userId}_${requestId}`;
+  const now = Date.now();
+  return store.runTransaction(async (tx) => {
+    const doc = await tx.get('aiRequests', id);
+    if (doc) {
+      const age = now - new Date(doc.createdAt || 0).getTime();
+      if (doc.response && age < REQUEST_TTL_MS) {
+        return { duplicate: true, response: doc.response };
+      }
+      if (!doc.response && age < REQUEST_TTL_MS) {
+        return { inFlight: true };
+      }
+      // Expirado: se recicla el registro para esta petición.
+    }
+    tx.set('aiRequests', id, { userId, status: 'processing', createdAt: new Date(now).toISOString() });
+    return { fresh: true };
+  });
+}
+
+async function completeIdempotentRequest(userId, requestId, response) {
+  await store.setDoc(`aiRequests`, `${userId}_${requestId}`, {
+    userId,
+    requestId,
+    status: 'done',
+    createdAt: new Date().toISOString(),
+    response,
+  });
+}
+
+async function failIdempotentRequest(userId, requestId) {
+  // Elimina el registro para que un reintento legítimo con la misma clave funcione.
+  await store.deleteDoc('aiRequests', `${userId}_${requestId}`).catch(() => {});
+}
 
 function entitlementsOf(req) {
   return entitlement.buildEntitlements(req.subscription);
@@ -73,65 +139,104 @@ async function handleMessage(req, res, modeId) {
   }
 
   const { message } = req.body || {};
-  if (!message || !message.trim()) {
+  const trimmed = typeof message === 'string' ? message.trim() : '';
+  if (!trimmed) {
     return res.status(400).json({ error: 'message es requerido' });
+  }
+  if (trimmed.length > MAX_MESSAGE_LENGTH) {
+    return res.status(400).json({
+      error: 'message_too_long',
+      message: `El mensaje es demasiado largo (máximo ${MAX_MESSAGE_LENGTH} caracteres). Divídelo en dos.`,
+    });
+  }
+
+  // Idempotencia: si el cliente envía requestId, deduplica reintentos ANTES de
+  // reservar cupo (un reintento no debe consumir otro mensaje).
+  const requestId = requestIdOf(req.body);
+  if (requestId) {
+    const begin = await beginIdempotentRequest(req.user.id, requestId);
+    if (begin.duplicate) {
+      return res.json({ ...begin.response, duplicate: true });
+    }
+    if (begin.inFlight) {
+      return res.status(409).json({ error: 'request_in_flight', message: 'Ese mensaje ya se está procesando.' });
+    }
   }
 
   const ent = entitlementsOf(req);
 
-  // Reserva atómica del mensaje ANTES de cualquier otra lectura: si el límite
-  // diario ya se alcanzó, respondemos 429 con UNA sola lectura (check+incremento
-  // dentro de la transacción), sin leer historial ni perfil. Peticiones
-  // simultáneas no pueden exceder aiMessagesPerDay.
-  const reservation = await aiUsage.reserve(req.user.id, MODE_PARAM, ent.aiMessagesPerDay);
-  if (!reservation.ok) {
-    return res.status(429).json({ error: 'ai_limit_reached', message: 'Alcanzaste tu límite diario de mensajes IA.', used: reservation.used, limit: ent.aiMessagesPerDay });
-  }
-
-  // Historial y contexto en paralelo (1 round trip).
-  const [history, context] = await Promise.all([
-    getConversation(req.user.id, modeId),
-    userContext(req.user.id),
-  ]);
-  const modelMessages = buildModelMessages(modeId, history, message.trim(), context);
-
-  // Si la IA falla, se revierte la reserva para no penalizar al usuario.
-  let result;
   try {
-    result = await aiClient.chat(modelMessages);
+    // Reserva atómica del mensaje ANTES de cualquier otra lectura: si el límite
+    // diario ya se alcanzó, respondemos 429 con UNA sola lectura (check+incremento
+    // dentro de la transacción), sin leer historial ni perfil. Peticiones
+    // simultáneas no pueden exceder aiMessagesPerDay.
+    const reservation = await aiUsage.reserve(req.user.id, MODE_PARAM, ent.aiMessagesPerDay);
+    if (!reservation.ok) {
+      if (requestId) await failIdempotentRequest(req.user.id, requestId);
+      return res.status(429).json({ error: 'ai_limit_reached', message: 'Alcanzaste tu límite diario de mensajes IA.', used: reservation.used, limit: ent.aiMessagesPerDay });
+    }
+
+    // Historial y contexto en paralelo (1 round trip).
+    const [history, context] = await Promise.all([
+      getConversation(req.user.id, modeId),
+      userContext(req.user.id),
+    ]);
+    const modelMessages = buildModelMessages(modeId, history, trimmed, context);
+
+    // Si la IA falla, se revierte la reserva Y el registro de idempotencia para
+    // no penalizar al usuario ni bloquear su reintento.
+    let result;
+    try {
+      result = await aiClient.chat(modelMessages);
+    } catch (err) {
+      await Promise.all([
+        aiUsage.release(req.user.id, MODE_PARAM).catch(() => {}),
+        requestId ? failIdempotentRequest(req.user.id, requestId) : Promise.resolve(),
+      ]);
+      throw err;
+    }
+
+    const now = new Date().toISOString();
+    const nextHistory = [
+      ...history,
+      { role: 'user', content: trimmed, at: now },
+      { role: 'assistant', content: result.content, at: now },
+    ];
+
+    // Tokens/coste reales (incremento atómico sin lectura) + guardado del
+    // historial, en paralelo (independientes entre sí).
+    const usageMeta = {
+      tokens: result.usage?.total_tokens || 0,
+      inputTokens: result.usage?.prompt_tokens || 0,
+      outputTokens: result.usage?.completion_tokens || 0,
+      estimatedCost: aiClient.estimateCost(result.usage),
+    };
+    await Promise.all([
+      aiUsage.addTokens(req.user.id, MODE_PARAM, usageMeta),
+      saveConversation(req.user.id, modeId, nextHistory),
+    ]);
+
+    const payload = {
+      reply: result.content,
+      mode: modeId,
+      used: reservation.used,
+      limit: ent.aiMessagesPerDay,
+      mock: result.mock,
+    };
+
+    // Cachea la respuesta bajo la clave de idempotencia (reintentos reciben
+    // exactamente la misma respuesta sin consumir otro mensaje).
+    if (requestId) await completeIdempotentRequest(req.user.id, requestId, payload);
+
+    res.json(payload);
   } catch (err) {
-    await aiUsage.release(req.user.id, MODE_PARAM).catch(() => {});
+    if (requestId) await failIdempotentRequest(req.user.id, requestId);
     throw err;
   }
-
-  const now = new Date().toISOString();
-  const nextHistory = [
-    ...history,
-    { role: 'user', content: message.trim(), at: now },
-    { role: 'assistant', content: result.content, at: now },
-  ];
-
-  // Tokens/coste reales (incremento atómico sin lectura) + guardado del
-  // historial, en paralelo (independientes entre sí).
-  await Promise.all([
-    aiUsage.addTokens(req.user.id, MODE_PARAM, {
-      tokens: result.usage?.total_tokens || 0,
-      estimatedCost: aiClient.estimateCost(result.usage),
-    }),
-    saveConversation(req.user.id, modeId, nextHistory),
-  ]);
-
-  res.json({
-    reply: result.content,
-    mode: modeId,
-    used: reservation.used,
-    limit: ent.aiMessagesPerDay,
-    mock: result.mock,
-  });
 }
 
-// POST /tutor/message — body: { mode, message }
-router.post('/message', async (req, res) => {
+// POST /tutor/message — body: { mode, message, requestId? }
+router.post('/message', tutorLimiter, async (req, res) => {
   const { mode } = req.body || {};
   const resolved = mode === 'stuck' ? null : prompts.resolveMode(mode);
   if (!resolved) {
@@ -145,8 +250,8 @@ router.post('/message', async (req, res) => {
   }
 });
 
-// POST /tutor/stuck — body: { message }
-router.post('/stuck', async (req, res) => {
+// POST /tutor/stuck — body: { message, requestId? }
+router.post('/stuck', tutorLimiter, async (req, res) => {
   try {
     await handleMessage(req, res, 'stuck');
   } catch (err) {

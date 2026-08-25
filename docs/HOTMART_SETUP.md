@@ -25,12 +25,17 @@ Premium y registra el cobro (MRR).
 
 ## Paso 1 — Crear los productos recurrentes en Hotmart
 
-Crea **dos productos** de tipo **suscripción recurrente**:
+Crea **dos productos** de tipo **suscripción recurrente** con los precios del
+modelo freemium vigente (deben coincidir EXACTAMENTE con `PRICE_MONTHLY_USD` /
+`PRICE_ANNUAL_USD`, default 4.99/39.99):
 
-| Producto | Precio | Precio anualizado | Nota |
+| Producto | Precio | Equivalente | Nota |
 |---|---|---|---|
-| AppIngles Premium Mensual | US$ 15.00 | — | Plan `monthly` |
-| AppIngles Premium Anual | US$ 99.00 | US$ 8.25/mes | Plan `annual` |
+| AppIngles Premium Mensual | US$ 4.99/mes | — | Plan `monthly` |
+| AppIngles Premium Anual | US$ 39.99/año | US$ 3.33/mes (−33%) | Plan `annual` |
+
+> Si los precios configurados en Hotmart no coinciden con los de la app,
+> la implementación NO debe considerarse terminada: reportar la diferencia.
 
 Al crearlos, Hotmart te da la URL de venta:
 `https://pay.hotmart.com/XXXXXXXX`. Guarda los dos códigos (el número final).

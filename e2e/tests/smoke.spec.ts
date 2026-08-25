@@ -7,7 +7,7 @@ test.describe('Smoke', () => {
     await expect(page.getByRole('heading', { name: 'Inglés en 21 Días' })).toBeVisible();
     await expect(page.getByPlaceholder('tu@email.com')).toBeVisible();
     await expect(page.getByPlaceholder('Contraseña')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Iniciar mi reto' })).toBeVisible();
   });
 
   test('una ruta protegida redirige a /login sin sesión', async ({ page }) => {

@@ -6,7 +6,7 @@ test.describe('Ejercicios', () => {
   test('EX-001 un fallo en el quiz NO rompe el flujo (regresión BUG-001)', async ({ page }) => {
     await newOnboardedUser(page, 'ex1');
 
-    await page.getByRole('button', { name: 'Empezar Día 1' }).click();
+    await page.getByRole('button', { name: 'Comenzar Día 1' }).click();
     await expect(page).toHaveURL(/\/day\/1/);
     await expect(page.getByRole('heading', { name: '🎯 Objetivo de hoy' })).toBeVisible({ timeout: 60_000 });
 

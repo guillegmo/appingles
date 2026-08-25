@@ -71,7 +71,7 @@ export function LoginPage() {
           <span className="font-display text-3xl font-black leading-none">21</span>
         </div>
         <h1 className="text-2xl font-bold">Inglés en 21 Días</h1>
-        <p className="mt-1 text-sm text-slate-500">Una ruta de 21 estaciones hacia el inglés. Con tu entrenador IA.</p>
+        <p className="mt-1 text-sm text-slate-500">Una ruta guiada de 21 días para practicar inglés paso a paso.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-3">
@@ -93,9 +93,25 @@ export function LoginPage() {
           minLength={6}
         />
         <Button type="submit" className="w-full" size="lg" disabled={loading}>
-          {loading ? 'Cargando…' : 'Iniciar sesión'}
+          {loading ? 'Entrando…' : 'Iniciar mi reto'}
         </Button>
       </form>
+
+      {/* Recorrido del reto: 21 estaciones (Día 1 → Día 21). Decorativo. */}
+      <div className="mt-6 flex w-full max-w-xs items-center gap-2" aria-hidden="true">
+        <span className="text-[10px] font-bold text-slate-400">Día 1</span>
+        <div className="flex flex-1 items-center justify-between">
+          {Array.from({ length: 21 }, (_, i) => (
+            <span
+              key={i}
+              className={`h-1.5 w-1.5 rounded-full ${i === 0 ? 'bg-primary-600' : i === 20 ? 'bg-emerald-500' : 'bg-slate-300'}`}
+            />
+          ))}
+        </div>
+        <span className="text-[10px] font-bold text-emerald-600">Día 21</span>
+      </div>
+
+      <p className="mt-4 text-xs font-medium text-primary-700">Tu Día 1 comienza aquí.</p>
 
       {error && (
         <p role="alert" className="mt-3 flex w-full max-w-sm items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-xs font-medium text-rose-700">

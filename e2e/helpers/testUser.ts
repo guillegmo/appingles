@@ -106,7 +106,7 @@ export async function completeOnboarding(page: Page): Promise<void> {
 
   const goalBtn = page.getByRole('button', { name: /Aprender inglés para viajar/ });
   const levelBtn = page.getByRole('button', { name: 'Sé muy pocas palabras' });
-  const startBtn = page.getByRole('button', { name: /Empezar Día 1|Continuar mi progreso/ });
+  const startBtn = page.getByRole('button', { name: /Comenzar Día 1|Continuar mi progreso/ });
 
   // La pantalla de onboarding puede re-montarse mientras terminan de cargar
   // challenge/progress, reseteando el estado local (goal/level). Se reintenta la
@@ -124,7 +124,7 @@ export async function completeOnboarding(page: Page): Promise<void> {
   }
 
   await startBtn.click();
-  await expect(page.getByText('Tu ruta de inglés')).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByText(/Tu (Reto de Inglés en 21 Días|ruta de inglés)/)).toBeVisible({ timeout: 60_000 });
 }
 
 // Navega al login y llena credenciales sin esperar la redirección (quien lo
@@ -133,7 +133,7 @@ export async function fillLogin(page: Page, email: string, password: string): Pr
   await page.goto('/login');
   await page.getByPlaceholder('tu@email.com').fill(email);
   await page.getByPlaceholder('Contraseña').fill(password);
-  await page.getByRole('button', { name: 'Iniciar sesión' }).click();
+  await page.getByRole('button', { name: 'Iniciar mi reto' }).click();
 }
 
 export async function login(page: Page, email: string): Promise<void> {

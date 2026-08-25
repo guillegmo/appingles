@@ -9,7 +9,7 @@ test.describe('Flujo Día 1', () => {
     await completeOnboarding(page);
 
     // Empezar Día 1 desde el dashboard
-    await page.getByRole('button', { name: /Empezar Día 1|Continuar Día 1/ }).first().click();
+    await page.getByRole('button', { name: /Comenzar Día 1|Continuar Día 1/ }).first().click();
     await expect(page).toHaveURL(/\/day\/1/);
     await expect(page.getByRole('heading', { name: 'Presentaciones' })).toBeVisible();
 

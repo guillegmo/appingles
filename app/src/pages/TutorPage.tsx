@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bot, Lock, Mic, Send, Volume2, Loader2, HelpCircle } from 'lucide-react';
+import { Bot, Lock, Mic, Send, Volume2, Loader2, HelpCircle, CheckCircle2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import { speak } from '../utils/speech';
-import { getTutorModes, getTutorHistory, sendTutorMessage, sendTutorStuck, getTutorUsage, trackAnalyticsEvent } from '../services/api';
+import { getTutorModes, getTutorHistory, sendTutorMessage, sendTutorStuck, getTutorUsage, trackAnalyticsEvent, apiErrorInfo } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
@@ -107,9 +107,15 @@ export function TutorPage() {
         },
       });
     } catch (e) {
-      const msg = (e as Error).message;
-      const limited = /429/.test(msg);
-      setError(limited ? 'Alcanzaste tu límite diario de mensajes IA.' : 'El tutor no respondió. Intenta de nuevo.');
+      const info = apiErrorInfo(e);
+      const limited = info.status === 429 || /429/.test(info.message || '') || /429/.test((e as Error).message);
+      setError(
+        limited
+          ? premium
+            ? `Has utilizado tus ${usage.limit} mensajes de IA de hoy. Tu límite se renovará mañana.`
+            : 'Has utilizado tus 3 mensajes de IA de hoy. Con Premium tienes hasta 60 al día.'
+          : info.message || 'El tutor no respondió. Intenta de nuevo.',
+      );
       setMessages((m) => m.slice(0, -1));
       if (voiceModeRef.current) {
         if (limited) {
@@ -181,6 +187,10 @@ export function TutorPage() {
   };
 
   const remaining = Math.max(0, usage.limit - usage.used);
+  const usagePct = usage.limit > 0 ? Math.min(100, Math.round((usage.used / usage.limit) * 100)) : 0;
+  // Aviso discreto cuando quedan pocos mensajes (free: el último; premium: ~15%).
+  const lowThreshold = premium ? Math.max(2, Math.ceil(usage.limit * 0.15)) : 1;
+  const showLowNotice = remaining > 0 && remaining <= lowThreshold;
 
   return (
     <div className="flex h-[calc(100dvh-7rem)] flex-col p-5 pb-0">
@@ -188,18 +198,31 @@ export function TutorPage() {
         <h1 className="flex items-center gap-2 text-xl font-bold">
           <Bot className="h-6 w-6 text-primary-600" /> Tutor IA
         </h1>
-        <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${premium ? 'bg-emerald-100 text-emerald-700' : remaining > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
-          {!premium && <Lock className="h-3 w-3" />}
-          {premium ? 'Ilimitado' : `${remaining}/${usage.limit} mensajes hoy`}
+        <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${remaining > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}`}>
+          Mensajes de IA: {usage.used} de {usage.limit} hoy
         </span>
       </div>
+      {usage.limit > 0 && (
+        <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+          <div
+            className={`h-full rounded-full transition-all ${remaining > lowThreshold ? 'bg-primary-500' : 'bg-amber-400'}`}
+            style={{ width: `${usagePct}%` }}
+          />
+        </div>
+      )}
       <p className="mt-1 text-xs text-slate-500">Hola {user?.name}, conozco tu nivel y tus debilidades.</p>
-      {!premium && (
+      {showLowNotice && (
+        <p className="mt-1.5 rounded-lg bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700">
+          Te quedan {remaining} {remaining === 1 ? 'mensaje' : 'mensajes'} de IA hoy.
+          {!premium && ' Puedes probar Premium para llegar a 60 al día.'}
+        </p>
+      )}
+      {!premium && remaining > 0 && !showLowNotice && (
         <button
           onClick={() => navigate('/premium')}
           className="mt-2 w-full rounded-xl bg-primary-600 px-3 py-2 text-left text-xs font-semibold text-white"
         >
-          Tienes {remaining} mensajes IA gratis hoy. Desbloquea conversaciones ilimitadas con Premium IA →
+          Tienes {remaining} mensajes de IA hoy. Con Premium tienes hasta 60 al día →
         </button>
       )}
       <div className="mt-2 flex justify-center">
@@ -267,15 +290,19 @@ export function TutorPage() {
 
         <div className="shrink-0 border-t border-slate-100 p-3">
           {!premium && remaining === 0 ? (
-            <div className="flex flex-col items-center rounded-xl bg-rose-50 px-4 py-5 text-center">
-              <Lock className="h-6 w-6 text-rose-400" />
-              <p className="mt-2 text-sm font-bold text-rose-700">Se acabaron tus mensajes gratis hoy</p>
-              <p className="mt-1 text-xs text-slate-500">
-                Con Premium IA conversas sin límite, con voz y con corrección al momento.
-              </p>
+            <div className="flex flex-col items-center rounded-xl bg-slate-50 px-4 py-5 text-center">
+              <Lock className="h-6 w-6 text-slate-400" />
+              <p className="mt-2 text-sm font-bold text-slate-700">Has utilizado tus {usage.limit || 3} mensajes de IA de hoy.</p>
+              <p className="mt-1 text-xs text-slate-500">Premium permite hasta 60 mensajes diarios.</p>
               <Button className="mt-3 w-full" size="lg" onClick={() => navigate('/premium')}>
-                Desbloquear Premium IA
+                Conocer Premium
               </Button>
+            </div>
+          ) : premium && remaining === 0 ? (
+            <div className="flex flex-col items-center rounded-xl bg-slate-50 px-4 py-5 text-center">
+              <CheckCircle2 className="h-6 w-6 text-primary-500" />
+              <p className="mt-2 text-sm font-bold text-slate-700">Has utilizado tus {usage.limit} mensajes de IA de hoy.</p>
+              <p className="mt-1 text-xs text-slate-500">Tu límite se renovará mañana. ¡Buen trabajo practicando!</p>
             </div>
           ) : (
             <div className="flex items-center gap-2">

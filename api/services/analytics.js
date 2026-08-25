@@ -44,8 +44,8 @@ function eventName(req, res, next) {
 
 // ---- Métricas de negocio (dashboard) ----
 
-const PRICE_MONTHLY_USD = Number(process.env.PRICE_MONTHLY_USD || 15);
-const PRICE_ANNUAL_USD = Number(process.env.PRICE_ANNUAL_USD || 99);
+const PRICE_MONTHLY_USD = Number(process.env.PRICE_MONTHLY_USD || 4.99);
+const PRICE_ANNUAL_USD = Number(process.env.PRICE_ANNUAL_USD || 39.99);
 
 // Precio mensual equivalente de cada plan (anual -> precio/12).
 function planPricePerMonth(plan) {

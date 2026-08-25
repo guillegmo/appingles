@@ -500,18 +500,36 @@ export async function getTutorHistory(mode: string, signal?: AbortSignal): Promi
   return cachedGet('/tutor/history', { mode }, TTL.tutorHistory, signal);
 }
 
+// Idempotencia del tutor: cada acción del usuario genera una clave única que
+// viaja al backend; un reintento de red con la misma clave devuelve la MISMA
+// respuesta sin consumir otro mensaje (la deduplicación real es server-side).
+function newRequestId(): string {
+  const c = typeof crypto !== 'undefined' ? crypto : undefined;
+  if (c && 'randomUUID' in c) return c.randomUUID().replace(/-/g, '');
+  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 12)}`;
+}
+
 export async function sendTutorMessage(mode: string, message: string): Promise<import('../types').TutorReply> {
-  const { data } = await api.post('/tutor/message', { mode, message });
+  const { data } = await api.post('/tutor/message', { mode, message, requestId: newRequestId() });
   invalidateCache('/tutor');
   invalidateCache('/analytics');
   return data;
 }
 
 export async function sendTutorStuck(message: string): Promise<import('../types').TutorReply> {
-  const { data } = await api.post('/tutor/stuck', { message });
+  const { data } = await api.post('/tutor/stuck', { message, requestId: newRequestId() });
   invalidateCache('/tutor');
   invalidateCache('/analytics');
   return data;
+}
+
+// Extrae el mensaje amigable y el estado HTTP de un error de la API.
+export function apiErrorInfo(e: unknown): { status?: number; message?: string } {
+  if (axios.isAxiosError(e)) {
+    const data = e.response?.data as { message?: string } | undefined;
+    return { status: e.response?.status, message: data?.message };
+  }
+  return { message: e instanceof Error ? e.message : undefined };
 }
 
 export async function getTutorUsage(signal?: AbortSignal): Promise<import('../types').TutorUsage> {

@@ -9,13 +9,14 @@
   "grammarFocus": "repaso de la semana 3",
   "lesson": {
     "title": "Estructura de una entrevista corta",
-    "rule": "Una presentación profesional sigue un orden: 1) saludo y nombre, 2) experiencia y trabajo (I have five years of experience), 3) gustos profesionales (I enjoy working with my team), 4) planes futuros (In the future, I want to travel). El verbo tras 'enjoy' va en -ing: I enjoy working.",
+    "rule": "Para conversaciones fluidas: combina opiniones con evidencia ('In my experience...'), usa 'Actually' para corregir o añadir, 'For example' para ilustrar, 'Good point' para validar al otro. En debates: empieza con tu opinión, luego responde al otro con acuerdo parcial o desacuerdo educado.",
     "examples": [
-      "I have five years of experience.",
-      "My goal is to improve my English.",
-      "I work in customer service.",
-      "In the future, I want to travel.",
-      "I enjoy working with my team."
+      "I think travelling is important.",
+      "In my experience, English opens doors.",
+      "Actually, I started learning last year.",
+      "Good point! I hadn't thought of that.",
+      "For example, I used English on my last trip.",
+      "I see what you mean, but I also think..."
     ],
     "commonMistakes": [
       "I enjoy work → I enjoy WORKING",
@@ -25,37 +26,281 @@
   },
   "pronunciationTip": "Divide tu discurso en frases cortas con pausas naturales: 'I work in customer service' / 'and I enjoy working with my team'. Las pausas dan ritmo.",
   "vocabulary": [
-    { "en": "experience", "es": "experiencia" },
-    { "en": "goal", "es": "meta" },
-    { "en": "future", "es": "futuro" },
-    { "en": "plans", "es": "planes" },
-    { "en": "skills", "es": "habilidades" },
-    { "en": "team", "es": "equipo" },
-    { "en": "company", "es": "empresa" },
-    { "en": "customer service", "es": "atención al cliente" }
+    {
+      "en": "experience",
+      "es": "experiencia"
+    },
+    {
+      "en": "goal",
+      "es": "meta"
+    },
+    {
+      "en": "future",
+      "es": "futuro"
+    },
+    {
+      "en": "plans",
+      "es": "planes"
+    },
+    {
+      "en": "skills",
+      "es": "habilidades"
+    },
+    {
+      "en": "team",
+      "es": "equipo"
+    },
+    {
+      "en": "company",
+      "es": "empresa"
+    },
+    {
+      "en": "customer service",
+      "es": "atención al cliente"
+    }
   ],
   "phrases": [
-    { "en": "I have five years of experience.", "es": "Tengo cinco años de experiencia." },
-    { "en": "My goal is to improve my English.", "es": "Mi meta es mejorar mi inglés." },
-    { "en": "I work in customer service.", "es": "Trabajo en atención al cliente." },
-    { "en": "In the future, I want to travel.", "es": "En el futuro, quiero viajar." },
-    { "en": "I enjoy working with my team.", "es": "Disfruto trabajar con mi equipo." },
-    { "en": "I have plans for the weekend.", "es": "Tengo planes para el fin de semana." },
-    { "en": "I am improving my English skills.", "es": "Estoy mejorando mis habilidades de inglés." },
-    { "en": "I work for a big company.", "es": "Trabajo para una empresa grande." }
+    {
+      "en": "I have five years of experience.",
+      "es": "Tengo cinco años de experiencia."
+    },
+    {
+      "en": "My goal is to improve my English.",
+      "es": "Mi meta es mejorar mi inglés."
+    },
+    {
+      "en": "I work in customer service.",
+      "es": "Trabajo en atención al cliente."
+    },
+    {
+      "en": "In the future, I want to travel.",
+      "es": "En el futuro, quiero viajar."
+    },
+    {
+      "en": "I enjoy working with my team.",
+      "es": "Disfruto trabajar con mi equipo."
+    },
+    {
+      "en": "I have plans for the weekend.",
+      "es": "Tengo planes para el fin de semana."
+    },
+    {
+      "en": "I am improving my English skills.",
+      "es": "Estoy mejorando mis habilidades de inglés."
+    },
+    {
+      "en": "I work for a big company.",
+      "es": "Trabajo para una empresa grande."
+    }
   ],
   "exercises": [
-    { "type": "mcq", "prompt": "¿Qué significa “goal”?", "options": ["meta", "trabajo", "habilidad", "equipo"], "answer": 0 },
-    { "type": "translate", "prompt": "Traduce al inglés: “Tengo cinco años de experiencia.”", "answer": "I have five years of experience." },
-    { "type": "gapfill", "prompt": "Completa: I enjoy ___ with my team.", "options": ["working", "work", "works"], "answer": 0 },
-    { "type": "order", "prompt": "Ordena la frase: “En el futuro, quiero viajar.”", "words": ["the", "In", "I", "travel", "future", "to", "want"], "answer": [1, 0, 4, 2, 6, 5, 3] }
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “goal”?",
+      "options": [
+        "meta",
+        "trabajo",
+        "habilidad",
+        "equipo"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “customer service”?",
+      "options": [
+        "atención al cliente",
+        "servicio técnico",
+        "venta al por menor",
+        "servicio de entrega"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "experience",
+          "es": "experiencia"
+        },
+        {
+          "en": "goal",
+          "es": "meta"
+        },
+        {
+          "en": "future",
+          "es": "futuro"
+        },
+        {
+          "en": "skills",
+          "es": "habilidades"
+        }
+      ]
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I enjoy ___ with my team.",
+      "options": [
+        "working",
+        "work",
+        "works"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: My ___ is to improve my English.",
+      "options": [
+        "goal",
+        "go",
+        "going"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I see your ___.",
+      "options": [
+        "point",
+        "idea",
+        "job"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "In my experience, English is useful.",
+      "options": [
+        "En mi experiencia, el inglés es útil.",
+        "En mi opinión, el inglés es fácil.",
+        "Creo que el inglés es difícil.",
+        "Estudio inglés todos los días."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I have five years of experience.",
+      "options": [
+        "Tengo cinco años de experiencia.",
+        "Tengo quince años de experiencia.",
+        "Tengo cinco años de edad.",
+        "Trabajo cinco años."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En una conferencia.\nModerador: What is your next step?\nTú: ___.\nModerador: Excellent!",
+      "options": [
+        "I want to keep learning.",
+        "I want to keeping learning.",
+        "I wants to keep learning.",
+        "I want keep learning."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la frase: “En el futuro, quiero viajar.”",
+      "words": [
+        "the",
+        "In",
+        "I",
+        "travel",
+        "future",
+        "to",
+        "want"
+      ],
+      "answer": [
+        1,
+        0,
+        4,
+        2,
+        6,
+        5,
+        3
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En una conferencia, compartes tu experiencia.\nModerador: What has been your biggest challenge?\nTú: ___ But I learned a lot from it.",
+      "options": [
+        "In my experience, learning English was hard.",
+        "In my experience, learning English were hard.",
+        "In my experience, learning English is hard.",
+        "In my experience, learning English am hard."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "I am agree with your point.",
+      "options": [
+        "I agree with your point.",
+        "I am agree with your point.",
+        "I agreeing with your point.",
+        "I agrees with your point."
+      ],
+      "answer": 0,
+      "correctAnswer": "I agree with your point."
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I have five years ___ experience.",
+      "options": [
+        "of",
+        "in",
+        "at"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: \"En el futuro, quiero viajar.\"",
+      "answer": "In the future, I want to travel."
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"Disfruto trabajar con mi equipo.\"",
+      "words": [
+        "my",
+        "I",
+        "working",
+        "enjoy",
+        "team",
+        "with"
+      ],
+      "answer": [
+        1,
+        3,
+        2,
+        5,
+        0,
+        4
+      ]
+    }
   ],
-  "speak": "Entrevista corta: preséntate, habla de tu trabajo y tus planes futuros. 90 segundos.",
-  "challenge": "Graba una entrevista de 90 segundos respondiendo 4 preguntas.",
+  "speak": "Resume lo que aprendiste en 3 semanas. Usa: 'I learned ___. I can now ___. In my experience ___. My next step is ___.' Habla durante 60 segundos.",
+  "challenge": "Graba un video final de 1 minuto: comparte tu progreso, qué fue lo más difícil, qué fue lo más útil, y cuál es tu siguiente meta. Usa: 'In 21 days, I learned ___. The hardest part was ___. My next step is ___.'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

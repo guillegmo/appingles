@@ -12,10 +12,11 @@
     "rule": "Para pedir educadamente: Can I have...? / Do you have...? Para preguntar precio: How much is this? En afirmaciones se usa 'some' (I have some questions) y en negativas/preguntas 'any' (I don't have any change). Para existir: There is / There are (Hay un/una / Hay varios).",
     "examples": [
       "How much is this shirt?",
-      "Do you have this in a larger size?",
-      "Can I pay by card?",
-      "It is too expensive.",
-      "I am just looking, thank you."
+      "Can I have a smaller size?",
+      "I am just looking, thanks.",
+      "Do you accept credit cards?",
+      "This is too expensive.",
+      "Can I get a refund?"
     ],
     "commonMistakes": [
       "How much is cost? → How much is it? / How much does it cost?",
@@ -25,39 +26,290 @@
   },
   "pronunciationTip": "Distingue 'price' (precio, termina en /s/) de 'prize' (premio, termina en /z/). La 's' final en price es sorda: pres.",
   "vocabulary": [
-    { "en": "How much is this?", "es": "¿Cuánto cuesta esto?" },
-    { "en": "Can I have...?", "es": "¿Me das...?" },
-    { "en": "size", "es": "talla" },
-    { "en": "price", "es": "precio" },
-    { "en": "cheap", "es": "barato" },
-    { "en": "expensive", "es": "caro" },
-    { "en": "a refund", "es": "un reembolso" },
-    { "en": "cash", "es": "efectivo" }
+    {
+      "en": "How much is this?",
+      "es": "¿Cuánto cuesta esto?"
+    },
+    {
+      "en": "Can I have...?",
+      "es": "¿Me das...?"
+    },
+    {
+      "en": "size",
+      "es": "talla"
+    },
+    {
+      "en": "price",
+      "es": "precio"
+    },
+    {
+      "en": "cheap",
+      "es": "barato"
+    },
+    {
+      "en": "expensive",
+      "es": "caro"
+    },
+    {
+      "en": "a refund",
+      "es": "un reembolso"
+    },
+    {
+      "en": "cash",
+      "es": "efectivo"
+    }
   ],
   "phrases": [
-    { "en": "How much is this shirt?", "es": "¿Cuánto cuesta esta camisa?" },
-    { "en": "Do you have this in a larger size?", "es": "¿Tienes esto en una talla más grande?" },
-    { "en": "Can I pay by card?", "es": "¿Puedo pagar con tarjeta?" },
-    { "en": "It is too expensive.", "es": "Es demasiado caro." },
-    { "en": "I am just looking, thank you.", "es": "Solo estoy mirando, gracias." },
-    { "en": "Can I have the receipt, please?", "es": "¿Me da el recibo, por favor?" },
-    { "en": "The price is very good.", "es": "El precio es muy bueno." },
-    { "en": "This shirt is cheap.", "es": "Esta camisa es barata." },
-    { "en": "I want a refund.", "es": "Quiero un reembolso." },
-    { "en": "Can I pay in cash?", "es": "¿Puedo pagar en efectivo?" }
+    {
+      "en": "How much is this shirt?",
+      "es": "¿Cuánto cuesta esta camisa?"
+    },
+    {
+      "en": "Do you have this in a larger size?",
+      "es": "¿Tienes esto en una talla más grande?"
+    },
+    {
+      "en": "Can I pay by card?",
+      "es": "¿Puedo pagar con tarjeta?"
+    },
+    {
+      "en": "It is too expensive.",
+      "es": "Es demasiado caro."
+    },
+    {
+      "en": "I am just looking, thank you.",
+      "es": "Solo estoy mirando, gracias."
+    },
+    {
+      "en": "Can I have the receipt, please?",
+      "es": "¿Me da el recibo, por favor?"
+    },
+    {
+      "en": "The price is very good.",
+      "es": "El precio es muy bueno."
+    },
+    {
+      "en": "This shirt is cheap.",
+      "es": "Esta camisa es barata."
+    },
+    {
+      "en": "I want a refund.",
+      "es": "Quiero un reembolso."
+    },
+    {
+      "en": "Can I pay in cash?",
+      "es": "¿Puedo pagar en efectivo?"
+    }
   ],
   "exercises": [
-    { "type": "mcq", "prompt": "¿Qué significa “a refund”?", "options": ["un reembolso", "una talla", "un precio", "una oferta"], "answer": 0 },
-    { "type": "gapfill", "prompt": "Completa: Do you have this in a ___ size?", "options": ["large", "larger", "largest"], "answer": 1 },
-    { "type": "translate", "prompt": "Traduce al inglés: “¿Cuánto cuesta esta camisa?”", "answer": "How much is this shirt?" },
-    { "type": "order", "prompt": "Ordena la frase: “Solo estoy mirando.”", "words": ["just", "I", "looking", "am"], "answer": [1, 3, 0, 2] }
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “a refund”?",
+      "options": [
+        "un reembolso",
+        "una talla",
+        "un precio",
+        "una oferta"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “cheap”?",
+      "options": [
+        "barato",
+        "caro",
+        "grande",
+        "pequeño"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “I'm just looking”?",
+      "options": [
+        "Solo estoy mirando",
+        "Ya encontré",
+        "Necesito ayuda",
+        "Quiero comprar"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "cheap",
+          "es": "barato"
+        },
+        {
+          "en": "expensive",
+          "es": "caro"
+        },
+        {
+          "en": "size",
+          "es": "talla"
+        },
+        {
+          "en": "a refund",
+          "es": "un reembolso"
+        }
+      ]
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: Do you have this in a ___ size?",
+      "options": [
+        "large",
+        "larger",
+        "largest"
+      ],
+      "answer": 1
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "How much is this shirt?",
+      "options": [
+        "¿Cuánto cuesta esta camisa?",
+        "¿Dónde está esta camisa?",
+        "¿Qué talla es esta camisa?",
+        "¿Puedo probarme esta camisa?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En una tienda de ropa.\nVendedor: Can I help you?\nTú: ___.\nVendedor: The fitting rooms are over there.",
+      "options": [
+        "Can I try this on?",
+        "Can I tries this on?",
+        "Can I trying this on?",
+        "Can I try this in?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "Can I pay by card?",
+      "options": [
+        "¿Puedo pagar con tarjeta?",
+        "¿Puedo pagar con efectivo?",
+        "¿Puedo pagar mañana?",
+        "¿Puedo comprar una tarjeta?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la frase: “Solo estoy mirando.”",
+      "words": [
+        "just",
+        "I",
+        "looking",
+        "am"
+      ],
+      "answer": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: “¿Puedo pagar con tarjeta?”",
+      "words": [
+        "Can",
+        "I",
+        "pay",
+        "card",
+        "with"
+      ],
+      "answer": [
+        0,
+        1,
+        2,
+        4,
+        3
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En una tienda de ropa.\nVendedor: Can I help you?\nTú: Yes, I'm looking for a shirt. ___\nVendedor: We have it in blue and white.",
+      "options": [
+        "Do you have it in blue?",
+        "Do you has it in blue?",
+        "Do you have it on blue?",
+        "Do you having it in blue?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "How much cost this shirt?",
+      "options": [
+        "How much does this shirt cost?",
+        "How much costs this shirt?",
+        "How much cost this shirt?",
+        "How much is cost this shirt?"
+      ],
+      "answer": 0,
+      "correctAnswer": "How much does this shirt cost?"
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I don't have ___ change.",
+      "options": [
+        "any",
+        "some",
+        "much"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: \"¿Tienes esto en una talla más grande?\"",
+      "answer": "Do you have this in a larger size?"
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"¿Cuánto cuesta esta camisa?\"",
+      "words": [
+        "is",
+        "How",
+        "shirt",
+        "this",
+        "much"
+      ],
+      "answer": [
+        1,
+        4,
+        0,
+        3,
+        2
+      ]
+    }
   ],
-  "speak": "Simula comprar una camisa: pregunta el precio, la talla y paga. 45 segundos.",
-  "challenge": "Roleplay: tú eres el cliente y el vendedor te ofrece una opción más barata.",
+  "speak": "Simula una compra. Di: 'I'm looking for ___. How much is it? Do you have it in ___? Can I pay with card?' Habla durante 45 segundos.",
+  "challenge": "Graba un audio como si estuvieras en una tienda. Incluye: qué buscas, preguntas de precio, talla y método de pago. Usa: 'Excuse me, I'm looking for ___. How much is this? Do you have it in a smaller size?'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

@@ -11,11 +11,12 @@
     "title": "Secuencia de un roleplay: del saludo al pago",
     "rule": "Un roleplay sigue pasos: 1) saludo y pedido (A table for two), 2) pedir (Can I have the menu?), 3) pedir la cuenta (The bill, please), 4) agradecer. Para pedir indicaciones: Where is the nearest...? + preposiciones (at the corner, next to).",
     "examples": [
-      "A table for two, please.",
-      "Can I have the menu, please?",
-      "The bill, please.",
-      "Where is the nearest restaurant?",
-      "Turn left at the corner."
+      "Host: Good evening. A table for two?",
+      "You: Yes, please. Can I have the menu?",
+      "You: I would like the pasta, please.",
+      "You: Can I have the bill, please?",
+      "You: Thank you. The food was delicious.",
+      "You: Excuse me, where is the nearest restaurant?"
     ],
     "commonMistakes": [
       "A table two → A table FOR two",
@@ -25,38 +26,274 @@
   },
   "pronunciationTip": "Las preguntas cortas suben la entonación al final: Where is the bank? sube en 'bank'.",
   "vocabulary": [
-    { "en": "menu", "es": "menú" },
-    { "en": "bill", "es": "la cuenta" },
-    { "en": "water", "es": "agua" },
-    { "en": "restaurant", "es": "restaurante" },
-    { "en": "street", "es": "calle" },
-    { "en": "left", "es": "izquierda" },
-    { "en": "right", "es": "derecha" },
-    { "en": "straight ahead", "es": "todo recto" }
+    {
+      "en": "menu",
+      "es": "menú"
+    },
+    {
+      "en": "bill",
+      "es": "la cuenta"
+    },
+    {
+      "en": "water",
+      "es": "agua"
+    },
+    {
+      "en": "restaurant",
+      "es": "restaurante"
+    },
+    {
+      "en": "street",
+      "es": "calle"
+    },
+    {
+      "en": "left",
+      "es": "izquierda"
+    },
+    {
+      "en": "right",
+      "es": "derecha"
+    },
+    {
+      "en": "straight ahead",
+      "es": "todo recto"
+    }
   ],
   "phrases": [
-    { "en": "A table for two, please.", "es": "Una mesa para dos, por favor." },
-    { "en": "Can I have the menu, please?", "es": "¿Me trae el menú, por favor?" },
-    { "en": "The bill, please.", "es": "La cuenta, por favor." },
-    { "en": "Where is the nearest restaurant?", "es": "¿Dónde está el restaurante más cercano?" },
-    { "en": "Turn left at the corner.", "es": "Gira a la izquierda en la esquina." },
-    { "en": "Can I have some water, please?", "es": "¿Me trae un poco de agua, por favor?" },
-    { "en": "The restaurant is on this street.", "es": "El restaurante está en esta calle." },
-    { "en": "Turn right at the corner.", "es": "Gira a la derecha en la esquina." },
-    { "en": "The bank is straight ahead.", "es": "El banco está todo recto." }
+    {
+      "en": "A table for two, please.",
+      "es": "Una mesa para dos, por favor."
+    },
+    {
+      "en": "Can I have the menu, please?",
+      "es": "¿Me trae el menú, por favor?"
+    },
+    {
+      "en": "The bill, please.",
+      "es": "La cuenta, por favor."
+    },
+    {
+      "en": "Where is the nearest restaurant?",
+      "es": "¿Dónde está el restaurante más cercano?"
+    },
+    {
+      "en": "Turn left at the corner.",
+      "es": "Gira a la izquierda en la esquina."
+    },
+    {
+      "en": "Can I have some water, please?",
+      "es": "¿Me trae un poco de agua, por favor?"
+    },
+    {
+      "en": "The restaurant is on this street.",
+      "es": "El restaurante está en esta calle."
+    },
+    {
+      "en": "Turn right at the corner.",
+      "es": "Gira a la derecha en la esquina."
+    },
+    {
+      "en": "The bank is straight ahead.",
+      "es": "El banco está todo recto."
+    }
   ],
   "exercises": [
-    { "type": "mcq", "prompt": "¿Qué significa “the bill”?", "options": ["la cuenta", "el menú", "el agua", "la calle"], "answer": 0 },
-    { "type": "gapfill", "prompt": "Completa: A table ___ two, please.", "options": ["for", "to", "of"], "answer": 0 },
-    { "type": "translate", "prompt": "Traduce al inglés: “¿Dónde está el restaurante más cercano?”", "answer": "Where is the nearest restaurant?" },
-    { "type": "order", "prompt": "Ordena la frase: “Gira a la izquierda en la esquina.”", "words": ["at", "Turn", "the", "corner", "left"], "answer": [1, 4, 0, 3, 2] }
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “the bill”?",
+      "options": [
+        "la cuenta",
+        "el menú",
+        "el agua",
+        "la calle"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “straight ahead”?",
+      "options": [
+        "todo recto",
+        "a la derecha",
+        "a la izquierda",
+        "cerca"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"Gira a la derecha en la esquina.\"",
+      "words": [
+        "right",
+        "Turn",
+        "the",
+        "at",
+        "corner"
+      ],
+      "answer": [
+        1,
+        0,
+        3,
+        2,
+        4
+      ]
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: A table ___ two, please.",
+      "options": [
+        "for",
+        "to",
+        "of"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: Where is the ___ restaurant?",
+      "options": [
+        "near",
+        "nearest",
+        "nearer"
+      ],
+      "answer": 1
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Un amigo te pregunta por ayer.\nAmigo: Where were you yesterday?\nTú: ___.\nAmigo: Nice!",
+      "options": [
+        "I was at work.",
+        "I were at work.",
+        "I was in work.",
+        "I was work."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I saw Maria at the park.",
+      "options": [
+        "Vi a María en el parque.",
+        "Busco a María en el parque.",
+        "Hablo con María en el parque.",
+        "Voy con María al parque."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "Where is the nearest restaurant?",
+      "options": [
+        "¿Dónde está el restaurante más cercano?",
+        "¿Dónde está el banco más cercano?",
+        "¿Cuándo abre el restaurante?",
+        "¿Dónde está el restaurante caro?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “Ayer fui al supermercado.”",
+      "answer": "Yesterday I went to the supermarket."
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la frase: “Gira a la izquierda en la esquina.”",
+      "words": [
+        "at",
+        "Turn",
+        "the",
+        "corner",
+        "left"
+      ],
+      "answer": [
+        1,
+        4,
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Contándole a un amigo tu semana pasada.\nAmigo: How was your week?\nTú: ___ It was very busy.",
+      "options": [
+        "It was great, thanks!",
+        "It is great, thanks!",
+        "It were great, thanks!",
+        "It am great, thanks!"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "I was visit my family last week.",
+      "options": [
+        "I visited my family last week.",
+        "I visit my family last week.",
+        "I was visited my family last week.",
+        "I visiting my family last week."
+      ],
+      "answer": 0,
+      "correctAnswer": "I visited my family last week."
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: Where ___ the nearest restaurant?",
+      "options": [
+        "is",
+        "are",
+        "am"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: \"Una mesa para dos, por favor.\"",
+      "answer": "A table for two, please."
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "bill",
+          "es": "la cuenta"
+        },
+        {
+          "en": "menu",
+          "es": "el menú"
+        },
+        {
+          "en": "street",
+          "es": "la calle"
+        },
+        {
+          "en": "water",
+          "es": "el agua"
+        }
+      ]
+    }
   ],
-  "speak": "Roleplay: escena de restaurante: pide comida y paga. 90 segundos.",
-  "challenge": "Graba un roleplay de 90 segundos como turista pidiendo indicaciones.",
+  "speak": "Cuenta tu semana pasada. Usa: 'Last week I ___. I visited ___. I went to ___.' Habla durante 45 segundos.",
+  "challenge": "Cuenta tu semana pasada como si le hablaras a un amigo. Usa: 'Last week was ___. On Monday I ___. On Tuesday I ___. My favorite day was ___ because ___.'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

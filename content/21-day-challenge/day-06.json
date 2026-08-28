@@ -11,11 +11,12 @@
     "title": "Estructura de una conversación sobre ti",
     "rule": "Una conversación sobre tu vida sigue un orden: 1) saludo y presentación, 2) origen y edad, 3) trabajo y gustos, 4) rutina. Usa conectores: 'and' (y), 'but' (pero), 'also' (también). Contesta y luego devuelve la pregunta con 'And you?'.",
     "examples": [
-      "My name is Ana.",
-      "I am from Mexico. I am twenty-five years old.",
-      "I work as a teacher.",
-      "I like listening to music, but I don't like sports.",
-      "I usually wake up at 6:00. And you?"
+      "Hi, I am Maria from Mexico.",
+      "I am a student. I study English.",
+      "I like music and reading.",
+      "What about you?",
+      "Nice to meet you!",
+      "I usually wake up at 7:00."
     ],
     "commonMistakes": [
       "I work of teacher → I work as a teacher",
@@ -111,29 +112,186 @@
     {
       "type": "mcq",
       "prompt": "¿Qué significa “hobby”?",
-      "options": ["pasatiempo", "trabajo", "edad", "país"],
+      "options": [
+        "pasatiempo",
+        "trabajo",
+        "edad",
+        "país"
+      ],
       "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “free time”?",
+      "options": [
+        "tiempo libre",
+        "tiempo completo",
+        "tiempo parcial",
+        "tiempo de espera"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Cuál es la forma correcta de presentarte?",
+      "options": [
+        "Hi, I am Maria from Mexico.",
+        "Hi, I Maria am from Mexico.",
+        "Hi, I from Mexico Maria.",
+        "Hi, Maria I am Mexico."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "hobby",
+          "es": "pasatiempo"
+        },
+        {
+          "en": "name",
+          "es": "nombre"
+        },
+        {
+          "en": "country",
+          "es": "país"
+        },
+        {
+          "en": "free time",
+          "es": "tiempo libre"
+        }
+      ]
     },
     {
       "type": "gapfill",
       "prompt": "Completa: I work ___ a teacher.",
-      "options": ["as", "at", "for"],
+      "options": [
+        "as",
+        "at",
+        "for"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I like listening to music.",
+      "options": [
+        "Me gusta escuchar música.",
+        "Me gusta hablar música.",
+        "No me gusta la música.",
+        "Quiero música."
+      ],
       "answer": 0
     },
     {
       "type": "translate",
-      "prompt": "Traduce al inglés: “Me gusta escuchar música.”",
-      "answer": "I like listening to music."
+      "prompt": "Traduce al inglés: “Escucho música todos los días.”",
+      "answer": "I listen to music every day."
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "What do you like to do?",
+      "options": [
+        "¿Qué te gusta hacer?",
+        "¿Qué te gusta comer?",
+        "¿Dónde te gusta comer?",
+        "¿Qué te gusta comprar?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “Mi pasatiempo es escuchar música.”",
+      "answer": "My hobby is listening to music."
     },
     {
       "type": "order",
       "prompt": "Ordena la frase: “Soy de México.”",
-      "words": ["am", "from", "I", "Mexico"],
-      "answer": [2, 0, 1, 3]
+      "words": [
+        "am",
+        "from",
+        "I",
+        "Mexico"
+      ],
+      "answer": [
+        2,
+        0,
+        1,
+        3
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la presentación:",
+      "context": "Estás en una reunión de networking. Preséntate:\nTú: Hi, everyone! ___. I'm from Mexico and I work as a designer.",
+      "options": [
+        "My name is Carlos",
+        "I name is Carlos",
+        "Me name is Carlos",
+        "My names is Carlos"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "I work of teacher.",
+      "options": [
+        "I work as a teacher.",
+        "I work of a teacher.",
+        "I work in a teacher.",
+        "I work for teacher."
+      ],
+      "answer": 0,
+      "correctAnswer": "I work as a teacher."
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I like listening ___ music.",
+      "options": [
+        "to",
+        "at",
+        "in"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Hablando de pasatiempos con un amigo.\nAmigo: What do you do in your free time?\nTú: ___.\nAmigo: That's nice!",
+      "options": [
+        "My hobby is reading.",
+        "My hobby are reading.",
+        "My hobby is read.",
+        "My hobby reading."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"Trabajo como profesor.\"",
+      "words": [
+        "as",
+        "work",
+        "a",
+        "I",
+        "teacher"
+      ],
+      "answer": [
+        3,
+        1,
+        0,
+        2,
+        4
+      ]
     }
   ],
-  "speak": "Habla 60 segundos sobre ti: nombre, origen, edad, gustos y rutina.",
-  "challenge": "Presentación de un minuto sin leer. Grábala.",
+  "speak": "Preséntate completamente. Usa: 'Hello! My name is ___. I am from ___. I am ___ years old. I work as ___. I like ___.' Habla durante 45 segundos.",
+  "challenge": "Graba una presentación completa como si fuera para un video de YouTube. Incluye: nombre, país, edad, trabajo y un gusto. Usa todas las frases de la semana.",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",

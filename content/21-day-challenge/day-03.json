@@ -11,11 +11,12 @@
     "title": "Like / don't like + sustantivo o -ing",
     "rule": "Para gustos se usa 'like' + sustantivo (I like coffee) o + verbo en -ing (I like listening to music). Negativo: don't like. Pregunta: Do you like...? Con he/she/it se añade -s: She likes. Para amor fuerte: I love.",
     "examples": [
-      "I like coffee.",
-      "I don't like traffic.",
+      "I like music.",
+      "I like reading.",
+      "I don't like coffee.",
+      "She likes sports.",
       "Do you like pizza?",
-      "I love music.",
-      "She likes reading."
+      "I love travelling."
     ],
     "commonMistakes": [
       "I like play → I like playing / I like to play",
@@ -96,14 +97,89 @@
     {
       "type": "mcq",
       "prompt": "¿Qué significa “I don't like...”?",
-      "options": ["Me gusta...", "No me gusta...", "Me encanta...", "Odio..."],
+      "options": [
+        "Me gusta...",
+        "No me gusta...",
+        "Me encanta...",
+        "Odio..."
+      ],
       "answer": 1
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “I love...”?",
+      "options": [
+        "Me encanta...",
+        "No me gusta...",
+        "Me gusta...",
+        "No soporto..."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Cuál es correcto? “I like play” vs “I like playing”",
+      "options": [
+        "I like playing",
+        "I like play",
+        "Ambas",
+        "Ninguna"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "music",
+          "es": "música"
+        },
+        {
+          "en": "movies",
+          "es": "películas"
+        },
+        {
+          "en": "sports",
+          "es": "deportes"
+        },
+        {
+          "en": "food",
+          "es": "comida"
+        }
+      ]
     },
     {
       "type": "gapfill",
       "prompt": "Completa: I like ___ music.",
-      "options": ["listen", "listening", "listens"],
+      "options": [
+        "listen",
+        "listening",
+        "listens"
+      ],
       "answer": 1
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: She ___ reading.",
+      "options": [
+        "like",
+        "likes",
+        "liking"
+      ],
+      "answer": 1
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I don't like coffee.",
+      "options": [
+        "No me gusta el café.",
+        "Me encanta el café.",
+        "No tengo café.",
+        "Quiero café."
+      ],
+      "answer": 0
     },
     {
       "type": "translate",
@@ -113,12 +189,101 @@
     {
       "type": "order",
       "prompt": "Ordena la frase: “Me encanta la música.”",
-      "words": ["music", "I", "love"],
-      "answer": [1, 2, 0]
+      "words": [
+        "music",
+        "I",
+        "love"
+      ],
+      "answer": [
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"¿Te gusta la pizza?\"",
+      "words": [
+        "like",
+        "you",
+        "pizza",
+        "Do"
+      ],
+      "answer": [
+        3,
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Un amigo te pregunta sobre tus gustos.\nAmigo: Do you like sports?\nTú: ___",
+      "options": [
+        "Yes, I like soccer very much.",
+        "Yes, I like very much soccer.",
+        "I am soccer.",
+        "I have soccer."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "I like play soccer.",
+      "options": [
+        "I like playing soccer.",
+        "I like to playing soccer.",
+        "I like plays soccer.",
+        "I like played soccer."
+      ],
+      "answer": 0,
+      "correctAnswer": "I like playing soccer."
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Un amigo te pregunta qué te gusta hacer.\nAmigo: What do you like to do?\nTú: ___.\nAmigo: Nice!",
+      "options": [
+        "I like reading.",
+        "I like read.",
+        "I like to reading.",
+        "I likes reading."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I like music.",
+      "options": [
+        "Me gusta la música.",
+        "Me gusta el deporte.",
+        "No me gusta la música.",
+        "Me gusta bailar."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"No me gusta el chocolate.\"",
+      "words": [
+        "like",
+        "chocolate",
+        "don't",
+        "I"
+      ],
+      "answer": [
+        3,
+        2,
+        0,
+        1
+      ]
     }
   ],
-  "speak": "Di 3 cosas que te gustan y 2 que no te gustan. 45 segundos.",
-  "challenge": "Responde la pregunta \"¿Te gusta...?\" 5 veces con temas diferentes.",
+  "speak": "Habla de tus gustos. Usa: 'I like ___. I don't like ___. I love ___.' Di al menos 3 cosas. Habla durante 30 segundos.",
+  "challenge": "Graba un audio explicando qué te gusta y qué no. Usa: 'I like ___ because ___. I don't like ___ because ___. My favorite ___ is ___.'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",

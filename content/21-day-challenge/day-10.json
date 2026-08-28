@@ -11,11 +11,12 @@
     "title": "Pedir comida con cortesía",
     "rule": "Para pedir con educación: I would like... (Quisiera...) o Can I have...? (¿Me puede traer...?). La forma corta de 'I would' es 'I'd'. Para preguntar si algo es apto: Is this dish vegetarian? Para pagar: Can I have the bill, please?",
     "examples": [
-      "Could I see the menu, please?",
       "I would like a coffee, please.",
-      "I'd like the grilled chicken.",
-      "Is this dish vegetarian?",
-      "Can I have the bill, please?"
+      "Can I have the menu?",
+      "Could I have the bill, please?",
+      "A table for two, please.",
+      "The food was delicious.",
+      "Do you have anything vegetarian?"
     ],
     "commonMistakes": [
       "I want a coffee (brusco) → I would like a coffee",
@@ -25,37 +26,279 @@
   },
   "pronunciationTip": "'I would like' en conversación se contrae: I'd like /aɪd laɪk/. El sonido /d/ conecta con 'like'.",
   "vocabulary": [
-    { "en": "menu", "es": "menú" },
-    { "en": "I would like...", "es": "Quisiera..." },
-    { "en": "water", "es": "agua" },
-    { "en": "the bill", "es": "la cuenta" },
-    { "en": "delicious", "es": "delicioso" },
-    { "en": "vegetarian", "es": "vegetariano" },
-    { "en": "a table for two", "es": "una mesa para dos" },
-    { "en": "anything else?", "es": "¿algo más?" }
+    {
+      "en": "menu",
+      "es": "menú"
+    },
+    {
+      "en": "I would like...",
+      "es": "Quisiera..."
+    },
+    {
+      "en": "water",
+      "es": "agua"
+    },
+    {
+      "en": "the bill",
+      "es": "la cuenta"
+    },
+    {
+      "en": "delicious",
+      "es": "delicioso"
+    },
+    {
+      "en": "vegetarian",
+      "es": "vegetariano"
+    },
+    {
+      "en": "a table for two",
+      "es": "una mesa para dos"
+    },
+    {
+      "en": "anything else?",
+      "es": "¿algo más?"
+    }
   ],
   "phrases": [
-    { "en": "Could I see the menu, please?", "es": "¿Me muestra el menú, por favor?" },
-    { "en": "I would like a coffee, please.", "es": "Quisiera un café, por favor." },
-    { "en": "Is this dish vegetarian?", "es": "¿Este platillo es vegetariano?" },
-    { "en": "Can I have the bill, please?", "es": "¿Me trae la cuenta, por favor?" },
-    { "en": "The food was delicious.", "es": "La comida estaba deliciosa." },
-    { "en": "Can I have some water, please?", "es": "¿Me trae un poco de agua, por favor?" },
-    { "en": "A table for two, please.", "es": "Una mesa para dos, por favor." },
-    { "en": "Do you want anything else?", "es": "¿Quieres algo más?" }
+    {
+      "en": "Could I see the menu, please?",
+      "es": "¿Me muestra el menú, por favor?"
+    },
+    {
+      "en": "I would like a coffee, please.",
+      "es": "Quisiera un café, por favor."
+    },
+    {
+      "en": "Is this dish vegetarian?",
+      "es": "¿Este platillo es vegetariano?"
+    },
+    {
+      "en": "Can I have the bill, please?",
+      "es": "¿Me trae la cuenta, por favor?"
+    },
+    {
+      "en": "The food was delicious.",
+      "es": "La comida estaba deliciosa."
+    },
+    {
+      "en": "Can I have some water, please?",
+      "es": "¿Me trae un poco de agua, por favor?"
+    },
+    {
+      "en": "A table for two, please.",
+      "es": "Una mesa para dos, por favor."
+    },
+    {
+      "en": "Do you want anything else?",
+      "es": "¿Quieres algo más?"
+    }
   ],
   "exercises": [
-    { "type": "mcq", "prompt": "¿Qué significa “the bill”?", "options": ["la cuenta", "el menú", "la propina", "la mesa"], "answer": 0 },
-    { "type": "gapfill", "prompt": "Completa: I would ___ a coffee, please.", "options": ["like", "liked", "liking"], "answer": 0 },
-    { "type": "translate", "prompt": "Traduce al inglés: “Quisiera un café, por favor.”", "answer": "I would like a coffee, please." },
-    { "type": "order", "prompt": "Ordena la frase: “¿Me trae la cuenta, por favor?”", "words": ["have", "Can", "the", "please", "I", "bill"], "answer": [1, 4, 0, 3, 5, 2] }
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “the bill”?",
+      "options": [
+        "la cuenta",
+        "el menú",
+        "la propina",
+        "la mesa"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “delicious”?",
+      "options": [
+        "delicioso",
+        "caro",
+        "barato",
+        "fresco"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "the bill",
+          "es": "la cuenta"
+        },
+        {
+          "en": "menu",
+          "es": "menú"
+        },
+        {
+          "en": "delicious",
+          "es": "delicioso"
+        },
+        {
+          "en": "a table for two",
+          "es": "una mesa para dos"
+        }
+      ]
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I would ___ a coffee, please.",
+      "options": [
+        "like",
+        "liked",
+        "liking"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: Is this dish ___?",
+      "options": [
+        "vegetarian",
+        "vegetarian dish",
+        "vegetarianism"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: Can I have the ___, please?",
+      "options": [
+        "bill",
+        "menu",
+        "water"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I would like a coffee, please.",
+      "options": [
+        "Quisiera un café, por favor.",
+        "Quiero el café.",
+        "Necesito un café.",
+        "Tengo un café."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En un restaurante.\nMesero: Are you ready to order?\nTú: ___.\nMesero: Would you like anything to drink?",
+      "options": [
+        "I would like the pasta, please.",
+        "I would like a pasta, please.",
+        "I would like the pastas, please.",
+        "I would likes the pasta, please."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I would like a table for two.",
+      "options": [
+        "Quisiera una mesa para dos.",
+        "Quisiera una mesa para tres.",
+        "Quisiera una silla para dos.",
+        "Quisiera dos mesas."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la frase: “¿Me trae la cuenta, por favor?”",
+      "words": [
+        "have",
+        "Can",
+        "the",
+        "please",
+        "I",
+        "bill"
+      ],
+      "answer": [
+        1,
+        4,
+        0,
+        2,
+        5,
+        3
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En un restaurante.\nMesero: Good evening. What would you like?\nTú: ___\nMesero: Great choice. Anything else?",
+      "options": [
+        "I would like some pasta, please.",
+        "I want some pasta, please.",
+        "I like pasta, please.",
+        "I have some pasta, please."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "I want a coffee, please.",
+      "options": [
+        "I would like a coffee, please.",
+        "I would likes a coffee, please.",
+        "I want a coffee, please.",
+        "I will like a coffee, please."
+      ],
+      "answer": 0,
+      "correctAnswer": "I would like a coffee, please."
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: Could I ___ the menu, please?",
+      "options": [
+        "see",
+        "saw",
+        "seeing"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: \"¿Me trae la cuenta, por favor?\"",
+      "answer": "Can I have the bill, please?"
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"Quisiera un café, por favor.\"",
+      "words": [
+        "please",
+        "a",
+        "like",
+        "coffee",
+        "I",
+        "would"
+      ],
+      "answer": [
+        4,
+        5,
+        2,
+        1,
+        3,
+        0
+      ]
+    }
   ],
-  "speak": "Pide una comida completa: entrada, plato principal y bebida. 45 segundos.",
-  "challenge": "Roleplay: tú eres el cliente en un restaurante (el camarero es IA o un compañero).",
+  "speak": "Simula una visita a un restaurante. Di: 'I would like ___. Can I have the ___, please? The food was delicious.' Habla durante 45 segundos.",
+  "challenge": "Graba un audio como si estuvieras pidiendo en un restaurante. Incluye: pedir mesa, pedir comida, pedir la cuenta. Usa: 'A table for two, please. I would like ___. Can I have the bill, please?'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

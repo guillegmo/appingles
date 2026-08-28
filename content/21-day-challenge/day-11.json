@@ -12,10 +12,11 @@
     "rule": "Para confirmar una reserva: I have a reservation. Para pedir algo: I need... (Necesito...). Para preguntar hora: What time is...? Con 'need' se usa el verbo en infinitivo: I need to go to the airport. Los artículos: a/an (indefinido), the (definido).",
     "examples": [
       "I have a reservation.",
-      "I need to go to the airport.",
       "What time is my flight?",
       "Where is the check-in counter?",
-      "My luggage is lost."
+      "I need to go to the airport.",
+      "My flight leaves at 10:00.",
+      "Can I have a window seat?"
     ],
     "commonMistakes": [
       "I have reservation → I have A reservation",
@@ -25,37 +26,285 @@
   },
   "pronunciationTip": "En 'reservation' el acento va en la tercera sílaba: re-ser-VA-tion. No la digas 're-SER-vation'.",
   "vocabulary": [
-    { "en": "reservation", "es": "reservación" },
-    { "en": "hotel", "es": "hotel" },
-    { "en": "airport", "es": "aeropuerto" },
-    { "en": "luggage", "es": "equipaje" },
-    { "en": "flight", "es": "vuelo" },
-    { "en": "boarding pass", "es": "pase de abordar" },
-    { "en": "check-in", "es": "registro" },
-    { "en": "passport", "es": "pasaporte" }
+    {
+      "en": "reservation",
+      "es": "reservación"
+    },
+    {
+      "en": "hotel",
+      "es": "hotel"
+    },
+    {
+      "en": "airport",
+      "es": "aeropuerto"
+    },
+    {
+      "en": "luggage",
+      "es": "equipaje"
+    },
+    {
+      "en": "flight",
+      "es": "vuelo"
+    },
+    {
+      "en": "boarding pass",
+      "es": "pase de abordar"
+    },
+    {
+      "en": "check-in",
+      "es": "registro"
+    },
+    {
+      "en": "passport",
+      "es": "pasaporte"
+    },
+    {
+      "en": "departure gate",
+      "es": "puerta de salida"
+    }
   ],
   "phrases": [
-    { "en": "I have a reservation.", "es": "Tengo una reservación." },
-    { "en": "Where is the check-in counter?", "es": "¿Dónde está el mostrador de registro?" },
-    { "en": "I need to go to the airport.", "es": "Necesito ir al aeropuerto." },
-    { "en": "What time is my flight?", "es": "¿A qué hora es mi vuelo?" },
-    { "en": "My luggage is lost.", "es": "Perdí mi equipaje." },
-    { "en": "The hotel is near the airport.", "es": "El hotel está cerca del aeropuerto." },
-    { "en": "Here is my boarding pass.", "es": "Aquí está mi pase de abordar." },
-    { "en": "I have my passport.", "es": "Tengo mi pasaporte." }
+    {
+      "en": "I have a reservation.",
+      "es": "Tengo una reservación."
+    },
+    {
+      "en": "Where is the check-in counter?",
+      "es": "¿Dónde está el mostrador de registro?"
+    },
+    {
+      "en": "I need to go to the airport.",
+      "es": "Necesito ir al aeropuerto."
+    },
+    {
+      "en": "What time is my flight?",
+      "es": "¿A qué hora es mi vuelo?"
+    },
+    {
+      "en": "My luggage is lost.",
+      "es": "Perdí mi equipaje."
+    },
+    {
+      "en": "The hotel is near the airport.",
+      "es": "El hotel está cerca del aeropuerto."
+    },
+    {
+      "en": "Here is my boarding pass.",
+      "es": "Aquí está mi pase de abordar."
+    },
+    {
+      "en": "I have my passport.",
+      "es": "Tengo mi pasaporte."
+    }
   ],
   "exercises": [
-    { "type": "mcq", "prompt": "¿Qué significa “boarding pass”?", "options": ["pase de abordar", "equipaje", "pasaporte", "vuelo"], "answer": 0 },
-    { "type": "gapfill", "prompt": "Completa: I have ___ reservation.", "options": ["a", "an", "the"], "answer": 0 },
-    { "type": "translate", "prompt": "Traduce al inglés: “¿A qué hora es mi vuelo?”", "answer": "What time is my flight?" },
-    { "type": "order", "prompt": "Ordena la pregunta: “¿Dónde está el mostrador de registro?”", "words": ["the", "is", "counter", "Where", "check-in"], "answer": [3, 1, 4, 0, 2] }
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “boarding pass”?",
+      "options": [
+        "pase de abordar",
+        "equipaje",
+        "pasaporte",
+        "vuelo"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “luggage”?",
+      "options": [
+        "equipaje",
+        "pasaporte",
+        "vuelo",
+        "hotel"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “departure gate”?",
+      "options": [
+        "puerta de salida",
+        "hora de llegada",
+        "pase de abordar",
+        "mostrador de check-in"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "airport",
+          "es": "aeropuerto"
+        },
+        {
+          "en": "flight",
+          "es": "vuelo"
+        },
+        {
+          "en": "luggage",
+          "es": "equipaje"
+        },
+        {
+          "en": "boarding pass",
+          "es": "pase de abordar"
+        }
+      ]
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I have ___ reservation.",
+      "options": [
+        "a",
+        "an",
+        "the"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I have a reservation.",
+      "options": [
+        "Tengo una reservación.",
+        "Tengo un pasaje.",
+        "Tengo un equipaje.",
+        "Tengo una dirección."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “¿A qué hora es mi vuelo?”",
+      "answer": "What time is my flight?"
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I need to go to the airport.",
+      "options": [
+        "Necesito ir al aeropuerto.",
+        "Necesito ir a la estación.",
+        "Quiero ir al aeropuerto.",
+        "Necesito ir al hotel."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la pregunta: “¿Dónde está el mostrador de registro?”",
+      "words": [
+        "the",
+        "is",
+        "counter",
+        "Where",
+        "check-in"
+      ],
+      "answer": [
+        3,
+        1,
+        0,
+        4,
+        2
+      ]
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: “Necesito ir al aeropuerto.”",
+      "words": [
+        "the",
+        "to",
+        "I",
+        "airport",
+        "need",
+        "go",
+        "to"
+      ],
+      "answer": [
+        2,
+        4,
+        1,
+        5,
+        6,
+        0,
+        3
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En el aeropuerto.\nAgente: Do you have your boarding pass?\nTú: Yes, here it is. ___\nAgente: Gate 12, boarding starts in 30 minutes.",
+      "options": [
+        "Which gate is my flight?",
+        "Which gate are my flight?",
+        "Which gate is my flights?",
+        "Which gates is my flight?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "I need go to airport.",
+      "options": [
+        "I need to go to the airport.",
+        "I need go to airport.",
+        "I need going to airport.",
+        "I need to goes to the airport."
+      ],
+      "answer": 0,
+      "correctAnswer": "I need to go to the airport."
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En el aeropuerto.\nAgente: Good morning, how can I help you?\nTú: ___.\nAgente: Certainly. Can I see your passport?",
+      "options": [
+        "I would like to check in, please.",
+        "I would like to checking in, please.",
+        "I would likes to check in, please.",
+        "I would like to check on, please."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: \"¿A qué hora sale mi vuelo?\"",
+      "answer": "What time does my flight leave?"
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"Tengo una reservación.\"",
+      "words": [
+        "have",
+        "I",
+        "a",
+        "reservation"
+      ],
+      "answer": [
+        1,
+        0,
+        2,
+        3
+      ]
+    }
   ],
-  "speak": "Haz el check-in en el hotel: reserva, nombre y número de noches. 45 segundos.",
-  "challenge": "Roleplay: en el aeropuerto, pregunta dónde está tu puerta de embarque.",
+  "speak": "Describe un viaje. Usa: 'I need to go to ___. My flight is at ___. I have a reservation.' Habla durante 45 segundos.",
+  "challenge": "Imagina que estás en el aeropuerto. Di: dónde vas, hora de vuelo, si tienes reservación, y qué necesitas. Usa: 'I'm going to ___. My flight leaves at ___. I have a reservation at gate ___.'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

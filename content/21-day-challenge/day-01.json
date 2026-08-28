@@ -14,7 +14,9 @@
       "I am Maria.",
       "You are from Mexico.",
       "She is my friend.",
-      "They are students."
+      "They are students.",
+      "I am not tired.",
+      "Are you a student?"
     ],
     "commonMistakes": [
       "I is → I am",
@@ -91,13 +93,87 @@
     {
       "type": "mcq",
       "prompt": "¿Qué significa “Nice to meet you”?",
-      "options": ["Encantado de conocerte", "Buenos días", "Hasta luego", "¿Cómo estás?"],
+      "options": [
+        "Encantado de conocerte",
+        "Buenos días",
+        "Hasta luego",
+        "¿Cómo estás?"
+      ],
       "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “How are you?”?",
+      "options": [
+        "¿Cómo estás?",
+        "¿Dónde estás?",
+        "¿Qué haces?",
+        "¿Quién eres?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "Hello",
+          "es": "Hola"
+        },
+        {
+          "en": "Good morning",
+          "es": "Buenos días"
+        },
+        {
+          "en": "Nice to meet you",
+          "es": "Encantado de conocerte"
+        },
+        {
+          "en": "Fine, thanks",
+          "es": "Bien, gracias"
+        }
+      ]
     },
     {
       "type": "gapfill",
       "prompt": "Completa: I ___ from Mexico.",
-      "options": ["am", "is", "are"],
+      "options": [
+        "am",
+        "is",
+        "are"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: She ___ my friend.",
+      "options": [
+        "am",
+        "is",
+        "are"
+      ],
+      "answer": 1
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: ___ name is Maria.",
+      "options": [
+        "My",
+        "I",
+        "Me"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "Hello, my name is Maria.",
+      "options": [
+        "Hola, mi nombre es María.",
+        "Hola, soy de María.",
+        "Hola, me gusta María.",
+        "Buenos días, María."
+      ],
       "answer": 0
     },
     {
@@ -106,14 +182,117 @@
       "answer": "I am from Colombia."
     },
     {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “¿Cómo estás?”",
+      "answer": "How are you?"
+    },
+    {
       "type": "order",
       "prompt": "Ordena la frase: “Mi nombre es María.”",
-      "words": ["is", "My", "Maria", "name"],
-      "answer": [1, 3, 0, 2]
+      "words": [
+        "is",
+        "My",
+        "Maria",
+        "name"
+      ],
+      "answer": [
+        1,
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Encuentras a un compañero nuevo en clase.\nTú: Hi! ___\nCompañero: My name is Carlos.",
+      "options": [
+        "What is your name?",
+        "How are you?",
+        "Where are you from?",
+        "How old are you?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "I is a student.",
+      "options": [
+        "I am a student.",
+        "I are a student.",
+        "I a student.",
+        "I is student."
+      ],
+      "answer": 0,
+      "correctAnswer": "I am a student."
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Conoces a alguien en una fiesta.\nTú: Where are you from?\nElla: ___.\nTú: Nice to meet you!",
+      "options": [
+        "I am from Argentina.",
+        "I is from Argentina.",
+        "I from Argentina.",
+        "I am Argentina."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I am a student.",
+      "options": [
+        "Soy estudiante.",
+        "Soy profesor.",
+        "Eres estudiante.",
+        "Ella es estudiante."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"¿De dónde eres?\"",
+      "words": [
+        "are",
+        "Where",
+        "from",
+        "you"
+      ],
+      "answer": [
+        1,
+        0,
+        3,
+        2
+      ]
+    },
+    {
+      "type": "listen-type",
+      "prompt": "Escucha y escribe lo que oyes.",
+      "audio": "I am from Mexico.",
+      "answer": "I am from Mexico."
+    },
+    {
+      "type": "listen-order",
+      "prompt": "Escucha y toca las palabras en orden.",
+      "audio": "Nice to meet you.",
+      "words": [
+        "meet",
+        "Nice",
+        "you",
+        "to"
+      ],
+      "answer": [
+        1,
+        3,
+        0,
+        2
+      ]
     }
   ],
-  "speak": "Di hola, tu nombre, tu país y una cosa sobre ti. Habla durante 30 segundos.",
-  "challenge": "Graba un audio de 30 segundos como si fuera un video: nombre, país y profesión.",
+  "speak": "Di hola, tu nombre, tu país y una cosa sobre ti. Usa esta guía: 'Hello, my name is ___. I am from ___. I am a ___.' Habla durante 30 segundos.",
+  "challenge": "Graba un audio de 30 segundos como si fuera un video: nombre, país y profesión. Intenta: 'Hi! My name is ___. I am from ___. I work as a ___.'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",

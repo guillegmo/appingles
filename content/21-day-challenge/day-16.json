@@ -9,12 +9,13 @@
   "grammarFocus": "present simple + vocabulario de trabajo",
   "lesson": {
     "title": "Hablar de tu trabajo: work as / in / for",
-    "rule": "Para describir tu trabajo: work AS + profesión (I work as a developer), work IN + lugar o sector (I work in a hospital), work FOR + empresa (I work for a bank). La pregunta clave: What do you do? (¿A qué te dedicas?).",
+    "rule": "Para hablar de trabajo: 'I work as a [profesión]' (profesión), 'I work in a [lugar]' (lugar), 'I work for [empresa]' (empresa). Preposiciones clave: at 10:00 (hora), in a hospital (lugar), for a company (empresa). 'I have a meeting' = Tengo una reunión.",
     "examples": [
-      "I work as a developer.",
-      "I work in a hospital.",
-      "I work for a tech company.",
+      "I work as a teacher.",
+      "She works in a hospital.",
       "I have a meeting at 10:00.",
+      "My boss is very nice.",
+      "I work with a great team.",
       "What do you do for a living?"
     ],
     "commonMistakes": [
@@ -25,41 +26,287 @@
   },
   "pronunciationTip": "'Colleague' tiene dos sílabas: CO-llague /ˈkɒliːɡ/. No digas 'col-league' con /ei/ ni tres sílabas.",
   "vocabulary": [
-    { "en": "job", "es": "trabajo/empleo" },
-    { "en": "colleague", "es": "compañero de trabajo" },
-    { "en": "meeting", "es": "reunión" },
-    { "en": "boss", "es": "jefe" },
-    { "en": "office", "es": "oficina" },
-    { "en": "team", "es": "equipo" },
-    { "en": "department", "es": "departamento" },
-    { "en": "company", "es": "empresa" }
+    {
+      "en": "job",
+      "es": "trabajo/empleo"
+    },
+    {
+      "en": "colleague",
+      "es": "compañero de trabajo"
+    },
+    {
+      "en": "meeting",
+      "es": "reunión"
+    },
+    {
+      "en": "boss",
+      "es": "jefe"
+    },
+    {
+      "en": "office",
+      "es": "oficina"
+    },
+    {
+      "en": "team",
+      "es": "equipo"
+    },
+    {
+      "en": "department",
+      "es": "departamento"
+    },
+    {
+      "en": "company",
+      "es": "empresa"
+    }
   ],
   "phrases": [
-    { "en": "I work as a developer.", "es": "Trabajo como desarrollador." },
-    { "en": "I work in a hospital.", "es": "Trabajo en un hospital." },
-    { "en": "I have a meeting at 10:00.", "es": "Tengo una reunión a las 10:00." },
-    { "en": "My colleagues are very friendly.", "es": "Mis compañeros son muy amables." },
-    { "en": "What do you do for a living?", "es": "¿A qué te dedicas?" },
-    { "en": "I love my job.", "es": "Amo mi trabajo." },
-    { "en": "My colleague is very helpful.", "es": "Mi compañero es muy servicial." },
-    { "en": "My boss is very kind.", "es": "Mi jefe es muy amable." },
-    { "en": "I work in an office.", "es": "Trabajo en una oficina." },
-    { "en": "I enjoy working with my team.", "es": "Disfruto trabajar con mi equipo." },
-    { "en": "She works in the sales department.", "es": "Ella trabaja en el departamento de ventas." },
-    { "en": "I work for a big company.", "es": "Trabajo para una empresa grande." }
+    {
+      "en": "I work as a developer.",
+      "es": "Trabajo como desarrollador."
+    },
+    {
+      "en": "I work in a hospital.",
+      "es": "Trabajo en un hospital."
+    },
+    {
+      "en": "I have a meeting at 10:00.",
+      "es": "Tengo una reunión a las 10:00."
+    },
+    {
+      "en": "My colleagues are very friendly.",
+      "es": "Mis compañeros son muy amables."
+    },
+    {
+      "en": "What do you do for a living?",
+      "es": "¿A qué te dedicas?"
+    },
+    {
+      "en": "I love my job.",
+      "es": "Amo mi trabajo."
+    },
+    {
+      "en": "My colleague is very helpful.",
+      "es": "Mi compañero es muy servicial."
+    },
+    {
+      "en": "My boss is very kind.",
+      "es": "Mi jefe es muy amable."
+    },
+    {
+      "en": "I work in an office.",
+      "es": "Trabajo en una oficina."
+    },
+    {
+      "en": "I enjoy working with my team.",
+      "es": "Disfruto trabajar con mi equipo."
+    },
+    {
+      "en": "She works in the sales department.",
+      "es": "Ella trabaja en el departamento de ventas."
+    },
+    {
+      "en": "I work for a big company.",
+      "es": "Trabajo para una empresa grande."
+    }
   ],
   "exercises": [
-    { "type": "mcq", "prompt": "¿Qué significa “boss”?", "options": ["jefe", "reunión", "compañero", "oficina"], "answer": 0 },
-    { "type": "gapfill", "prompt": "Completa: I work ___ a developer.", "options": ["as", "in", "for"], "answer": 0 },
-    { "type": "translate", "prompt": "Traduce al inglés: “¿A qué te dedicas?”", "answer": "What do you do?" },
-    { "type": "order", "prompt": "Ordena la frase: “Tengo una reunión a las 10:00.”", "words": ["a", "I", "at", "meeting", "have", "10:00"], "answer": [1, 4, 0, 3, 5, 2] }
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “boss”?",
+      "options": [
+        "jefe",
+        "reunión",
+        "compañero",
+        "oficina"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “colleague”?",
+      "options": [
+        "compañero de trabajo",
+        "jefe",
+        "oficina",
+        "empresa"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “team”?",
+      "options": [
+        "equipo",
+        "oficina",
+        "jefe",
+        "reunión"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "boss",
+          "es": "jefe"
+        },
+        {
+          "en": "colleague",
+          "es": "compañero de trabajo"
+        },
+        {
+          "en": "meeting",
+          "es": "reunión"
+        },
+        {
+          "en": "team",
+          "es": "equipo"
+        }
+      ]
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I work ___ a developer.",
+      "options": [
+        "as",
+        "in",
+        "for"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En una entrevista de trabajo.\nEntrevistador: Where do you work?\nTú: ___.\nEntrevistador: That's interesting!",
+      "options": [
+        "I work in a hospital.",
+        "I work on a hospital.",
+        "I works in a hospital.",
+        "I work in hospital."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I work as a teacher.",
+      "options": [
+        "Trabajo como profesor.",
+        "Trabajo en la escuela.",
+        "Quiero ser profesor.",
+        "Estudio para ser profesor."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “¿A qué te dedicas?”",
+      "answer": "What do you do?"
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I have a meeting at 3:00.",
+      "options": [
+        "Tengo una reunión a las 3:00.",
+        "Tengo una reunión a las 2:00.",
+        "Tuve una reunión a las 3:00.",
+        "Tengo una cita a las 3:00."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la frase: “Tengo una reunión a las 10:00.”",
+      "words": [
+        "a",
+        "I",
+        "at",
+        "meeting",
+        "have",
+        "10:00"
+      ],
+      "answer": [
+        1,
+        4,
+        0,
+        3,
+        2,
+        5
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En una entrevista de trabajo.\nEntrevistador: What do you do?\nTú: ___\nEntrevistador: That's interesting. How long have you been doing that?",
+      "options": [
+        "I work as a software developer.",
+        "I work in a software developer.",
+        "I work as software developer.",
+        "I working as a software developer."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "I have a meeting in 10:00.",
+      "options": [
+        "I have a meeting at 10:00.",
+        "I have a meeting in 10:00.",
+        "I has a meeting at 10:00.",
+        "I have a meeting on 10:00."
+      ],
+      "answer": 0,
+      "correctAnswer": "I have a meeting at 10:00."
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I work ___ a big company.",
+      "options": [
+        "for",
+        "as",
+        "in"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: \"Trabajo en una oficina.\"",
+      "answer": "I work in an office."
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"¿A qué te dedicas?\"",
+      "words": [
+        "do",
+        "you",
+        "do",
+        "What"
+      ],
+      "answer": [
+        3,
+        0,
+        1,
+        2
+      ]
+    }
   ],
-  "speak": "Describe tu trabajo: rol, empresa y tareas diarias. 60 segundos.",
-  "challenge": "Preséntate en una reunión: nombre, rol y departamento.",
+  "speak": "Describe tu trabajo. Usa: 'I work as ___. I work in/at ___. I have meetings ___. My boss is ___.' Habla durante 45 segundos.",
+  "challenge": "Imagina que alguien te pregunta a qué te dedicas. Di tu profesión, dónde trabajas, qué haces y con quién. Usa: 'I work as a ___. I work in ___. I work with ___. I enjoy ___.'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

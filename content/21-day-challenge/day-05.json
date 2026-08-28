@@ -12,10 +12,11 @@
     "rule": "Para preguntar por información usa una palabra WH + do/does + sujeto + verbo: Where do you work? / What does she do? WH más usadas: what (qué), where (dónde), when (cuándo), who (quién), why (por qué), how (cómo). Con he/she/it usamos 'does' y el verbo sin -s: What does she do? (no 'does she does').",
     "examples": [
       "What is your name?",
-      "Where do you work?",
-      "When do you finish?",
-      "Who is your friend?",
-      "How much is this?"
+      "Where do you live?",
+      "When do you wake up?",
+      "How old are you?",
+      "How much does it cost?",
+      "Why do you study English?"
     ],
     "commonMistakes": [
       "Where you work? → Where do you work?",
@@ -92,29 +93,185 @@
     {
       "type": "mcq",
       "prompt": "¿Qué significa “where”?",
-      "options": ["dónde", "qué", "cuándo", "por qué"],
+      "options": [
+        "dónde",
+        "qué",
+        "cuándo",
+        "por qué"
+      ],
       "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “how much”?",
+      "options": [
+        "cuánto",
+        "cómo",
+        "dónde",
+        "quién"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "what",
+          "es": "qué"
+        },
+        {
+          "en": "where",
+          "es": "dónde"
+        },
+        {
+          "en": "when",
+          "es": "cuándo"
+        },
+        {
+          "en": "why",
+          "es": "por qué"
+        }
+      ]
     },
     {
       "type": "gapfill",
       "prompt": "Completa: ___ do you work?",
-      "options": ["Where", "What", "When"],
+      "options": [
+        "Where",
+        "What",
+        "When"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: What ___ she do?",
+      "options": [
+        "do",
+        "does",
+        "is"
+      ],
+      "answer": 1
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: ___ do you live? — I live in Mexico.",
+      "options": [
+        "Where",
+        "What",
+        "When"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "Where do you live?",
+      "options": [
+        "¿Dónde vives?",
+        "¿Qué haces?",
+        "¿Cuándo trabajas?",
+        "¿Por qué estudias?"
+      ],
       "answer": 0
     },
     {
       "type": "translate",
-      "prompt": "Traduce al inglés: “¿Dónde trabajas?”",
-      "answer": "Where do you work?"
+      "prompt": "Traduce al inglés: \"¿Cuándo comes?\"",
+      "answer": "When do you eat?"
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "How much does it cost?",
+      "options": [
+        "¿Cuánto cuesta?",
+        "¿Dónde cuesta?",
+        "¿Cuándo cuesta?",
+        "¿Cuántos cuestan?"
+      ],
+      "answer": 0
     },
     {
       "type": "order",
       "prompt": "Ordena la pregunta: “¿Dónde trabajas?”",
-      "words": ["you", "work", "Where", "do"],
-      "answer": [2, 3, 0, 1]
+      "words": [
+        "you",
+        "work",
+        "Where",
+        "do"
+      ],
+      "answer": [
+        2,
+        3,
+        0,
+        1
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "En una tienda, necesitas preguntar el precio.\nTú: Excuse me, ___\nVendedor: It's $15.",
+      "options": [
+        "how much is this shirt?",
+        "where is this shirt?",
+        "what is this shirt?",
+        "who is this shirt?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "Where you live?",
+      "options": [
+        "Where do you live?",
+        "Where are you live?",
+        "Where you lives?",
+        "Where do you lives?"
+      ],
+      "answer": 0,
+      "correctAnswer": "Where do you live?"
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Preguntas sobre el trabajo de alguien.\nTú: What do you do?\nElla: ___.\nTú: Interesting!",
+      "options": [
+        "I am a teacher.",
+        "I is a teacher.",
+        "I a teacher.",
+        "I am teacher."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: \"¿Dónde trabajas?\"",
+      "answer": "Where do you work?"
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"¿Por qué estudias inglés?\"",
+      "words": [
+        "you",
+        "Why",
+        "English",
+        "study",
+        "do"
+      ],
+      "answer": [
+        1,
+        4,
+        0,
+        3,
+        2
+      ]
     }
   ],
-  "speak": "Haz 5 preguntas WH diferentes en voz alta. 45 segundos.",
-  "challenge": "Entrevista a alguien (real o IA): 5 preguntas y respuestas.",
+  "speak": "Practica hacer preguntas. Di 5 preguntas diferentes usando What, Where, When, How, Why. Habla durante 30 segundos.",
+  "challenge": "Imagina que estás conociendo a alguien. Hazle 5 preguntas: nombre, edad, dónde vive, a qué se dedica y qué le gusta. Usa: 'What is your name? How old are you? Where do you live? What do you do? What do you like?'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",

@@ -63,4 +63,46 @@ test.describe('Reto de 21 días', () => {
     expect(second.res.status()).toBe(200);
     expect(second.body.xpEarned).toBe(0); // sin duplicar XP
   });
+
+  test('CH-005 Campeón: completar los 21 días desbloquea el post-21', async ({ page, request }) => {
+    await newOnboardedUser(page, 'ch5');
+    const token = await tokenFromPage(page);
+    const session = await sessionFromPage(page);
+    const api = apiAuthed(request, '', token, session);
+
+    // Completa los 21 días por API (rápido y sin repetir XP en cada uno).
+    let xp = 0;
+    for (let n = 1; n <= 21; n++) {
+      const { res, body } = await api.post(`/challenge/day/${n}/complete`, {});
+      expect(res.status()).toBe(200);
+      expect(body.dayCompleted).toBe(n);
+      expect(body.xpEarned).toBeGreaterThan(0); // primer completado de cada día
+      xp += body.xpEarned;
+    }
+    expect(xp).toBeGreaterThan(0);
+
+    // El índice refleja los 21 días completados y sin bloqueos.
+    const { body: idx } = await api.get('/challenge');
+    expect(idx.days.length).toBe(21);
+    expect(idx.days.every((d: { completed: boolean; locked: boolean }) => d.completed && !d.locked)).toBe(true);
+
+    // Progreso global: 21/21, XP acumulada, insignia de campeón.
+    const { body: prog } = await api.get('/challenge/progress');
+    expect(prog.daysCompleted).toBe(21);
+    expect(prog.completedDays).toHaveLength(21);
+    expect(prog.totalXp).toBe(xp);
+    expect(prog.badges).toContain('champion-21');
+
+    // Post-21 desbloqueado: assessment y Daily Practice (403 para no campeones).
+    const assessment = await api.get('/challenge/assessment');
+    expect(assessment.res.status()).toBe(200);
+    expect(assessment.body).toBeTruthy();
+    const daily = await api.get('/practice/today');
+    expect(daily.res.status()).toBe(200);
+    expect(daily.body.mission).toBeTruthy();
+
+    // UI: el dashboard muestra el reto al 100%.
+    await page.goto('/home');
+    await expect(page.getByText('21/21 días')).toBeVisible({ timeout: 30_000 });
+  });
 });

@@ -11,11 +11,12 @@
     "title": "El pasado simple: was/were, -ed y verbos irregulares",
     "rule": "Para 'was/were' (ser/estar en pasado): I/he/she was, you/we/they were. Los verbos regulares terminan en -ed: worked, visited. Los irregulares cambian: go→went, have→had, see→saw. Expresiones de tiempo: yesterday (ayer), last week (la semana pasada), last night (anoche).",
     "examples": [
-      "Yesterday I worked from home.",
-      "I was at the office at 9:00.",
-      "Last week I visited my family.",
-      "I went to the supermarket.",
-      "It was a good day."
+      "Yesterday I went to the supermarket.",
+      "She was at the office.",
+      "We visited our family last week.",
+      "I watched a movie last night.",
+      "He worked all day yesterday.",
+      "Did you go out last weekend?"
     ],
     "commonMistakes": [
       "I go yesterday → I went yesterday",
@@ -25,37 +26,273 @@
   },
   "pronunciationTip": "El pasado -ed suena distinto: worked /t/, played /d/, visited /id/. Practica: work-ed no se dice, es 'workt'.",
   "vocabulary": [
-    { "en": "yesterday", "es": "ayer" },
-    { "en": "last week", "es": "la semana pasada" },
-    { "en": "last night", "es": "anoche" },
-    { "en": "worked", "es": "trabajé" },
-    { "en": "visited", "es": "visité" },
-    { "en": "went", "es": "fui" },
-    { "en": "had", "es": "tuve" },
-    { "en": "saw", "es": "vi" }
+    {
+      "en": "yesterday",
+      "es": "ayer"
+    },
+    {
+      "en": "last week",
+      "es": "la semana pasada"
+    },
+    {
+      "en": "last night",
+      "es": "anoche"
+    },
+    {
+      "en": "worked",
+      "es": "trabajé"
+    },
+    {
+      "en": "visited",
+      "es": "visité"
+    },
+    {
+      "en": "went",
+      "es": "fui"
+    },
+    {
+      "en": "had",
+      "es": "tuve"
+    },
+    {
+      "en": "saw",
+      "es": "vi"
+    }
   ],
   "phrases": [
-    { "en": "Yesterday I worked from home.", "es": "Ayer trabajé desde casa." },
-    { "en": "I was at the office at 9:00.", "es": "Estaba en la oficina a las 9:00." },
-    { "en": "Last week I visited my family.", "es": "La semana pasada visité a mi familia." },
-    { "en": "I went to the supermarket.", "es": "Fui al supermercado." },
-    { "en": "It was a good day.", "es": "Fue un buen día." },
-    { "en": "Last night I watched a movie.", "es": "Anoche vi una película." },
-    { "en": "I had a good breakfast.", "es": "Tuve un buen desayuno." },
-    { "en": "I saw my friends yesterday.", "es": "Vi a mis amigos ayer." }
+    {
+      "en": "Yesterday I worked from home.",
+      "es": "Ayer trabajé desde casa."
+    },
+    {
+      "en": "I was at the office at 9:00.",
+      "es": "Estaba en la oficina a las 9:00."
+    },
+    {
+      "en": "Last week I visited my family.",
+      "es": "La semana pasada visité a mi familia."
+    },
+    {
+      "en": "I went to the supermarket.",
+      "es": "Fui al supermercado."
+    },
+    {
+      "en": "It was a good day.",
+      "es": "Fue un buen día."
+    },
+    {
+      "en": "Last night I watched a movie.",
+      "es": "Anoche vi una película."
+    },
+    {
+      "en": "I had a good breakfast.",
+      "es": "Tuve un buen desayuno."
+    },
+    {
+      "en": "I saw my friends yesterday.",
+      "es": "Vi a mis amigos ayer."
+    }
   ],
   "exercises": [
-    { "type": "mcq", "prompt": "¿Qué significa “yesterday”?", "options": ["ayer", "hoy", "mañana", "la semana pasada"], "answer": 0 },
-    { "type": "gapfill", "prompt": "Completa: Yesterday I ___ to the supermarket.", "options": ["go", "went", "gone"], "answer": 1 },
-    { "type": "translate", "prompt": "Traduce al inglés: “La semana pasada visité a mi familia.”", "answer": "Last week I visited my family." },
-    { "type": "order", "prompt": "Ordena la frase: “Estaba en la oficina.”", "words": ["office", "was", "I", "the", "at"], "answer": [2, 1, 4, 3, 0] }
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “yesterday”?",
+      "options": [
+        "ayer",
+        "hoy",
+        "mañana",
+        "la semana pasada"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Cuál es el pasado de “go”?",
+      "options": [
+        "went",
+        "goed",
+        "goes",
+        "going"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Cuál es el pasado de “see”?",
+      "options": [
+        "saw",
+        "seed",
+        "seeed",
+        "sees"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "yesterday",
+          "es": "ayer"
+        },
+        {
+          "en": "last week",
+          "es": "la semana pasada"
+        },
+        {
+          "en": "last night",
+          "es": "anoche"
+        },
+        {
+          "en": "visited",
+          "es": "visité"
+        }
+      ]
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: Yesterday I ___ to the supermarket.",
+      "options": [
+        "go",
+        "went",
+        "gone"
+      ],
+      "answer": 1
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: She ___ to the market yesterday.",
+      "options": [
+        "go",
+        "went",
+        "goes"
+      ],
+      "answer": 1
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "Yesterday I went to the supermarket.",
+      "options": [
+        "Ayer fui al supermercado.",
+        "Ayer voy al supermercado.",
+        "Ayer estoy en el supermercado.",
+        "Ayer tengo el supermercado."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "Last week I visited my family.",
+      "options": [
+        "La semana pasada visité a mi familia.",
+        "La semana pasada visité a mis amigos.",
+        "La próxima semana visitaré a mi familia.",
+        "La semana pasada llamé a mi familia."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “Anoche vi una película.”",
+      "answer": "Last night I watched a movie."
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la frase: “Estaba en la oficina.”",
+      "words": [
+        "office",
+        "was",
+        "I",
+        "the",
+        "at"
+      ],
+      "answer": [
+        2,
+        1,
+        4,
+        3,
+        0
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Un amigo te pregunta qué hiciste el fin de semana.\nAmigo: What did you do last weekend?\nTú: ___",
+      "options": [
+        "I went to the movies with friends.",
+        "I go to the movies with friends.",
+        "I goed to the movies with friends.",
+        "I going to the movies with friends."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "Yesterday I go to the supermarket.",
+      "options": [
+        "Yesterday I went to the supermarket.",
+        "Yesterday I go to the supermarket.",
+        "Yesterday I going to the supermarket.",
+        "Yesterday I goed to the supermarket."
+      ],
+      "answer": 0,
+      "correctAnswer": "Yesterday I went to the supermarket."
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Un amigo te pregunta qué hiciste el fin de semana.\nAmigo: What did you do yesterday?\nTú: ___.\nAmigo: Cool!",
+      "options": [
+        "I played soccer with friends.",
+        "I play soccer with friends.",
+        "I played soccer friends.",
+        "I playing soccer with friends."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: \"Ayer vi a María en el parque.\"",
+      "answer": "Yesterday I saw Maria at the park."
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"Ayer fui al supermercado.\"",
+      "words": [
+        "to",
+        "went",
+        "I",
+        "supermarket",
+        "the",
+        "yesterday"
+      ],
+      "answer": [
+        2,
+        1,
+        0,
+        4,
+        3,
+        5
+      ]
+    }
   ],
-  "speak": "Describe en 5 oraciones lo que hiciste ayer. 60 segundos.",
-  "challenge": "Cuenta tu \"día perfecto\" del fin de semana pasado en pasado.",
+  "speak": "Cuenta qué hiciste ayer. Usa: 'Yesterday I ___. I was at ___. I saw ___. I had ___.' Habla durante 45 segundos.",
+  "challenge": "Graba un audio contando tu día de ayer en pasado. Incluye al menos 5 oraciones: 'Yesterday I woke up at ___. I went to ___. I worked ___. I saw ___. I had ___.'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

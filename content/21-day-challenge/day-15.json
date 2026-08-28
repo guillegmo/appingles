@@ -9,13 +9,14 @@
   "grammarFocus": "going to / will",
   "lesson": {
     "title": "Planes (going to) vs decisiones (will)",
-    "rule": "'Be going to' expresa planes ya decididos: I am going to travel next month (Voy a viajar). 'Will' expresa decisiones del momento, promesas o predicciones: I will call you (Te llamaré). Estructura: be + going to + verbo. El tiempo: next month (el próximo mes), tomorrow (mañana), soon (pronto).",
+    "rule": "Para hablar del futuro en inglés hay dos formas: 'going to' (planes decididos: 'I am going to travel') y 'will' (decisiones del momento: 'I will call you'). Forma negativa: 'I'm not going to...' / 'I won't...'. Pregunta: 'Are you going to...?' / 'Will you...?'",
     "examples": [
       "I am going to travel next month.",
       "I will call you tomorrow.",
-      "What are you going to do this weekend?",
-      "Maybe I will stay home.",
-      "We are going to start soon."
+      "She is going to study English.",
+      "We will visit my parents this weekend.",
+      "Maybe I will start a new course.",
+      "Are you going to the party tonight?"
     ],
     "commonMistakes": [
       "I going to travel → I AM going to travel",
@@ -25,37 +26,295 @@
   },
   "pronunciationTip": "En conversación, 'going to' se oye como 'gonna' /ˈɡʌnə/. Es informal pero muy común: I'm gonna travel.",
   "vocabulary": [
-    { "en": "next month", "es": "el próximo mes" },
-    { "en": "tomorrow", "es": "mañana" },
-    { "en": "soon", "es": "pronto" },
-    { "en": "plan", "es": "plan" },
-    { "en": "maybe", "es": "quizás" },
-    { "en": "will", "es": "haré (futuro)" },
-    { "en": "be going to", "es": "ir a (futuro)" },
-    { "en": "next week", "es": "la próxima semana" }
+    {
+      "en": "next month",
+      "es": "el próximo mes"
+    },
+    {
+      "en": "tomorrow",
+      "es": "mañana"
+    },
+    {
+      "en": "soon",
+      "es": "pronto"
+    },
+    {
+      "en": "plan",
+      "es": "plan"
+    },
+    {
+      "en": "maybe",
+      "es": "quizás"
+    },
+    {
+      "en": "will",
+      "es": "haré (futuro)"
+    },
+    {
+      "en": "be going to",
+      "es": "ir a (futuro)"
+    },
+    {
+      "en": "next week",
+      "es": "la próxima semana"
+    }
   ],
   "phrases": [
-    { "en": "I am going to travel next month.", "es": "Voy a viajar el próximo mes." },
-    { "en": "I will call you tomorrow.", "es": "Te llamaré mañana." },
-    { "en": "What are you going to do this weekend?", "es": "¿Qué vas a hacer este fin de semana?" },
-    { "en": "Maybe I will stay home.", "es": "Quizás me quede en casa." },
-    { "en": "We are going to start soon.", "es": "Vamos a empezar pronto." },
-    { "en": "I am going to study tomorrow.", "es": "Voy a estudiar mañana." },
-    { "en": "What is your plan for the weekend?", "es": "¿Cuál es tu plan para el fin de semana?" },
-    { "en": "I will see you next week.", "es": "Te veré la próxima semana." }
+    {
+      "en": "I am going to travel next month.",
+      "es": "Voy a viajar el próximo mes."
+    },
+    {
+      "en": "I will call you tomorrow.",
+      "es": "Te llamaré mañana."
+    },
+    {
+      "en": "What are you going to do this weekend?",
+      "es": "¿Qué vas a hacer este fin de semana?"
+    },
+    {
+      "en": "Maybe I will stay home.",
+      "es": "Quizás me quede en casa."
+    },
+    {
+      "en": "We are going to start soon.",
+      "es": "Vamos a empezar pronto."
+    },
+    {
+      "en": "I am going to study tomorrow.",
+      "es": "Voy a estudiar mañana."
+    },
+    {
+      "en": "What is your plan for the weekend?",
+      "es": "¿Cuál es tu plan para el fin de semana?"
+    },
+    {
+      "en": "I will see you next week.",
+      "es": "Te veré la próxima semana."
+    }
   ],
   "exercises": [
-    { "type": "mcq", "prompt": "¿Qué significa “maybe”?", "options": ["quizás", "pronto", "plan", "mañana"], "answer": 0 },
-    { "type": "gapfill", "prompt": "Completa: I ___ going to travel next month.", "options": ["am", "is", "are"], "answer": 0 },
-    { "type": "translate", "prompt": "Traduce al inglés: “Voy a viajar el próximo mes.”", "answer": "I am going to travel next month." },
-    { "type": "order", "prompt": "Ordena la pregunta: “¿Qué vas a hacer este fin de semana?”", "words": ["weekend", "going", "What", "are", "do", "you", "this", "to"], "answer": [2, 3, 5, 1, 7, 4, 6, 0] }
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “maybe”?",
+      "options": [
+        "quizás",
+        "pronto",
+        "plan",
+        "mañana"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Cuál es la diferencia entre “going to” y “will” en este contexto?",
+      "options": [
+        "going to = plan decidido, will = decisión del momento",
+        "Son exactamente iguales",
+        "going to = pasado, will = futuro",
+        "will = negativo, going to = afirmativo"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "tomorrow",
+          "es": "mañana"
+        },
+        {
+          "en": "next week",
+          "es": "la próxima semana"
+        },
+        {
+          "en": "maybe",
+          "es": "quizás"
+        },
+        {
+          "en": "plan",
+          "es": "plan"
+        }
+      ]
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I ___ going to travel next month.",
+      "options": [
+        "am",
+        "is",
+        "are"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: She ___ going to study tomorrow.",
+      "options": [
+        "am",
+        "is",
+        "are"
+      ],
+      "answer": 1
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I am going to travel next month.",
+      "options": [
+        "Voy a viajar el próximo mes.",
+        "Viajé el mes pasado.",
+        "Quiero viajar el próximo mes.",
+        "No quiero viajar el próximo mes."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Hablando de planes con un amigo.\nAmigo: What are you doing next weekend?\nTú: ___.\nAmigo: Sounds fun!",
+      "options": [
+        "I am going to visit my family.",
+        "I am going to visiting my family.",
+        "I am going visit my family.",
+        "I going to visit my family."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I will call you tomorrow.",
+      "options": [
+        "Te llamaré mañana.",
+        "Te llamé ayer.",
+        "Te llamo ahora.",
+        "Me llamarás mañana."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la pregunta: “¿Qué vas a hacer este fin de semana?”",
+      "words": [
+        "weekend",
+        "going",
+        "What",
+        "are",
+        "do",
+        "you",
+        "this",
+        "to"
+      ],
+      "answer": [
+        2,
+        3,
+        5,
+        1,
+        7,
+        4,
+        6,
+        0
+      ]
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: “Voy a viajar el próximo mes.”",
+      "words": [
+        "travel",
+        "am",
+        "going",
+        "month",
+        "next",
+        "to",
+        "I"
+      ],
+      "answer": [
+        6,
+        1,
+        2,
+        5,
+        0,
+        4,
+        3
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Hablando de planes con un amigo.\nAmigo: Are you doing anything this weekend?\nTú: ___ We're going to the beach.",
+      "options": [
+        "Yes, I'm going to the beach.",
+        "Yes, I go to the beach.",
+        "Yes, I will going to the beach.",
+        "Yes, I am go to the beach."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "I will to travel next month.",
+      "options": [
+        "I will going to travel next month.",
+        "I will to travel next month.",
+        "I will travel next month.",
+        "I am going travel next month."
+      ],
+      "answer": 2,
+      "correctAnswer": "I will travel next month."
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: They ___ going to travel next week.",
+      "options": [
+        "are",
+        "is",
+        "am"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: \"Voy a estudiar mañana.\"",
+      "answer": "I am going to study tomorrow."
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"Vamos a empezar pronto.\"",
+      "words": [
+        "start",
+        "We",
+        "going",
+        "are",
+        "soon",
+        "to"
+      ],
+      "answer": [
+        1,
+        3,
+        2,
+        5,
+        0,
+        4
+      ]
+    }
   ],
-  "speak": "Comparte 3 planes futuros. 45 segundos.",
-  "challenge": "Pregunta a un compañero sus planes de fin de semana y cuenta los tuyos.",
+  "speak": "Habla de tus planes futuros. Usa: 'I am going to ___ next month. I will ___ this weekend. Maybe I will ___.' Habla durante 45 segundos.",
+  "challenge": "Graba un audio con tus planes para el próximo mes. Incluye al menos 3 planes: 'I am going to travel to ___. I will study ___. Maybe I will start ___.'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

@@ -9,13 +9,14 @@
   "grammarFocus": "I think... / In my opinion...",
   "lesson": {
     "title": "Dar opinión y expresar acuerdo/desacuerdo",
-    "rule": "Para dar tu opinión: I think... (Creo que...), In my opinion... (En mi opinión...). Para estar de acuerdo: I agree (Estoy de acuerdo). Para discrepar con educación: I disagree (No estoy de acuerdo). Pregunta a otros: What do you think? (¿Qué opinas?).",
+    "rule": "Para expresar opiniones con nivel avanzado: 'I think...' (opinión), 'In my opinion...' (formal), 'In my experience...' (basado en experiencia). Para acuerdo: 'I agree', 'Good point'. Para desacuerdo educado: 'I see your point, but...', 'I'm not sure I agree because...', 'I tend to think...'. Evita: 'In my opinion, I think...' (redundante).",
     "examples": [
       "I think this movie is great.",
       "In my opinion, English is useful.",
-      "What do you think about it?",
       "I agree with you.",
-      "In my experience, practice helps."
+      "I see your point, but I prefer comedies.",
+      "In my experience, practice helps.",
+      "I tend to think online learning is more flexible."
     ],
     "commonMistakes": [
       "I am think → I think",
@@ -25,37 +26,289 @@
   },
   "pronunciationTip": "En 'think' el sonido es /θ/ (th sordo): pon la lengua entre los dientes. No digas 'sink' (hundirse).",
   "vocabulary": [
-    { "en": "I think...", "es": "Creo que..." },
-    { "en": "In my opinion", "es": "En mi opinión" },
-    { "en": "I agree", "es": "Estoy de acuerdo" },
-    { "en": "I disagree", "es": "No estoy de acuerdo" },
-    { "en": "What do you think?", "es": "¿Qué opinas?" },
-    { "en": "Maybe", "es": "Quizás" },
-    { "en": "In my experience", "es": "En mi experiencia" },
-    { "en": "good point", "es": "buen punto" }
+    {
+      "en": "I think...",
+      "es": "Creo que..."
+    },
+    {
+      "en": "In my opinion",
+      "es": "En mi opinión"
+    },
+    {
+      "en": "I agree",
+      "es": "Estoy de acuerdo"
+    },
+    {
+      "en": "I disagree",
+      "es": "No estoy de acuerdo"
+    },
+    {
+      "en": "What do you think?",
+      "es": "¿Qué opinas?"
+    },
+    {
+      "en": "Maybe",
+      "es": "Quizás"
+    },
+    {
+      "en": "In my experience",
+      "es": "En mi experiencia"
+    },
+    {
+      "en": "good point",
+      "es": "buen punto"
+    }
   ],
   "phrases": [
-    { "en": "I think this movie is great.", "es": "Creo que esta película es genial." },
-    { "en": "In my opinion, English is useful.", "es": "En mi opinión, el inglés es útil." },
-    { "en": "What do you think about it?", "es": "¿Qué opinas al respecto?" },
-    { "en": "I agree with you.", "es": "Estoy de acuerdo contigo." },
-    { "en": "In my experience, practice helps.", "es": "En mi experiencia, la práctica ayuda." },
-    { "en": "I disagree with you.", "es": "No estoy de acuerdo contigo." },
-    { "en": "Maybe you are right.", "es": "Quizás tengas razón." },
-    { "en": "That is a good point.", "es": "Ese es un buen punto." }
+    {
+      "en": "I think this movie is great.",
+      "es": "Creo que esta película es genial."
+    },
+    {
+      "en": "In my opinion, English is useful.",
+      "es": "En mi opinión, el inglés es útil."
+    },
+    {
+      "en": "What do you think about it?",
+      "es": "¿Qué opinas al respecto?"
+    },
+    {
+      "en": "I agree with you.",
+      "es": "Estoy de acuerdo contigo."
+    },
+    {
+      "en": "In my experience, practice helps.",
+      "es": "En mi experiencia, la práctica ayuda."
+    },
+    {
+      "en": "I disagree with you.",
+      "es": "No estoy de acuerdo contigo."
+    },
+    {
+      "en": "Maybe you are right.",
+      "es": "Quizás tengas razón."
+    },
+    {
+      "en": "That is a good point.",
+      "es": "Ese es un buen punto."
+    }
   ],
   "exercises": [
-    { "type": "mcq", "prompt": "¿Qué significa “I agree”?", "options": ["Estoy de acuerdo", "No estoy de acuerdo", "Creo que", "Opino"], "answer": 0 },
-    { "type": "translate", "prompt": "Traduce al inglés: “Creo que esta película es genial.”", "answer": "I think this movie is great." },
-    { "type": "gapfill", "prompt": "Completa: In my ___, English is useful.", "options": ["opinion", "opine", "option"], "answer": 0 },
-    { "type": "order", "prompt": "Ordena la pregunta: “¿Qué opinas al respecto?”", "words": ["you", "What", "it", "about", "do", "think"], "answer": [1, 4, 0, 5, 3, 2] }
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “I agree”?",
+      "options": [
+        "Estoy de acuerdo",
+        "No estoy de acuerdo",
+        "Creo que",
+        "Opino"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Qué significa “I disagree”?",
+      "options": [
+        "No estoy de acuerdo",
+        "Estoy de acuerdo",
+        "Creo que",
+        "Opino"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "I think",
+          "es": "creo que"
+        },
+        {
+          "en": "I agree",
+          "es": "estoy de acuerdo"
+        },
+        {
+          "en": "I disagree",
+          "es": "no estoy de acuerdo"
+        },
+        {
+          "en": "in my opinion",
+          "es": "en mi opinión"
+        }
+      ]
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: In my ___, English is useful.",
+      "options": [
+        "opinion",
+        "opine",
+        "option"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: I ___ you are right.",
+      "options": [
+        "think",
+        "thinking",
+        "thinks"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Un amigo te pide tu opinión.\nAmigo: What do you think about this movie?\nTú: ___.\nAmigo: Me too!",
+      "options": [
+        "In my opinion, it's great.",
+        "In my opinion, it are great.",
+        "On my opinion, it's great.",
+        "In my opinion, it great."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I think this movie is great.",
+      "options": [
+        "Creo que esta película es genial.",
+        "Pienso ver esta película.",
+        "No me gusta esta película.",
+        "Esta película es mala."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: “Esta película es muy buena.”",
+      "answer": "This movie is very good."
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena la pregunta: “¿Qué opinas al respecto?”",
+      "words": [
+        "you",
+        "What",
+        "it",
+        "about",
+        "do",
+        "think"
+      ],
+      "answer": [
+        1,
+        4,
+        0,
+        5,
+        3,
+        2
+      ]
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: “Creo que es una buena idea.”",
+      "words": [
+        "think",
+        "a",
+        "I",
+        "is",
+        "good",
+        "idea",
+        "it",
+        "that"
+      ],
+      "answer": [
+        2,
+        0,
+        7,
+        6,
+        3,
+        1,
+        4,
+        5
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Debate con un amigo sobre películas.\nAmigo: I think action movies are the best.\nTú: ___ I prefer comedies.",
+      "options": [
+        "I see your point, but...",
+        "I am see your point, but...",
+        "I sees your point, but...",
+        "I seeing your point, but..."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "In my opinion, I think English is useful.",
+      "options": [
+        "I think English is useful.",
+        "In my opinion, I think English is useful.",
+        "In my opinion, I think English are useful.",
+        "In my opinion, I think English is use."
+      ],
+      "answer": 0,
+      "correctAnswer": "I think English is useful."
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: In my ___, we should start early.",
+      "options": [
+        "opinion",
+        "option",
+        "oppose"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I disagree with you.",
+      "options": [
+        "No estoy de acuerdo contigo.",
+        "Estoy de acuerdo contigo.",
+        "No te entiendo.",
+        "No estoy seguro."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"Estoy de acuerdo contigo.\"",
+      "words": [
+        "I",
+        "agree",
+        "you",
+        "with"
+      ],
+      "answer": [
+        0,
+        1,
+        3,
+        2
+      ]
+    }
   ],
-  "speak": "Da tu opinión sobre tu película o comida favorita. 60 segundos.",
-  "challenge": "Debate un tema simple: muestra acuerdo y desacuerdo con educación.",
+  "speak": "Da tu opinión sobre algo. Usa: 'I think ___. In my opinion ___. I agree that ___. I see your point, but ___.' Habla durante 45 segundos.",
+  "challenge": "Debate un tema: '¿Las redes sociales son buenas?' Empieza con tu opinión, luego muestra acuerdo y desacuerdo educado. Usa: 'I think ___. I agree that ___, but I see your point. In my experience ___.'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "practice", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "practice",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

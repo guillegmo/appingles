@@ -16,11 +16,15 @@ export interface GrammarLesson {
 }
 
 export interface DayExercise {
-  type: 'mcq' | 'gapfill' | 'translate' | 'order';
+  type: 'mcq' | 'gapfill' | 'translate' | 'order' | 'listening' | 'matching' | 'dialogue' | 'errorfix' | 'listen-type' | 'listen-order';
   prompt: string;
   options?: string[];
   answer: number | string | number[];
   words?: string[];
+  audio?: string;
+  pairs?: { en: string; es: string }[];
+  context?: string;
+  correctAnswer?: string;
 }
 
 export interface ReviewExam {

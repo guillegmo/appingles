@@ -57,7 +57,7 @@ export async function provisionUser(
 ): Promise<void> {
   const referer = { Referer: 'http://localhost:5173/' };
   let signUpBody: any = {};
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 8; attempt++) {
     const signUpRes = await page.request.post(
       `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`,
       { headers: referer, data: { email, password, returnSecureToken: true } },
@@ -65,8 +65,9 @@ export async function provisionUser(
     signUpBody = await signUpRes.json().catch(() => ({}));
     // EMAIL_EXISTS: el usuario ya existía (colisión/reintento); no es un error fatal.
     if (signUpRes.ok() || signUpBody?.error?.message === 'EMAIL_EXISTS') break;
-    if (signUpBody?.error?.message === 'TOO_MANY_ATTEMPTS_TRY_LATER' && attempt < 2) {
-      await page.waitForTimeout(2000 * (attempt + 1));
+    if (signUpBody?.error?.message === 'TOO_MANY_ATTEMPTS_TRY_LATER' && attempt < 7) {
+      // Throttling de Firebase por IP/hora: backoff progresivo (15s acumulados).
+      await page.waitForTimeout(15_000 + 5_000 * attempt);
       continue;
     }
     throw new Error(`No se pudo crear el usuario de prueba (${signUpBody?.error?.message})`);
@@ -80,13 +81,26 @@ export async function provisionUser(
   // La app ahora exige compra activa (gate de acceso). Concedemos acceso de
   // prueba al usuario recién creado vía el endpoint dev del backend local.
   if ((opts?.grantAccess ?? true) && signUpBody?.idToken) {
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const grantRes = await page.request.post(`${API_BASE}/api/access/dev-grant`, {
-        headers: { Authorization: `Bearer ${signUpBody.idToken}` },
-        data: { plan: 'reto21' },
-      });
-      if (grantRes.ok()) break;
+    let grantOk = false;
+    let lastError: unknown = null;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      try {
+        const grantRes = await page.request.post(`${API_BASE}/api/access/dev-grant`, {
+          headers: { Authorization: `Bearer ${signUpBody.idToken}` },
+          data: { plan: 'reto21' },
+        });
+        if (grantRes.ok()) {
+          grantOk = true;
+          break;
+        }
+      } catch (err) {
+        // ECONNRESET durante el arranque del API: transporte caído, se reintenta.
+        lastError = err;
+      }
       await page.waitForTimeout(1500 * (attempt + 1));
+    }
+    if (!grantOk) {
+      throw new Error(`No se pudo conceder el acceso de prueba (dev-grant)${lastError ? `: ${String(lastError)}` : ''}`);
     }
   }
 }
@@ -109,22 +123,34 @@ export async function completeOnboarding(page: Page): Promise<void> {
   const startBtn = page.getByRole('button', { name: /Comenzar Día 1|Continuar mi progreso/ });
 
   // La pantalla de onboarding puede re-montarse mientras terminan de cargar
-  // challenge/progress, reseteando el estado local (goal/level). Se reintenta la
-  // selección hasta que el botón de inicio quede habilitado, en lugar de fallar
-  // si el primer click no dejó el estado listo.
-  for (let attempt = 0; attempt < 4; attempt++) {
-    await goalBtn.click();
-    await levelBtn.click();
+  // challenge/progress, reseteando el estado local (goal/level) y dejando el
+  // botón deshabilitado. Se reintenta la selección + click en un solo ciclo
+  // hasta completar la transición, en lugar de fallar si un remount ocurre
+  // justo al hacer clic (el click sobre un botón deshabilitado se estancaría).
+  for (let attempt = 0; attempt < 8; attempt++) {
+    // Si el estado se perdió (botón deshabilitado), re-selecciona objetivo/nivel.
+    if (await startBtn.isDisabled().catch(() => true)) {
+      await goalBtn.click().catch(() => {});
+      await levelBtn.click().catch(() => {});
+      try {
+        await expect(startBtn).toBeEnabled({ timeout: 5_000 });
+      } catch {
+        continue;
+      }
+    }
     try {
-      await expect(startBtn).toBeEnabled({ timeout: 3_000 });
-      break;
+      await startBtn.click({ timeout: 5_000 });
     } catch {
-      if (attempt === 3) throw new Error('El botón de inicio del onboarding no se habilitó tras varios intentos');
+      continue; // detach/remount justo al hacer clic -> reintentar selección
+    }
+    try {
+      await expect(page.getByText(/Tu (Reto de Inglés en 21 Días|ruta de inglés)/)).toBeVisible({ timeout: 30_000 });
+      return;
+    } catch {
+      // La navegación re-montó el onboarding: reintentar.
     }
   }
-
-  await startBtn.click();
-  await expect(page.getByText(/Tu (Reto de Inglés en 21 Días|ruta de inglés)/)).toBeVisible({ timeout: 60_000 });
+  throw new Error('El onboarding no pudo completarse tras varios intentos');
 }
 
 // Navega al login y llena credenciales sin esperar la redirección (quien lo

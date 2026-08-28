@@ -15,7 +15,8 @@
       "I usually wake up at 7:00.",
       "Where do you work?",
       "I went to the supermarket yesterday.",
-      "I am going to travel next month."
+      "I am going to travel next month.",
+      "I think English is useful and important."
     ],
     "commonMistakes": [
       "No digas 'I have 25 years' → I am 25 years old",
@@ -25,45 +26,252 @@
   },
   "pronunciationTip": "Sonidos que ya dominas: /iː/ en meet, /ei/ en straight, /θ/ en think, el -ed del pasado (worked /t/, played /d/, visited /id/) y la -s de la tercera persona (works, plays, watches).",
   "vocabulary": [
-    { "en": "congratulations", "es": "felicidades" },
-    { "en": "you did it!", "es": "¡lo lograste!" },
-    { "en": "foundation", "es": "fundamento" },
-    { "en": "journey", "es": "viaje/trayecto" },
-    { "en": "continue", "es": "continuar" },
-    { "en": "next step", "es": "siguiente paso" },
-    { "en": "keep going", "es": "sigue adelante" },
-    { "en": "fluency", "es": "fluidez" }
+    {
+      "en": "congratulations",
+      "es": "felicidades"
+    },
+    {
+      "en": "you did it!",
+      "es": "¡lo lograste!"
+    },
+    {
+      "en": "foundation",
+      "es": "fundamento"
+    },
+    {
+      "en": "journey",
+      "es": "viaje/trayecto"
+    },
+    {
+      "en": "continue",
+      "es": "continuar"
+    },
+    {
+      "en": "next step",
+      "es": "siguiente paso"
+    },
+    {
+      "en": "keep going",
+      "es": "sigue adelante"
+    },
+    {
+      "en": "fluency",
+      "es": "fluidez"
+    },
+    {
+      "en": "colleague",
+      "es": "compañero de trabajo"
+    },
+    {
+      "en": "department",
+      "es": "departamento"
+    },
+    {
+      "en": "problem",
+      "es": "problema"
+    },
+    {
+      "en": "actually",
+      "es": "en realidad"
+    },
+    {
+      "en": "skills",
+      "es": "habilidades"
+    },
+    {
+      "en": "good point",
+      "es": "buen punto"
+    }
   ],
   "phrases": [
-    { "en": "Congratulations! You did it!", "es": "¡Felicidades! ¡Lo lograste!" },
-    { "en": "You built your foundation.", "es": "Construiste tu base." },
-    { "en": "Your English journey is just beginning.", "es": "Tu viaje de inglés apenas comienza." },
-    { "en": "Let's continue to the next step.", "es": "Continuemos al siguiente paso." },
-    { "en": "Keep going!", "es": "¡Sigue adelante!" },
-    { "en": "I want to improve my fluency.", "es": "Quiero mejorar mi fluidez." }
+    {
+      "en": "Congratulations! You did it!",
+      "es": "¡Felicidades! ¡Lo lograste!"
+    },
+    {
+      "en": "You built your foundation.",
+      "es": "Construiste tu base."
+    },
+    {
+      "en": "Your English journey is just beginning.",
+      "es": "Tu viaje de inglés apenas comienza."
+    },
+    {
+      "en": "Let's continue to the next step.",
+      "es": "Continuemos al siguiente paso."
+    },
+    {
+      "en": "Keep going!",
+      "es": "¡Sigue adelante!"
+    },
+    {
+      "en": "I want to improve my fluency.",
+      "es": "Quiero mejorar mi fluidez."
+    }
   ],
   "review": {
     "title": "Examen final de los 21 días",
     "passScore": 70,
     "questions": [
-      { "type": "mcq", "prompt": "¿Qué significa “Where are you from?”", "options": ["¿De dónde eres?", "¿Dónde trabajas?", "¿Cómo te llamas?", "¿Cuántos años tienes?"], "answer": 0 },
-      { "type": "gapfill", "prompt": "Completa: She ___ at a hospital.", "options": ["works", "work", "working"], "answer": 0 },
-      { "type": "translate", "prompt": "Traduce al inglés: “Voy a viajar el próximo mes.”", "answer": "I am going to travel next month." },
-      { "type": "mcq", "prompt": "¿Qué significa “the bill”?", "options": ["la cuenta", "el menú", "el agua", "el equipaje"], "answer": 0 },
-      { "type": "gapfill", "prompt": "Completa: Yesterday I ___ my family.", "options": ["visited", "visit", "visits"], "answer": 0 },
-      { "type": "translate", "prompt": "Traduce al inglés: “¿Te gusta la pizza?”", "answer": "Do you like pizza?" },
-      { "type": "mcq", "prompt": "Completa: How much ___ this?", "options": ["is", "are", "am"], "answer": 0 },
-      { "type": "translate", "prompt": "Traduce al inglés: “Necesito ayuda.”", "answer": "I need help." },
-      { "type": "mcq", "prompt": "¿Qué significa “I agree”?", "options": ["Estoy de acuerdo", "No estoy de acuerdo", "Creo que", "Quisiera"], "answer": 0 },
-      { "type": "gapfill", "prompt": "Completa: Can I have the ___, please?", "options": ["bill", "change", "water"], "answer": 0 }
+      {
+        "type": "mcq",
+        "prompt": "¿Qué significa “Where are you from?”",
+        "options": [
+          "¿De dónde eres?",
+          "¿Dónde trabajas?",
+          "¿Cómo te llamas?",
+          "¿Cuántos años tienes?"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "gapfill",
+        "prompt": "Completa: She ___ at a hospital.",
+        "options": [
+          "works",
+          "work",
+          "working"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "translate",
+        "prompt": "Traduce al inglés: “Voy a viajar el próximo mes.”",
+        "answer": "I am going to travel next month."
+      },
+      {
+        "type": "mcq",
+        "prompt": "¿Qué significa “the bill”?",
+        "options": [
+          "la cuenta",
+          "el menú",
+          "el agua",
+          "el equipaje"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "gapfill",
+        "prompt": "Completa: Yesterday I ___ my family.",
+        "options": [
+          "visited",
+          "visit",
+          "visits"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "errorfix",
+        "prompt": "Corrige el error:",
+        "context": "I will going to travel.",
+        "options": [
+          "I will travel.",
+          "I will traveling.",
+          "I will to travel.",
+          "I will travels."
+        ],
+        "answer": 0,
+        "correctAnswer": "I will travel."
+      },
+      {
+        "type": "gapfill",
+        "prompt": "Completa: How much ___ this?",
+        "options": [
+          "is",
+          "are",
+          "am"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "translate",
+        "prompt": "Traduce al inglés: “Necesito ayuda.”",
+        "answer": "I need help."
+      },
+      {
+        "type": "mcq",
+        "prompt": "¿Qué significa “I agree”?",
+        "options": [
+          "Estoy de acuerdo",
+          "No estoy de acuerdo",
+          "Creo que",
+          "Quisiera"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "gapfill",
+        "prompt": "Completa: Can I have the ___, please?",
+        "options": [
+          "bill",
+          "change",
+          "water"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "gapfill",
+        "prompt": "Completa: She ___ a meeting at 10:00.",
+        "options": [
+          "have",
+          "has",
+          "having"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "mcq",
+        "prompt": "¿Qué significa “I think...”?",
+        "options": [
+          "Creo que...",
+          "Pienso que...",
+          "Opino que...",
+          "Todas las anteriores"
+        ],
+        "answer": 3
+      },
+      {
+        "type": "translate",
+        "prompt": "Traduce al inglés: “No estoy de acuerdo.”",
+        "answer": "I disagree."
+      },
+      {
+        "type": "matching",
+        "prompt": "Empareja cada palabra con su traducción.",
+        "pairs": [
+          {
+            "en": "agree",
+            "es": "estar de acuerdo"
+          },
+          {
+            "en": "opinion",
+            "es": "opinión"
+          },
+          {
+            "en": "challenge",
+            "es": "reto"
+          },
+          {
+            "en": "experience",
+            "es": "experiencia"
+          }
+        ]
+      }
     ]
   },
-  "speak": "Tarea final de habla: un minuto sobre lo que aprendiste y tu próxima meta.",
-  "challenge": "Completa el examen final y empieza la evaluación del post-reto.",
+  "speak": "Tarea final: graba un audio de 1 minuto. Incluye: tu nombre, país, qué aprendiste en 21 días, cuál fue lo más útil, y cuál es tu siguiente meta. Usa: My name is ___. In 21 days, I learned ___. The most useful thing was ___. My next step is ___.",
+  "challenge": "Completa el examen final. Luego graba un video o audio de 1 minuto compartiendo tu progreso con alguien: 'In 21 days, I learned ___. I can now ___. I want to ___. Thank you for following this journey!'",
   "xpReward": 30,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

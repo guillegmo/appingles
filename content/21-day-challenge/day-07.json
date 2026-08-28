@@ -9,48 +9,249 @@
   "grammarFocus": "repetición de la semana 1",
   "pronunciationTip": "Repasa los sonidos de la semana: el sonido largo de 'meet', -teen vs -ty (thirteen/thirty) y la -s de la tercera persona (works /s/, plays /z/, watches /iz/).",
   "vocabulary": [
-    { "en": "name", "es": "nombre" },
-    { "en": "age", "es": "edad" },
-    { "en": "married", "es": "casado(a)" },
-    { "en": "wake up", "es": "despertarse" },
-    { "en": "usually", "es": "usualmente" },
-    { "en": "what", "es": "qué" },
-    { "en": "where", "es": "dónde" },
-    { "en": "hobby", "es": "pasatiempo" }
+    {
+      "en": "name",
+      "es": "nombre"
+    },
+    {
+      "en": "age",
+      "es": "edad"
+    },
+    {
+      "en": "married",
+      "es": "casado(a)"
+    },
+    {
+      "en": "wake up",
+      "es": "despertarse"
+    },
+    {
+      "en": "usually",
+      "es": "usualmente"
+    },
+    {
+      "en": "what",
+      "es": "qué"
+    },
+    {
+      "en": "where",
+      "es": "dónde"
+    },
+    {
+      "en": "hobby",
+      "es": "pasatiempo"
+    },
+    {
+      "en": "good morning",
+      "es": "buenos días"
+    },
+    {
+      "en": "free time",
+      "es": "tiempo libre"
+    }
   ],
   "phrases": [
-    { "en": "My name is Ana.", "es": "Mi nombre es Ana." },
-    { "en": "I am from Mexico.", "es": "Soy de México." },
-    { "en": "I usually wake up at 7:00.", "es": "Usualmente me despierto a las 7:00." },
-    { "en": "I like listening to music.", "es": "Me gusta escuchar música." },
-    { "en": "Where do you live?", "es": "¿Dónde vives?" },
-    { "en": "What is your age?", "es": "¿Cuál es tu edad?" },
-    { "en": "Are you married?", "es": "¿Estás casado(a)?" },
-    { "en": "What do you do?", "es": "¿A qué te dedicas?" },
-    { "en": "My hobby is reading.", "es": "Mi pasatiempo es leer." }
+    {
+      "en": "My name is Ana.",
+      "es": "Mi nombre es Ana."
+    },
+    {
+      "en": "I am from Mexico.",
+      "es": "Soy de México."
+    },
+    {
+      "en": "I usually wake up at 7:00.",
+      "es": "Usualmente me despierto a las 7:00."
+    },
+    {
+      "en": "I like listening to music.",
+      "es": "Me gusta escuchar música."
+    },
+    {
+      "en": "Where do you live?",
+      "es": "¿Dónde vives?"
+    },
+    {
+      "en": "What is your age?",
+      "es": "¿Cuál es tu edad?"
+    },
+    {
+      "en": "Are you married?",
+      "es": "¿Estás casado(a)?"
+    },
+    {
+      "en": "What do you do?",
+      "es": "¿A qué te dedicas?"
+    },
+    {
+      "en": "My hobby is reading.",
+      "es": "Mi pasatiempo es leer."
+    }
   ],
   "review": {
     "title": "Mini-examen de la semana 1",
     "passScore": 70,
     "questions": [
-      { "type": "mcq", "prompt": "¿Qué significa “I don't like...”?", "options": ["Me gusta...", "No me gusta...", "Me encanta...", "Odio..."], "answer": 1 },
-      { "type": "gapfill", "prompt": "Completa: She ___ a teacher.", "options": ["am", "is", "are"], "answer": 1 },
-      { "type": "translate", "prompt": "Traduce al inglés: “Me gusta la música.”", "answer": "I like music." },
-      { "type": "mcq", "prompt": "¿Qué significa “Where are you from?”", "options": ["¿Dónde trabajas?", "¿De dónde eres?", "¿Cómo te llamas?", "¿Cuántos años tienes?"], "answer": 1 },
-      { "type": "gapfill", "prompt": "Completa: ___ do you live?", "options": ["Where", "What", "When"], "answer": 0 },
-      { "type": "translate", "prompt": "Traduce al inglés: “Soy de Colombia.”", "answer": "I am from Colombia." },
-      { "type": "mcq", "prompt": "¿Qué significa “usually”?", "options": ["usualmente", "siempre", "nunca", "a veces"], "answer": 0 },
-      { "type": "gapfill", "prompt": "Completa: I ___ up at 7:00.", "options": ["wake", "wakes", "waking"], "answer": 0 },
-      { "type": "mcq", "prompt": "¿Qué significa “hobby”?", "options": ["pasatiempo", "trabajo", "edad", "país"], "answer": 0 },
-      { "type": "translate", "prompt": "Traduce al inglés: “¿Cómo te llamas?”", "answer": "What is your name?" }
+      {
+        "type": "mcq",
+        "prompt": "¿Qué significa “I don't like...”?",
+        "options": [
+          "Me gusta...",
+          "No me gusta...",
+          "Me encanta...",
+          "Odio..."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "gapfill",
+        "prompt": "Completa: She ___ a teacher.",
+        "options": [
+          "am",
+          "is",
+          "are"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "errorfix",
+        "prompt": "Corrige el error:",
+        "context": "I have 20 years.",
+        "options": [
+          "I am 20 years old.",
+          "I have 20 years old.",
+          "I am 20 years.",
+          "I am 20 year old."
+        ],
+        "answer": 0,
+        "correctAnswer": "I am 20 years old."
+      },
+      {
+        "type": "mcq",
+        "prompt": "¿Qué significa “Where are you from?”",
+        "options": [
+          "¿Dónde trabajas?",
+          "¿De dónde eres?",
+          "¿Cómo te llamas?",
+          "¿Cuántos años tienes?"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "gapfill",
+        "prompt": "Completa: ___ do you live?",
+        "options": [
+          "Where",
+          "What",
+          "When"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "translate",
+        "prompt": "Traduce al inglés: “Soy de Colombia.”",
+        "answer": "I am from Colombia."
+      },
+      {
+        "type": "mcq",
+        "prompt": "¿Qué significa “usually”?",
+        "options": [
+          "usualmente",
+          "siempre",
+          "nunca",
+          "a veces"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "gapfill",
+        "prompt": "Completa: I ___ up at 7:00.",
+        "options": [
+          "wake",
+          "wakes",
+          "waking"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "mcq",
+        "prompt": "¿Qué significa “hobby”?",
+        "options": [
+          "pasatiempo",
+          "trabajo",
+          "edad",
+          "país"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "translate",
+        "prompt": "Traduce al inglés: “¿Cómo te llamas?”",
+        "answer": "What is your name?"
+      },
+      {
+        "type": "matching",
+        "prompt": "Empareja cada palabra con su traducción.",
+        "pairs": [
+          {
+            "en": "work",
+            "es": "trabajar"
+          },
+          {
+            "en": "name",
+            "es": "nombre"
+          },
+          {
+            "en": "year",
+            "es": "año"
+          },
+          {
+            "en": "weekend",
+            "es": "fin de semana"
+          }
+        ]
+      },
+      {
+        "type": "gapfill",
+        "prompt": "Completa: I ___ a student.",
+        "options": [
+          "am",
+          "is",
+          "are"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "mcq",
+        "prompt": "¿Qué significa “What is your name?”?",
+        "options": [
+          "¿Cuál es tu nombre?",
+          "¿Dónde trabajas?",
+          "¿Cuántos años tienes?",
+          "¿De dónde eres?"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "translate",
+        "prompt": "Traduce al inglés: “Me gusta leer.”",
+        "answer": "I like reading."
+      }
     ]
   },
-  "speak": "Repite 5 frases clave de la semana 1 en voz alta.",
-  "challenge": "Mini-examen: completa el cuestionario de repaso de la semana 1.",
+  "speak": "Repasa las frases más importantes de la semana 1. Di en voz alta: 'My name is ___. I am from ___. I like ___. I usually wake up at ___. Where do you live?' Habla durante 30 segundos.",
+  "challenge": "Mini-examen: completa el cuestionario de repaso. Luego graba un audio de 30 segundos presentándote con tu nombre, país, edad y un gusto.",
   "xpReward": 30,
   "premium": false,
   "source": "provisional",
   "generated_content": true,
   "status": "published",
-  "steps": ["learn", "listen", "pronounce", "speak", "challenge", "complete"]
+  "steps": [
+    "learn",
+    "listen",
+    "pronounce",
+    "speak",
+    "challenge",
+    "complete"
+  ]
 }

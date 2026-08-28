@@ -11,10 +11,12 @@
     "title": "Preguntas con to be + números",
     "rule": "Para preguntar con 'to be', pon el verbo al inicio: Are you...? / Is he...? / Where are you from? La edad se dice con 'be', no con 'have': I am 25 years old. El número de teléfono y la dirección usan 'My... is'.",
     "examples": [
-      "How old are you? — I am 25 years old.",
-      "Where are you from? — I am from Colombia.",
-      "Where do you live? — I live in Bogotá.",
-      "My phone number is 555-1234."
+      "I am 25 years old.",
+      "She is married.",
+      "I live in Mexico City.",
+      "My phone number is 555-1234.",
+      "I am from Colombia.",
+      "What is your name? — My name is Ana."
     ],
     "commonMistakes": [
       "I have 25 years → I am 25 years old",
@@ -102,29 +104,191 @@
     {
       "type": "mcq",
       "prompt": "¿Qué significa “married”?",
-      "options": ["casado(a)", "soltero(a)", "edad", "dirección"],
+      "options": [
+        "casado(a)",
+        "soltero(a)",
+        "edad",
+        "dirección"
+      ],
       "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Cómo se dice “¿Cuántos años tienes?” en inglés?",
+      "options": [
+        "How old are you?",
+        "Where are you from?",
+        "What is your name?",
+        "How are you?"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mcq",
+      "prompt": "¿Cómo se dice “Vivo en Guadalajara” en inglés?",
+      "options": [
+        "I live in Guadalajara",
+        "I live at Guadalajara",
+        "I live on Guadalajara",
+        "I live Guadalajara"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "matching",
+      "prompt": "Empareja cada palabra con su traducción.",
+      "pairs": [
+        {
+          "en": "married",
+          "es": "casado(a)"
+        },
+        {
+          "en": "single",
+          "es": "soltero(a)"
+        },
+        {
+          "en": "address",
+          "es": "dirección"
+        },
+        {
+          "en": "phone number",
+          "es": "número de teléfono"
+        }
+      ]
     },
     {
       "type": "gapfill",
       "prompt": "Completa: Where ___ you from?",
-      "options": ["am", "is", "are"],
+      "options": [
+        "am",
+        "is",
+        "are"
+      ],
       "answer": 2
     },
     {
-      "type": "translate",
-      "prompt": "Traduce al inglés: “Tengo 25 años.”",
-      "answer": "I am 25 years old."
+      "type": "gapfill",
+      "prompt": "Completa: I am ___ years old.",
+      "options": [
+        "twenty-five",
+        "25 year",
+        "25 years"
+      ],
+      "answer": 2
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "I am 25 years old.",
+      "options": [
+        "Tengo 25 años.",
+        "Tengo 25 kilos.",
+        "Soy 25.",
+        "Estoy en 25."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Conoces a alguien nuevo.\nTú: How old are you?\nElla: ___.\nTú: Nice!",
+      "options": [
+        "I am 30 years old.",
+        "I am 30 year old.",
+        "I have 30 years old.",
+        "I am 30 years."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "listening",
+      "prompt": "Escucha y selecciona la traducción correcta.",
+      "audio": "My phone number is 555-1234.",
+      "options": [
+        "Mi número de teléfono es 555-1234.",
+        "Mi número de teléfono es 555-4321.",
+        "Mi dirección es 555-1234.",
+        "Mi nombre es 555-1234."
+      ],
+      "answer": 0
     },
     {
       "type": "order",
       "prompt": "Ordena la frase: “Vivo en México.”",
-      "words": ["in", "I", "live", "Mexico"],
-      "answer": [1, 2, 0, 3]
+      "words": [
+        "in",
+        "I",
+        "live",
+        "Mexico"
+      ],
+      "answer": [
+        1,
+        2,
+        0,
+        3
+      ]
+    },
+    {
+      "type": "dialogue",
+      "prompt": "Completa la conversación:",
+      "context": "Conoces a alguien en una fiesta.\nTú: Hi, where are you from?\nOtra persona: ___\nTú: Oh, I'm from Mexico too!",
+      "options": [
+        "I'm from Mexico. And you?",
+        "I have 25 years.",
+        "My name is Ana.",
+        "I am fine."
+      ],
+      "answer": 0
+    },
+    {
+      "type": "errorfix",
+      "prompt": "Corrige el error:",
+      "context": "I have 25 years.",
+      "options": [
+        "I am 25 years old.",
+        "I have 25 years old.",
+        "I am 25 years.",
+        "I have 25."
+      ],
+      "answer": 0,
+      "correctAnswer": "I am 25 years old."
+    },
+    {
+      "type": "gapfill",
+      "prompt": "Completa: How old ___ you?",
+      "options": [
+        "is",
+        "are",
+        "am"
+      ],
+      "answer": 1
+    },
+    {
+      "type": "translate",
+      "prompt": "Traduce al inglés: \"¿Cuántos años tienes?\"",
+      "answer": "How old are you?"
+    },
+    {
+      "type": "order",
+      "prompt": "Ordena: \"Mi número de teléfono es 555-1234.\"",
+      "words": [
+        "is",
+        "My",
+        "555-1234",
+        "number",
+        "phone"
+      ],
+      "answer": [
+        1,
+        4,
+        3,
+        0,
+        2
+      ]
     }
   ],
-  "speak": "Responde: edad, número de teléfono y dónde vives. 45 segundos.",
-  "challenge": "Pregunta a un compañero (real o IA) su nombre, edad y origen. Repite sus respuestas.",
+  "speak": "Describe tu información personal. Usa: 'I am ___ years old. I live in ___. My phone number is ___.' Habla durante 30 segundos.",
+  "challenge": "Imagina que conoces a alguien nuevo. Di tu nombre, edad, dónde vives y tu número de teléfono. Intenta: 'My name is ___. I am ___ years old. I live in ___. My phone number is ___.'",
   "xpReward": 40,
   "premium": false,
   "source": "provisional",

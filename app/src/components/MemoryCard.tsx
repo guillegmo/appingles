@@ -62,7 +62,6 @@ export function MemoryCard({
           <img
             src={resolveAssetUrl(image!.url)}
             alt={image!.alt}
-            loading="lazy"
             decoding="async"
             onError={() => setImageFailed(true)}
             className="flex-1 min-h-0 w-full object-cover"

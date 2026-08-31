@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { setKicked } from './sessionGuard';
 import { authLog } from './authLog';
+import type { ImageAsset } from '../types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
@@ -562,7 +563,7 @@ export async function getAdvancedStats(days = 7, signal?: AbortSignal): Promise<
 }
 
 export async function getMemoryBoard(mode = 'daily', size = '4x4', signal?: AbortSignal): Promise<{
-  cards: { id: string; text: string; lang: 'en' | 'es'; category: string; iconSVG: string; pairIndex: number }[];
+  cards: { id: string; text: string; lang: 'en' | 'es'; category: string; iconSVG: string; image?: ImageAsset | null; pairIndex: number }[];
   seed: string;
   mode: string;
   size: string;

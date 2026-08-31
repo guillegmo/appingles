@@ -8,7 +8,23 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { LoadingScreen } from '../components/ui/Spinner';
+import { resolveAssetUrl } from '../utils/assetUrl';
 import type { ImageAsset } from '../types';
+
+// Precarga las fotos del tablero apenas llega la respuesta, antes de que el
+// jugador voltee la primera carta: sin esto, el navegador recién pide la
+// imagen al insertar el <img> en el DOM (al voltear), y esa espera de red se
+// veía como una tarjeta vacía hasta que ya se estaba tocando la siguiente.
+function preloadBoardImages(cards: { image?: ImageAsset | null }[]) {
+  const seen = new Set<string>();
+  for (const card of cards) {
+    if (card.image && !seen.has(card.image.url)) {
+      seen.add(card.image.url);
+      const img = new Image();
+      img.src = resolveAssetUrl(card.image.url);
+    }
+  }
+}
 
 interface BoardCard {
   id: string;
@@ -88,6 +104,7 @@ export function MemoryGamePage() {
         const res = await getMemoryBoard(mode, sizeParam, controller.signal);
         if (!ignore) {
           setBoard(res);
+          preloadBoardImages(res.cards);
           setFlippedIds(new Set());
           setMatchedIds(new Set());
           setMoves(0);

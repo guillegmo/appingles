@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ImageOff } from 'lucide-react';
 import { cn } from '../utils/cn';
+import { resolveAssetUrl } from '../utils/assetUrl';
 import type { ImageAsset } from '../types';
 
 // Imagen pedagógica reutilizable: skeleton mientras carga, fallback silencioso
@@ -35,7 +36,7 @@ export function LessonImage({
     <div className={cn('relative overflow-hidden rounded-2xl bg-slate-100', className)}>
       {status === 'loading' && <div className="absolute inset-0 animate-pulse bg-slate-200" />}
       <img
-        src={asset.url}
+        src={resolveAssetUrl(asset.url)}
         alt={alt || asset.alt}
         loading="lazy"
         decoding="async"

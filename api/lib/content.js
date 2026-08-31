@@ -5,6 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const store = require('./store');
+const images = require('./images');
 
 const CONTENT_DIR = path.resolve(__dirname, '..', process.env.CONTENT_DIR || '../content');
 const DAYS_DIR = path.join(CONTENT_DIR, '21-day-challenge');
@@ -39,7 +40,18 @@ async function getDayPublished(dayNumber) {
   if (!day) return null;
   if (day.status !== 'published') return null;
   // en producción se podría servir desde Firestore; en V1 servimos el JSON directo
-  return day;
+
+  // Enriquecimiento visual: adjunta imágenes curadas al vocabulario y agrega
+  // ejercicios visuales (image-choice / listen-image) cuando hay suficiente
+  // vocabulario con imagen. Puramente aditivo: si no hay imágenes, el día
+  // se sirve exactamente igual que antes.
+  const vocabulary = images.attachImages(day.vocabulary);
+  const visualExercises = images.buildVisualExercises(vocabulary);
+  return {
+    ...day,
+    vocabulary,
+    exercises: visualExercises.length ? [...(day.exercises || []), ...visualExercises] : day.exercises,
+  };
 }
 
 module.exports = { CONTENT_DIR, getChallengeIndex, getDay, getDayPublished, getPost21, getContinuous };

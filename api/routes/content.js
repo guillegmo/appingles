@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const store = require('../lib/store');
 const content = require('../lib/content');
+const images = require('../lib/images');
 const entitlement = require('../services/entitlement');
 const contentGenerator = require('../services/contentGenerator');
 const aiUsage = require('../services/aiUsage');
@@ -63,7 +64,7 @@ router.get('/post21/:id', async (req, res) => {
   }
   if (!lesson) return res.status(404).json({ error: 'not_found', message: 'Lección no encontrada.' });
 
-  res.json(lesson);
+  res.json({ ...lesson, vocabulary: images.attachImages(lesson.vocabulary) });
 });
 
 // POST /content/post21/generate -> lección IA on-demand (Premium IA)

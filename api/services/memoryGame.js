@@ -3,6 +3,7 @@
 
 const store = require('../lib/store');
 const content = require('../lib/content');
+const images = require('../lib/images');
 const scoring = require('./scoring');
 const streakService = require('./streak');
 const { getCategory, getIconSVG } = require('./memoryUtils');
@@ -101,12 +102,16 @@ async function getBoard(userId, mode = 'daily', sizeKey = '4x4') {
     const item = selectedPairs[i];
     const category = getCategory(item.en);
     const iconSVG = getIconSVG(category, item.en);
+    // Foto curada (content/images/manifest.json) para el concepto del par, si
+    // existe: se adjunta a ambas cartas (EN y ES) del mismo par. Si no hay
+    // imagen, el frontend sigue usando el ícono SVG de categoría — nunca rompe.
+    const image = images.getImage(item.en);
     const cardId1 = `p${i}-en`;
     const cardId2 = `p${i}-es`;
 
     cards.push(
-      { id: cardId1, text: item.en, lang: 'en', category, iconSVG, pairIndex: i },
-      { id: cardId2, text: item.es, lang: 'es', category, iconSVG, pairIndex: i }
+      { id: cardId1, text: item.en, lang: 'en', category, iconSVG, image, pairIndex: i },
+      { id: cardId2, text: item.es, lang: 'es', category, iconSVG, image, pairIndex: i }
     );
   }
 

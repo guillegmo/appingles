@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { Check } from 'lucide-react';
 import { getIconSVG } from '../utils/memoryIcons';
+import { resolveAssetUrl } from '../utils/assetUrl';
+import type { ImageAsset } from '../types';
 
 interface MemoryCardProps {
   id: string;
@@ -7,6 +10,7 @@ interface MemoryCardProps {
   lang: 'en' | 'es';
   category: string;
   iconSVG?: string;
+  image?: ImageAsset | null;
   matched: boolean;
   flipped: boolean;
   onClick: () => void;
@@ -19,6 +23,7 @@ export function MemoryCard({
   lang,
   category,
   iconSVG,
+  image,
   matched,
   flipped,
   onClick,
@@ -26,6 +31,9 @@ export function MemoryCard({
 }: MemoryCardProps) {
   const isFlipped = flipped || matched;
   const svgContent = iconSVG || getIconSVG(category, text);
+  // Si la foto falla al cargar, cae al ícono SVG de categoría sin romper la carta.
+  const [imageFailed, setImageFailed] = useState(false);
+  const showImage = !!image && !imageFailed;
 
   return (
     <button
@@ -48,6 +56,30 @@ export function MemoryCard({
         <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
           <span className="text-2xl sm:text-3xl font-black text-white/90">?</span>
           <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-white/70 font-semibold mt-0.5">AppIngles</span>
+        </div>
+      ) : showImage ? (
+        <div className="absolute inset-0 flex flex-col animate-fade-in overflow-hidden">
+          <img
+            src={resolveAssetUrl(image!.url)}
+            alt={image!.alt}
+            loading="lazy"
+            decoding="async"
+            onError={() => setImageFailed(true)}
+            className="flex-1 min-h-0 w-full object-cover"
+          />
+          <div className="flex flex-col items-center justify-center py-0.5 px-1 bg-white">
+            <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-slate-400">
+              {lang === 'en' ? 'Inglés' : 'Español'}
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-slate-800 text-center leading-tight line-clamp-1 max-w-full break-words">
+              {text}
+            </span>
+          </div>
+          {matched && (
+            <div className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-white">
+              <Check className="h-2.5 w-2.5" />
+            </div>
+          )}
         </div>
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center p-2 animate-fade-in overflow-hidden">

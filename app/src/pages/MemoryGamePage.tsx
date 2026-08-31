@@ -8,6 +8,7 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { LoadingScreen } from '../components/ui/Spinner';
+import type { ImageAsset } from '../types';
 
 interface BoardCard {
   id: string;
@@ -15,6 +16,7 @@ interface BoardCard {
   lang: 'en' | 'es';
   category: string;
   iconSVG: string;
+  image?: ImageAsset | null;
   pairIndex: number;
 }
 
@@ -252,6 +254,7 @@ export function MemoryGamePage() {
             lang={card.lang}
             category={card.category}
             iconSVG={card.iconSVG}
+            image={card.image}
             matched={matchedIds.has(card.id)}
             flipped={flippedIds.has(card.id)}
             onClick={() => handleCardClick(card.id)}

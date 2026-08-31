@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { signInEmail, getToken } from '../services/firebase';
 import { trackAnalyticsEvent, registerSession } from '../services/api';
@@ -93,7 +93,7 @@ export function LoginPage() {
           minLength={6}
         />
         <Button type="submit" className="w-full" size="lg" disabled={loading}>
-          {loading ? 'Entrando…' : 'Iniciar mi reto'}
+          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Entrando…</> : 'Iniciar mi reto'}
         </Button>
       </form>
 

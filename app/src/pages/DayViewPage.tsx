@@ -12,6 +12,7 @@ import { ProgressBar } from '../components/ui/ProgressBar';
 import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
 import { LoadingScreen } from '../components/ui/Spinner';
 import { QuestionCard } from '../components/QuestionCard';
+import { VisualVocabularyCard } from '../components/VisualVocabularyCard';
 import type { DayContent, ReviewExam } from '../types';
 
 const STEP_LABELS: Record<string, string> = {
@@ -297,19 +298,25 @@ export function DayViewPage() {
             )}
             <div className="mt-4">
               <p className="mb-2 font-semibold">Vocabulario clave</p>
-              {(day.vocabulary ?? []).map((v, i) => (
-                <button
-                  key={i}
-                  onClick={() => speak(v.en)}
-                  className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-left text-sm hover:bg-slate-50"
-                >
-                  <span>
-                    <span className="font-semibold">{v.en}</span>
-                    <span className="ml-2 text-slate-500">{v.es}</span>
-                  </span>
-                  <Volume2 className="h-4 w-4 text-primary-500" />
-                </button>
-              ))}
+              <div className="space-y-2">
+                {(day.vocabulary ?? []).map((v, i) =>
+                  v.image ? (
+                    <VisualVocabularyCard key={i} item={v} />
+                  ) : (
+                    <button
+                      key={i}
+                      onClick={() => speak(v.en)}
+                      className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-left text-sm hover:bg-slate-50"
+                    >
+                      <span>
+                        <span className="font-semibold">{v.en}</span>
+                        <span className="ml-2 text-slate-500">{v.es}</span>
+                      </span>
+                      <Volume2 className="h-4 w-4 text-primary-500" />
+                    </button>
+                  ),
+                )}
+              </div>
             </div>
             <Button className="mt-5 w-full" size="lg" onClick={() => { markStep('learn'); setStepIdx(stepIdx + 1); }}>
               Continuar

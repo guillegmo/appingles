@@ -3,6 +3,7 @@ import { Volume2, Loader2 } from 'lucide-react';
 import { speak } from '../utils/speech';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
+import { LessonImage } from './LessonImage';
 import type { DayExercise } from '../types';
 
 // Compara una respuesta escrita/dicha con la esperada (normalizada).
@@ -58,7 +59,7 @@ export function QuestionCard({
   const check = () => {
     if (answered) return;
     let correct = false;
-    if (q.type === 'mcq' || q.type === 'gapfill' || q.type === 'listening' || q.type === 'dialogue' || q.type === 'errorfix') correct = chosen === q.answer;
+    if (q.type === 'mcq' || q.type === 'gapfill' || q.type === 'listening' || q.type === 'dialogue' || q.type === 'errorfix' || q.type === 'image-choice' || q.type === 'listen-image') correct = chosen === q.answer;
     else if (q.type === 'translate' || q.type === 'listen-type') correct = fuzzyMatches(String(q.answer), input.trim());
     else if (q.type === 'order' || q.type === 'listen-order') {
       const answer = q.answer as number[];
@@ -83,7 +84,7 @@ export function QuestionCard({
             ? !input.trim()
             : q.type === 'listen-type'
               ? !listenPlayed || !input.trim()
-              : q.type === 'listening'
+              : q.type === 'listening' || q.type === 'listen-image'
                 ? !listenPlayed || chosen === null
                 : chosen === null;
 
@@ -160,6 +161,62 @@ export function QuestionCard({
               </button>
             );
           })}
+        </div>
+      )}
+
+      {q.type === 'image-choice' && (
+        <div className="mt-4">
+          <LessonImage asset={q.image} alt={q.image?.alt ?? 'Imagen del ejercicio'} className="mx-auto h-44 w-44" />
+          <div className="mt-4 space-y-2">
+            {q.options?.map((opt, i) => {
+              const isCorrect = answered && i === q.answer;
+              const isWrong = answered && i === chosen && i !== q.answer;
+              return (
+                <button
+                  key={i}
+                  disabled={answered || busy}
+                  onClick={() => setChosen(i)}
+                  className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
+                    isCorrect ? 'border-emerald-500 bg-emerald-50 font-semibold' : isWrong ? 'border-rose-500 bg-rose-50' : chosen === i ? 'border-primary-400 bg-primary-50' : 'border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {q.type === 'listen-image' && (
+        <div className="mt-4">
+          <button
+            onClick={() => { speak(q.audio ?? String(q.answer)); setListenPlayed(true); }}
+            disabled={answered || busy}
+            className="inline-flex items-center gap-2 rounded-xl bg-primary-100 px-5 py-3 text-sm font-semibold text-primary-700 hover:bg-primary-200"
+          >
+            <Volume2 className="h-5 w-5" /> Escuchar
+          </button>
+          {listenPlayed && (
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              {q.imageOptions?.map((opt, i) => {
+                const isCorrect = answered && i === q.answer;
+                const isWrong = answered && i === chosen && i !== q.answer;
+                return (
+                  <button
+                    key={i}
+                    disabled={answered || busy}
+                    onClick={() => setChosen(i)}
+                    className={`rounded-2xl border-2 p-1.5 transition-colors ${
+                      isCorrect ? 'border-emerald-500' : isWrong ? 'border-rose-500' : chosen === i ? 'border-primary-400' : 'border-slate-200'
+                    }`}
+                  >
+                    <LessonImage asset={opt.image} alt={opt.image?.alt ?? opt.en} className="h-24 w-full" />
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 

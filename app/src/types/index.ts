@@ -1,6 +1,27 @@
+// Referencia a una imagen curada de un banco de stock (Pexels/Unsplash/Pixabay),
+// resuelta en el backend a partir de content/images/manifest.json y adjuntada
+// al vocabulario/ejercicios ya servidos — el frontend nunca busca imágenes.
+export interface ImageAsset {
+  provider: 'pexels' | 'unsplash' | 'pixabay';
+  providerId: string;
+  url: string;
+  thumbnailUrl: string;
+  alt: string;
+  width: number;
+  height: number;
+  author: string;
+  authorUrl?: string;
+  license: string;
+  sourceUrl: string;
+  // false para fotos "de escena" (frases abstractas): no participan del quiz
+  // "What is this?" porque no identifican una única palabra sin ambigüedad.
+  quizzable?: boolean;
+}
+
 export interface VocabularyItem {
   en: string;
   es: string;
+  image?: ImageAsset;
 }
 
 export interface PhraseItem {
@@ -16,7 +37,7 @@ export interface GrammarLesson {
 }
 
 export interface DayExercise {
-  type: 'mcq' | 'gapfill' | 'translate' | 'order' | 'listening' | 'matching' | 'dialogue' | 'errorfix' | 'listen-type' | 'listen-order';
+  type: 'mcq' | 'gapfill' | 'translate' | 'order' | 'listening' | 'matching' | 'dialogue' | 'errorfix' | 'listen-type' | 'listen-order' | 'image-choice' | 'listen-image';
   prompt: string;
   options?: string[];
   answer: number | string | number[];
@@ -25,6 +46,8 @@ export interface DayExercise {
   pairs?: { en: string; es: string }[];
   context?: string;
   correctAnswer?: string;
+  image?: ImageAsset; // image-choice: la imagen a identificar
+  imageOptions?: { en: string; image: ImageAsset }[]; // listen-image: opciones visuales
 }
 
 export interface ReviewExam {

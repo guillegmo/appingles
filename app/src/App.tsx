@@ -83,7 +83,13 @@ function OnboardingGate({ children }: { children: React.ReactNode }) {
     challenge?.onboardingCompleted ||
     (progress && (progress.daysCompleted > 0 || progress.totalXp > 0)) ||
     !!hasSeen;
-  if (user && !challenge && !progress) {
+  // La fuente de verdad del alta es challenge.onboardingCompleted; progress y
+  // el flag local son solo respaldo. No se decide con progress vacío + challenge
+  // null: en una restauración de sesión (recarga o 2º dispositivo, sin flag
+  // local) progress suele llegar antes que challenge y eso desviaría a /onboarding
+  // a usuarios que ya completaron el alta -> "se cierra la sesión" en el último
+  // dispositivo. Se espera a challenge para decidir.
+  if (user && !challenge) {
     if (error) {
       return (
         <div className="flex min-h-screen flex-col items-center justify-center gap-3 p-8">

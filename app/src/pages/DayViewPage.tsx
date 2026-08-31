@@ -13,6 +13,7 @@ import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
 import { LoadingScreen } from '../components/ui/Spinner';
 import { QuestionCard } from '../components/QuestionCard';
 import { VisualVocabularyCard } from '../components/VisualVocabularyCard';
+import { preloadImages } from '../utils/assetUrl';
 import type { DayContent, ReviewExam } from '../types';
 
 const STEP_LABELS: Record<string, string> = {
@@ -61,6 +62,16 @@ export function DayViewPage() {
     getDay(dayNumber)
       .then((d) => {
         setDay(d);
+        // Precarga todas las fotos del día (vocabulario + ejercicios visuales)
+        // apenas llega la respuesta, antes de llegar al paso "Aprender" o al
+        // ejercicio image-choice — evita la tarjeta vacía mientras carga.
+        preloadImages([
+          ...(d.vocabulary ?? []).map((v) => v.image?.url),
+          ...(d.exercises ?? []).flatMap((ex) => [
+            ex.image?.url,
+            ...(ex.imageOptions ?? []).map((opt) => opt.image?.url),
+          ]),
+        ]);
         // En StrictMode (dev) el efecto corre dos veces y la segunda respuesta
         // puede llegar tarde: si el día ya se cargó, no reiniciamos el avance.
         if (loadedDayRef.current === dayNumber) return;

@@ -6,6 +6,10 @@ dist
 .DS_Store
 .mcp.json
 
+# Generado por app/scripts/sync-images.mjs a partir de content/images/ — no
+# duplicar 100+MB de imágenes en dos lugares del repo.
+app/public/images/
+
 # Artefactos locales (logs de procesos y salidas de tests)
 *.err
 *.out

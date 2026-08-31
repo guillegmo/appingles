@@ -4,7 +4,10 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "sync-images": "node scripts/sync-images.mjs",
+    "predev": "npm run sync-images",
     "dev": "vite",
+    "prebuild": "npm run sync-images",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "oxlint"

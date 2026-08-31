@@ -1,13 +1,11 @@
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
-
-// El backend guarda rutas relativas (/api/images/...). En dev, VITE_API_URL
-// es relativo ('/api') y el proxy de Vite las resuelve contra el mismo origen.
-// En producción, VITE_API_URL es una URL absoluta a otro dominio (Render) — si
-// dejamos la ruta relativa, el navegador la resuelve contra el origen de la
-// página (el frontend), no contra la API, y la imagen nunca carga.
+// Las imágenes pedagógicas se sirven como estáticos del propio frontend
+// (public/images/, sincronizadas desde content/images/ por
+// scripts/sync-images.mjs) en vez de a través de la API — evita que cada
+// carga de imagen compita con el rate limiter y el proceso Node de la API
+// cuando hay varios usuarios concurrentes. El manifiesto guarda rutas del
+// tipo /images/archivo.jpg; solo falta anteponer el base path del deploy
+// (BrowserRouter usa el mismo import.meta.env.BASE_URL en App.tsx).
 export function resolveAssetUrl(url: string) {
-  if (/^https?:\/\//i.test(API_BASE)) {
-    return new URL(url, API_BASE).href;
-  }
-  return url;
+  const base = import.meta.env.BASE_URL; // '/' en dev, '/appingles/' en producción
+  return base.replace(/\/$/, '') + url;
 }

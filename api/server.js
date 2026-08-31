@@ -4,7 +4,6 @@
 
 require('dotenv').config();
 
-const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
@@ -54,11 +53,6 @@ app.use('/api', apiLimiter);
 // =============================
 // RUTAS
 // =============================
-
-// Imágenes pedagógicas curadas (content/images/*.jpg), descargadas con el MCP
-// StockImages en tiempo de autoría. Servidas como estáticos: sin llamadas a
-// proveedores en runtime.
-app.use('/api/images', express.static(path.resolve(__dirname, '../content/images')));
 
 app.use('/', require('./routes/health'));
 app.use('/api/auth', require('./routes/auth'));

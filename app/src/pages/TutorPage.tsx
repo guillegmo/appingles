@@ -100,6 +100,7 @@ export function TutorPage() {
       trackAnalyticsEvent('ai_session_completed', { mode: stuck ? 'stuck' : mode }).catch(() => {});
       const seq = ++speechSeqRef.current;
       speak(reply.reply, {
+        lang: 'en',
         onEnd: () => {
           // Conversación continua: al terminar de leer, vuelve a escuchar.
           // Solo si es la locución más reciente (las canceladas no reinician).
@@ -267,7 +268,7 @@ export function TutorPage() {
               >
                 <p className="whitespace-pre-wrap">{m.content}</p>
                 {m.role === 'assistant' && (
-                  <button onClick={() => speak(m.content)} className="mt-1.5 flex items-center gap-1 text-xs text-primary-600" aria-label="Escuchar">
+                  <button onClick={() => speak(m.content, { lang: 'en' })} className="mt-1.5 flex items-center gap-1 text-xs text-primary-600" aria-label="Escuchar">
                     <Volume2 className="h-3.5 w-3.5" /> escuchar
                   </button>
                 )}

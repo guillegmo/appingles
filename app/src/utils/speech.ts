@@ -4,6 +4,14 @@ import { isSpanish } from './language';
 export type SpeakOptions = {
   rate?: number;
   onEnd?: () => void;
+  // Si se da, lee TODO el texto con la voz de ese único idioma, sin alternar
+  // por segmento. Usado por el Tutor IA: sus respuestas mezclan inglés y
+  // español libremente (no siguen el patrón "ejemplo en inglés entre
+  // comillas / traducción entre paréntesis" de las tarjetas de vocabulario),
+  // y la voz en español de este sistema pronuncia muy mal el inglés — mejor
+  // una sola voz consistente (la nativa de EE. UU., que al menos se entiende
+  // algo al leer español) que alternar mal.
+  lang?: 'en' | 'es';
 };
 
 // El género no viene en la API de SpeechSynthesis; se infiere del nombre.
@@ -44,6 +52,18 @@ function rankByLang(voices: SpeechSynthesisVoice[], lang: 'es' | 'en'): SpeechSy
   return voices
     .filter((v) => langRank(v, lang) < 99)
     .sort((a, b) => langRank(a, lang) - langRank(b, lang));
+}
+
+// Para el Tutor IA (options.lang forzado): la MEJOR voz en inglés disponible,
+// sin la lógica de emparejar género/proveedor con una voz en español (esa
+// solo tiene sentido cuando se alterna entre los dos idiomas). Bypass
+// deliberado de pickVoicePair: ahí, si ninguna voz en inglés coincidía en
+// género con una voz en español, el emparejamiento fallaba entero y el
+// idioma forzado podía terminar con voice=null, cayendo al comportamiento
+// por defecto del navegador — que en un sistema con voces en español
+// instaladas puede terminar leyendo en español pese a u.lang='en-US'.
+function pickEnglishVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
+  return rankByLang(voices, 'en')[0] ?? null;
 }
 
 // Elige el PAR español+inglés con el MISMO GÉNERO (masculino primero, por la
@@ -172,14 +192,22 @@ export async function speak(text: string, options?: SpeakOptions) {
   synth.cancel();
 
   const rate = options?.rate ?? getSpeechSpeed();
-  const segments = buildSegments(cleanForSpeech(text));
+  const segments = options?.lang
+    ? [{ text: cleanForSpeech(text), lang: options.lang }]
+    : buildSegments(cleanForSpeech(text));
   if (!segments.length) {
     options?.onEnd?.();
     return;
   }
 
   const voices = await loadVoices();
-  const { esVoice, enVoice } = pickVoicePair(voices);
+  // options.lang forzado (Tutor IA): nunca se calcula ni se usa una voz en
+  // español — esVoice queda null a propósito, así unit.lang='es' no puede
+  // ocurrir aquí (segments ya viene forzado a un solo idioma) y aunque
+  // ocurriera, no habría voz en español disponible para usarla por error.
+  const { esVoice, enVoice } = options?.lang
+    ? { esVoice: null, enVoice: pickEnglishVoice(voices) }
+    : pickVoicePair(voices);
 
   const units: { text: string; lang: 'es' | 'en' }[] = [];
   for (const seg of segments) {

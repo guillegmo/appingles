@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Bot, Lock, Mic, Send, Volume2, Loader2, HelpCircle, CheckCircle2 } from 'lucide-react';
+import { Bot, Mic, Send, Volume2, Loader2, HelpCircle, CheckCircle2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import { speak } from '../utils/speech';
@@ -11,9 +10,7 @@ import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
 import type { TutorMode, TutorMessage } from '../types';
 
 export function TutorPage() {
-  const navigate = useNavigate();
-  const { entitlements, user } = useAppStore();
-  const premium = entitlements?.plan === 'premium';
+  const { user } = useAppStore();
   const [modes, setModes] = useState<TutorMode[]>([]);
   const [mode, setMode] = useState('conversation');
   const [messages, setMessages] = useState<TutorMessage[]>([]);
@@ -87,7 +84,6 @@ export function TutorPage() {
   const send = async (text?: string) => {
     const value = (text ?? input).trim();
     if (!value || sendingRef.current) return;
-    if (!premium && remaining === 0) return;
     sendingRef.current = true;
     setSending(true);
     setError(null);
@@ -111,9 +107,7 @@ export function TutorPage() {
       const limited = info.status === 429 || /429/.test(info.message || '') || /429/.test((e as Error).message);
       setError(
         limited
-          ? premium
-            ? `Has utilizado tus ${usage.limit} mensajes de IA de hoy. Tu límite se renovará mañana.`
-            : 'Has utilizado tus 3 mensajes de IA de hoy. Con Premium tienes hasta 60 al día.'
+          ? `Has utilizado tus ${usage.limit} mensajes de IA de hoy. Tu límite se renovará mañana.`
           : info.message || 'El tutor no respondió. Intenta de nuevo.',
       );
       setMessages((m) => m.slice(0, -1));
@@ -132,11 +126,16 @@ export function TutorPage() {
   };
 
   // Turno hablado: auto-envía lo que el usuario dijo sin pulsar Enviar.
+  // El botón del micrófono vuelve a su estado inicial apenas se envía el
+  // mensaje — no se queda "armado" escuchando el siguiente turno solo.
   const handleVoiceTurn = (finalText: string) => {
     const value = finalText.trim();
     if (!value || !voiceModeRef.current) return;
     if (lastSentRef.current === value) return;
     lastSentRef.current = value;
+    speech.stop();
+    setVoiceMode(false);
+    voiceModeRef.current = false;
     send(value);
   };
   onFinalHandlerRef.current = handleVoiceTurn;
@@ -188,8 +187,8 @@ export function TutorPage() {
 
   const remaining = Math.max(0, usage.limit - usage.used);
   const usagePct = usage.limit > 0 ? Math.min(100, Math.round((usage.used / usage.limit) * 100)) : 0;
-  // Aviso discreto cuando quedan pocos mensajes (free: el último; premium: ~15%).
-  const lowThreshold = premium ? Math.max(2, Math.ceil(usage.limit * 0.15)) : 1;
+  // Aviso discreto cuando quedan pocos mensajes (~15% del límite diario).
+  const lowThreshold = Math.max(2, Math.ceil(usage.limit * 0.15));
   const showLowNotice = remaining > 0 && remaining <= lowThreshold;
 
   return (
@@ -214,16 +213,7 @@ export function TutorPage() {
       {showLowNotice && (
         <p className="mt-1.5 rounded-lg bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700">
           Te quedan {remaining} {remaining === 1 ? 'mensaje' : 'mensajes'} de IA hoy.
-          {!premium && ' Puedes probar Premium para llegar a 60 al día.'}
         </p>
-      )}
-      {!premium && remaining > 0 && !showLowNotice && (
-        <button
-          onClick={() => navigate('/premium')}
-          className="mt-2 w-full rounded-xl bg-primary-600 px-3 py-2 text-left text-xs font-semibold text-white"
-        >
-          Tienes {remaining} mensajes de IA hoy. Con Premium tienes hasta 60 al día →
-        </button>
       )}
       <div className="mt-2 flex justify-center">
         <SpeechSpeedControl compact />
@@ -289,16 +279,7 @@ export function TutorPage() {
         {error && <p className="px-4 pb-1 text-xs text-rose-600">{error}</p>}
 
         <div className="shrink-0 border-t border-slate-100 p-3">
-          {!premium && remaining === 0 ? (
-            <div className="flex flex-col items-center rounded-xl bg-slate-50 px-4 py-5 text-center">
-              <Lock className="h-6 w-6 text-slate-400" />
-              <p className="mt-2 text-sm font-bold text-slate-700">Has utilizado tus {usage.limit || 3} mensajes de IA de hoy.</p>
-              <p className="mt-1 text-xs text-slate-500">Premium permite hasta 60 mensajes diarios.</p>
-              <Button className="mt-3 w-full" size="lg" onClick={() => navigate('/premium')}>
-                Conocer Premium
-              </Button>
-            </div>
-          ) : premium && remaining === 0 ? (
+          {remaining === 0 ? (
             <div className="flex flex-col items-center rounded-xl bg-slate-50 px-4 py-5 text-center">
               <CheckCircle2 className="h-6 w-6 text-primary-500" />
               <p className="mt-2 text-sm font-bold text-slate-700">Has utilizado tus {usage.limit} mensajes de IA de hoy.</p>

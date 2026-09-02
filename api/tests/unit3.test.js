@@ -28,6 +28,18 @@ test('Prompts: stuck tiene su propio system', () => {
   assert.match(prompts.STUCK_PROMPT.system, /atascado/i);
 });
 
+// Regresión: buildSystemPrompt('stuck', ...) hacía MODES['stuck'] || MODES.Conversation,
+// y 'stuck' nunca estuvo en MODES (STUCK_PROMPT vive aparte) — SIEMPRE caía a
+// Conversation, así que la instrucción de responder 100% en español nunca se
+// aplicaba de verdad. El test anterior solo comprobaba la constante suelta,
+// no lo que esta función realmente arma y envía al modelo.
+test('Prompts: buildSystemPrompt("stuck", ...) usa STUCK_PROMPT, no Conversation', () => {
+  const built = prompts.buildSystemPrompt('stuck', { level: 'beginner' });
+  assert.match(built, /ESPAÑOL/);
+  assert.ok(built.startsWith(prompts.STUCK_PROMPT.system), 'debe empezar con el system de STUCK_PROMPT');
+  assert.ok(!built.startsWith(prompts.MODES.Conversation.system), 'no debe caer en el prompt de Conversation');
+});
+
 test('AI client: mock dev devuelve respuesta y coste', () => {
   // Simula sin key: forzamos vía variable (el módulo la lee al cargar).
   // Como la key puede estar ausente/presente, verificamos ambas rutas de salida.

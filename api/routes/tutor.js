@@ -1,13 +1,15 @@
 // routes/tutor.js
 // Tutor IA: chat por modos + "I'm Stuck".
 // - Acceso: todos los usuarios; Free tiene 3 mensajes IA/día de muestra,
-//   Premium IA (suscripción recurrente) tiene 60 mensajes IA/día.
+//   Premium (pago único de por vida, V8) tiene 30 mensajes IA/día.
 // - Límite diario de mensajes según entitlement (aiMessagesPerDay), aplicado
 //   con reserva atómica (transacción): peticiones simultáneas no lo superan.
 // - Idempotencia: un requestId del cliente deduplica reintentos (doble clic,
 //   retry de red) para que 1 acción del usuario = 1 mensaje consumido.
 // - Rate limit anti-spam por usuario (además del límite diario).
-// - Memoria contextual: colección 'conversations' por user+mode (ventana corta).
+// - Memoria contextual: colección 'conversations' por user+mode (ventana corta,
+//   últimos CONTEXT_WINDOW mensajes) + respuestas con tope de tokens de salida
+//   (maxTokens) — controla el costo por mensaje sin tocar el modelo.
 
 const express = require('express');
 const router = express.Router();
@@ -21,7 +23,13 @@ const { authenticate } = require('../middleware/auth');
 
 router.use(authenticate);
 
-const CONTEXT_WINDOW = 12; // últimos N mensajes enviados al modelo
+const CONTEXT_WINDOW = 8; // últimos N mensajes enviados al modelo (V8: antes 12, reducido para bajar costo)
+// ~30-60 palabras de respuesta visible. Con modelos "reasoning" (gpt-oss) una
+// parte del presupuesto se gasta en el campo `reasoning` interno (ver
+// aiClient.js) incluso con reasoning_effort:'low' — 100 tokens totales podía
+// dejar 0 para la respuesta visible (bug real: content vacío). 180 deja
+// margen de sobra para el razonamiento + la respuesta completa sin cortarse.
+const REPLY_MAX_TOKENS = 180;
 const MODE_PARAM = 'tutor';
 const MAX_MESSAGE_LENGTH = 2000; // ~350 palabras: varias frases sí, abuso no
 
@@ -187,7 +195,7 @@ async function handleMessage(req, res, modeId) {
     // no penalizar al usuario ni bloquear su reintento.
     let result;
     try {
-      result = await aiClient.chat(modelMessages);
+      result = await aiClient.chat(modelMessages, { maxTokens: REPLY_MAX_TOKENS });
     } catch (err) {
       await Promise.all([
         aiUsage.release(req.user.id, MODE_PARAM).catch(() => {}),

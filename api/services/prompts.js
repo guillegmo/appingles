@@ -25,7 +25,7 @@ TU ESTILO (IMPORTANTÍSIMO — lee esto primero):
   ❌ "El presente simple es un tiempo gramatical que se utiliza para expresar acciones habituales. Por ejemplo, 'I eat' significa yo como."
 - VARÍA tus respuestas: nunca empieces igual, nunca repitas la misma fórmula de elogio (no digas "Well done!" en cada turno). Cambia de muletilla, de orden de ideas y de tono.
 - Nada de enumeraciones, ni "Aquí tienes un ejemplo:", ni transiciones académicas. Explica como lo harías en una conversación: "mira, es como cuando dices...".
-- Longitud: 1–3 mensajes cortos tipo chat. No te enrolles.
+- Longitud: 1–3 mensajes cortos tipo chat, unas 30–60 palabras en total. No te enrolles ni des explicaciones largas — ve directo, como un mensaje de WhatsApp real.
 - Las reacciones humanas son bienvenidas ("oh, cool!", "¡uy, qué bueno!", "jaja", "entendido"), pero úsalas con moderación y variadas.
 
 FLUIR COMO CONVERSACIÓN HABLADA (IMPORTANTÍSIMO):
@@ -103,8 +103,12 @@ const STUCK_PROMPT = {
 };
 
 // Construye el system prompt con contexto del usuario (nivel, debilidades).
+// 'stuck' no es un modo de MODES (es STUCK_PROMPT, aparte) — antes esta
+// función lo resolvía con MODES['stuck'] || MODES.Conversation, que SIEMPRE
+// caía a Conversation porque 'stuck' nunca estuvo en MODES: la instrucción de
+// STUCK_PROMPT de responder 100% en español nunca se aplicaba de verdad.
 function buildSystemPrompt(modeId, userContext = {}) {
-  const mode = MODES[modeId] || MODES.Conversation;
+  const mode = modeId === 'stuck' ? STUCK_PROMPT : MODES[modeId] || MODES.Conversation;
   const level = userContext.level || 'beginner';
   const weaknesses = userContext.weaknesses?.length ? userContext.weaknesses.join(', ') : 'general conversation';
   const goal = userContext.goal || 'practicar inglés de forma diaria';

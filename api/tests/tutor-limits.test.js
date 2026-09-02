@@ -1,8 +1,8 @@
 // tests/tutor-limits.test.js
-// Límites del tutor IA y concurrencia OBLIGATORIA del modelo freemium:
+// Límites del tutor IA y concurrencia OBLIGATORIA del modelo freemium (V8: Premium 30/día):
 //  - FREE 2/3 + 2 requests simultáneos        -> exactamente 1 aceptada -> 3/3
-//  - PREMIUM 59/60 + 3 requests simultáneos   -> exactamente 1 aceptada -> 60/60
-//  - PREMIUM 60/60 + 5 requests               -> 0 aceptadas (todas 429)
+//  - PREMIUM 29/30 + 3 requests simultáneos   -> exactamente 1 aceptada -> 30/30
+//  - PREMIUM 30/30 + 5 requests               -> 0 aceptadas (todas 429)
 //  - Doble clic / reintento con mismo requestId -> 1 solo mensaje consumido
 //  - Mensaje demasiado largo                  -> 400 message_too_long
 //  - Rate limit anti-spam                     -> excedido => 429 rate_limited
@@ -112,11 +112,11 @@ test('FREE 2/3: dos requests simultáneos aceptan exactamente uno -> 3/3', async
   }
 });
 
-test('PREMIUM 59/60: tres requests simultáneos aceptan exactamente uno -> 60/60', async () => {
+test('PREMIUM 29/30: tres requests simultáneos aceptan exactamente uno -> 30/30', async () => {
   const U = 'tl-premium';
   await cleanup([U]);
   try {
-    await seedUsed(U, 'premium', 59);
+    await seedUsed(U, 'premium', 29);
     await withServer(async (call) => {
       const responses = await Promise.all(
         Array.from({ length: 3 }, (_, i) =>
@@ -127,20 +127,20 @@ test('PREMIUM 59/60: tres requests simultáneos aceptan exactamente uno -> 60/60
       const limited = responses.filter((r) => r.status === 429);
       assert.equal(ok.length, 1, 'solo una de las tres puede entrar');
       assert.equal(limited.length, 2);
-      assert.equal(await usedCount(U), 60, 'estado final 60/60 (nunca 61/60)');
-      assert.equal(ok[0].data.used, 60);
-      assert.equal(ok[0].data.limit, 60);
+      assert.equal(await usedCount(U), 30, 'estado final 30/30 (nunca 31/30)');
+      assert.equal(ok[0].data.used, 30);
+      assert.equal(ok[0].data.limit, 30);
     });
   } finally {
     await cleanup([U]);
   }
 });
 
-test('PREMIUM 60/60: cinco requests simultáneos -> 0 aceptadas', async () => {
+test('PREMIUM 30/30: cinco requests simultáneos -> 0 aceptadas', async () => {
   const U = 'tl-capped';
   await cleanup([U]);
   try {
-    await seedUsed(U, 'premium', 60);
+    await seedUsed(U, 'premium', 30);
     await withServer(async (call) => {
       const responses = await Promise.all(
         Array.from({ length: 5 }, (_, i) =>
@@ -149,7 +149,7 @@ test('PREMIUM 60/60: cinco requests simultáneos -> 0 aceptadas', async () => {
       );
       assert.ok(responses.every((r) => r.status === 429), 'ninguna debe pasar el tope');
       assert.ok(responses.every((r) => r.data.error === 'ai_limit_reached'));
-      assert.equal(await usedCount(U), 60, 'el contador no cambia');
+      assert.equal(await usedCount(U), 30, 'el contador no cambia');
     });
   } finally {
     await cleanup([U]);

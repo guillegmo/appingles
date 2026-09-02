@@ -77,6 +77,14 @@ function mockChat(messages) {
   return { content, usage, mock: true };
 }
 
+// Modelos "reasoning" (gpt-oss, etc.) escriben un campo `reasoning` aparte de
+// `content` antes de responder. Con max_tokens bajo, si no se limita ese
+// razonamiento, se puede gastar TODO el presupuesto pensando y devolver
+// content vacío. reasoning_effort:'low' lo evita (probado: de ~60 a ~10
+// tokens de razonamiento). Es específico de esta familia de modelos — no se
+// envía a otros para no arriesgar un 400 en modelos que no lo soportan.
+const REASONING_MODEL = /gpt-oss/i.test(GROQ_MODEL);
+
 // Llama a Groq y devuelve { content, usage, model, mock }.
 async function chat(messages, { temperature = 0.7, maxTokens = 400 } = {}) {
   if (!GROQ_API_KEY) return mockChat(messages);
@@ -92,6 +100,7 @@ async function chat(messages, { temperature = 0.7, maxTokens = 400 } = {}) {
       messages,
       temperature,
       max_tokens: maxTokens,
+      ...(REASONING_MODEL ? { reasoning_effort: 'low' } : {}),
     }),
   });
 

@@ -130,7 +130,7 @@ export function MemoryMenuPage() {
       </Card>
 
       <h2 className="text-sm font-bold uppercase tracking-wide text-slate-400 mb-3">Elige modo</h2>
-      <div className="grid gap-3 mb-6">
+      <div className="grid grid-cols-1 gap-3 mb-6">
         {MODES.map((mode) => (
           <button
             key={mode.id}
@@ -139,7 +139,7 @@ export function MemoryMenuPage() {
               if (mode.id !== 'free') setShowDifficulty(false);
             }}
             className={`
-              relative rounded-xl border-2 p-4 text-left transition-all
+              relative w-full rounded-xl border-2 p-4 text-left transition-all
               ${selectedMode === mode.id ? 'border-primary-400 bg-primary-50' : 'border-slate-200 hover:border-primary-300'}
             `}
           >
@@ -167,12 +167,12 @@ export function MemoryMenuPage() {
       {selectedMode === 'free' && showDifficulty && (
         <div className="mb-6">
           <h2 className="text-sm font-bold uppercase tracking-wide text-slate-400 mb-3">Dificultad</h2>
-          <div className="grid gap-3">
+          <div className="grid grid-cols-1 gap-3">
             {DIFFICULTIES.map((d) => (
               <button
                 key={d.id}
                 onClick={() => { setSelectedDifficulty(d.id); handlePlay(); }}
-                className={`rounded-xl border-2 p-4 text-left transition-all ${selectedDifficulty === d.id ? 'border-primary-400 bg-primary-50' : 'border-slate-200 hover:border-primary-300'}`}
+                className={`w-full rounded-xl border-2 p-4 text-left transition-all ${selectedDifficulty === d.id ? 'border-primary-400 bg-primary-50' : 'border-slate-200 hover:border-primary-300'}`}
               >
                 <div className="flex items-center gap-3">
                   <span className={`flex h-10 w-10 items-center justify-center rounded-lg ${d.bg} shrink-0`}>

@@ -7,9 +7,15 @@
 // - Idempotencia: un requestId del cliente deduplica reintentos (doble clic,
 //   retry de red) para que 1 acción del usuario = 1 mensaje consumido.
 // - Rate limit anti-spam por usuario (además del límite diario).
-// - Memoria contextual: colección 'conversations' por user+mode (ventana corta,
-//   últimos CONTEXT_WINDOW mensajes) + respuestas con tope de tokens de salida
-//   (maxTokens) — controla el costo por mensaje sin tocar el modelo.
+// - Memoria contextual (V10): el cliente manda los últimos mensajes de la
+//   conversación en curso (`history` en el body) y el servidor los usa tal
+//   cual, recortados a CONTEXT_WINDOW — ya NO se lee ni se escribe en
+//   Firestore por mensaje (antes: colección 'conversations', 1 lectura + 1
+//   escritura extra por turno). La memoria dura mientras la pestaña sigue
+//   abierta; al recargar o cambiar de modo se pierde (no hay respaldo en
+//   base de datos) — es la contrapartida aceptada del ahorro.
+// - Respuestas con tope de tokens de salida (maxTokens) — controla el costo
+//   por mensaje sin tocar el modelo.
 
 const express = require('express');
 const router = express.Router();
@@ -32,6 +38,7 @@ const CONTEXT_WINDOW = 8; // últimos N mensajes enviados al modelo (V8: antes 1
 const REPLY_MAX_TOKENS = 180;
 const MODE_PARAM = 'tutor';
 const MAX_MESSAGE_LENGTH = 2000; // ~350 palabras: varias frases sí, abuso no
+const MAX_HISTORY_MESSAGE_LENGTH = 4000; // respuestas del asistente incluidas, margen amplio
 
 // Anti-spam/automatización: 20 mensajes/minuto es muy por encima del uso
 // normal (escribir + leer) y muy por debajo de bots. El tope real sigue
@@ -114,20 +121,17 @@ async function userContext(userId) {
   };
 }
 
-async function getConversation(userId, mode) {
-  const id = `${userId}_${mode}`;
-  const doc = await store.getDoc('conversations', id);
-  return doc?.messages || [];
-}
-
-async function saveConversation(userId, mode, messages) {
-  const id = `${userId}_${mode}`;
-  await store.setDoc('conversations', id, {
-    userId,
-    mode,
-    updatedAt: new Date().toISOString(),
-    messages: messages.slice(-200), // cap de historial almacenado
-  });
+// Historial que manda el cliente (su propio estado en pantalla) — nunca se
+// lee de Firestore. Es dato de un usuario autenticado sobre su propia
+// conversación (no cross-user), pero igual se sanea: solo role user/assistant
+// (nunca 'system', para que no se pueda inyectar/pisar el system prompt),
+// contenido string acotado, y recortado a CONTEXT_WINDOW.
+function sanitizeHistory(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+    .slice(-CONTEXT_WINDOW)
+    .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_HISTORY_MESSAGE_LENGTH) }));
 }
 
 // Construye los messages del modelo: system + historial (último contexto) + nuevo user.
@@ -184,11 +188,11 @@ async function handleMessage(req, res, modeId) {
       return res.status(429).json({ error: 'ai_limit_reached', message: 'Alcanzaste tu límite diario de mensajes IA.', used: reservation.used, limit: ent.aiMessagesPerDay });
     }
 
-    // Historial y contexto en paralelo (1 round trip).
-    const [history, context] = await Promise.all([
-      getConversation(req.user.id, modeId),
-      userContext(req.user.id),
-    ]);
+    // El historial lo manda el cliente (su propio estado en pantalla) — ya no
+    // se lee de Firestore. El contexto de perfil (nivel/debilidades) sí sigue
+    // en Firestore, se lee aparte.
+    const history = sanitizeHistory(req.body?.history);
+    const context = await userContext(req.user.id);
     const modelMessages = buildModelMessages(modeId, history, trimmed, context);
 
     // Si la IA falla, se revierte la reserva Y el registro de idempotencia para
@@ -204,25 +208,16 @@ async function handleMessage(req, res, modeId) {
       throw err;
     }
 
-    const now = new Date().toISOString();
-    const nextHistory = [
-      ...history,
-      { role: 'user', content: trimmed, at: now },
-      { role: 'assistant', content: result.content, at: now },
-    ];
-
-    // Tokens/coste reales (incremento atómico sin lectura) + guardado del
-    // historial, en paralelo (independientes entre sí).
+    // Tokens/coste reales (incremento atómico sin lectura). Ya no hay
+    // historial que guardar — el cliente ya tiene la respuesta y la agrega a
+    // su propio estado para el próximo turno.
     const usageMeta = {
       tokens: result.usage?.total_tokens || 0,
       inputTokens: result.usage?.prompt_tokens || 0,
       outputTokens: result.usage?.completion_tokens || 0,
       estimatedCost: aiClient.estimateCost(result.usage),
     };
-    await Promise.all([
-      aiUsage.addTokens(req.user.id, MODE_PARAM, usageMeta),
-      saveConversation(req.user.id, modeId, nextHistory),
-    ]);
+    await aiUsage.addTokens(req.user.id, MODE_PARAM, usageMeta);
 
     const payload = {
       reply: result.content,
@@ -266,15 +261,6 @@ router.post('/stuck', tutorLimiter, async (req, res) => {
     console.error('Tutor stuck error:', err.message);
     res.status(502).json({ error: 'ai_unavailable', message: 'El tutor no respondió. Intenta de nuevo.' });
   }
-});
-
-// GET /tutor/history?mode=roleplay — historial reciente del modo (incluye stuck)
-router.get('/history', async (req, res) => {
-  if (!canAccessTutor(req)) return res.status(403).json({ error: 'ai_disabled', message: 'El Tutor IA no está disponible.' });
-  const raw = req.query.mode || 'conversation';
-  const resolved = raw === 'stuck' ? { id: 'stuck' } : prompts.resolveMode(raw) || prompts.MODES.Conversation;
-  const history = await getConversation(req.user.id, resolved.id);
-  res.json({ mode: resolved.id, messages: history });
 });
 
 // GET /tutor/usage — mensajes usados hoy / límite

@@ -76,8 +76,6 @@ async function cleanup(users, requestIds = []) {
       ['subscriptions', u],
       ['aiUsage', `${u}_${TODAY}`],
       ['profiles', u],
-      ['conversations', `${u}_conversation`],
-      ['conversations', `${u}_stuck`],
       ...requestIds.map((r) => ['aiRequests', `${u}_${r}`]),
     ]) {
       deletions.push(store.deleteDoc(col, id));

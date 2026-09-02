@@ -259,7 +259,6 @@ const TTL = {  day: 10 * 60_000, // contenido de un día: estático salvo la ban
   report: 30_000,
   review: 20_000,
   tutorModes: 30 * 60_000, // catálogo de modos: estático
-  tutorHistory: 15_000,
   tutorUsage: 10_000,
   vocabulary: 20_000,
   leaderboard: 60_000,
@@ -475,10 +474,6 @@ export async function getTutorModes(signal?: AbortSignal): Promise<import('../ty
   return cachedGet('/tutor/modes', undefined, TTL.tutorModes, signal);
 }
 
-export async function getTutorHistory(mode: string, signal?: AbortSignal): Promise<import('../types').TutorHistory> {
-  return cachedGet('/tutor/history', { mode }, TTL.tutorHistory, signal);
-}
-
 // Idempotencia del tutor: cada acción del usuario genera una clave única que
 // viaja al backend; un reintento de red con la misma clave devuelve la MISMA
 // respuesta sin consumir otro mensaje (la deduplicación real es server-side).
@@ -488,15 +483,21 @@ function newRequestId(): string {
   return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 12)}`;
 }
 
-export async function sendTutorMessage(mode: string, message: string): Promise<import('../types').TutorReply> {
-  const { data } = await api.post('/tutor/message', { mode, message, requestId: newRequestId() });
+// history: los últimos mensajes ya en pantalla (role/content), para que el
+// tutor mantenga contexto sin que el backend lea/escriba en Firestore por
+// mensaje. Se pierde al recargar o cambiar de modo — no hay respaldo en base
+// de datos, es la contrapartida aceptada del ahorro.
+type TutorHistoryTurn = { role: 'user' | 'assistant'; content: string };
+
+export async function sendTutorMessage(mode: string, message: string, history: TutorHistoryTurn[] = []): Promise<import('../types').TutorReply> {
+  const { data } = await api.post('/tutor/message', { mode, message, history, requestId: newRequestId() });
   invalidateCache('/tutor');
   invalidateCache('/analytics');
   return data;
 }
 
-export async function sendTutorStuck(message: string): Promise<import('../types').TutorReply> {
-  const { data } = await api.post('/tutor/stuck', { message, requestId: newRequestId() });
+export async function sendTutorStuck(message: string, history: TutorHistoryTurn[] = []): Promise<import('../types').TutorReply> {
+  const { data } = await api.post('/tutor/stuck', { message, history, requestId: newRequestId() });
   invalidateCache('/tutor');
   invalidateCache('/analytics');
   return data;

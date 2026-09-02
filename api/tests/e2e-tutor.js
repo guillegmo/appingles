@@ -22,8 +22,14 @@ async function call(method, path, { user, body } = {}) {
   r = await call('POST', '/tutor/message', { user: 'tutor-user', body: { mode: 'roleplay', message: 'I like pizza' } });
   out.push(`msg2: used=${r.data.used}/${r.data.limit}`);
 
-  r = await call('GET', '/tutor/history?mode=roleplay', { user: 'tutor-user' });
-  out.push(`history: msgs=${r.data.messages.length} roles=${r.data.messages.map((m) => m.role).join(',')}`);
+  // V10: ya no hay GET /tutor/history (no se persiste en Firestore) — el
+  // cliente manda su propio historial en cada request; esto confirma que el
+  // backend lo acepta y responde bien con contexto incluido.
+  r = await call('POST', '/tutor/message', {
+    user: 'tutor-user',
+    body: { mode: 'roleplay', message: 'What did I just say I like?', history: [{ role: 'user', content: 'I like pizza' }, { role: 'assistant', content: 'Nice! What size would you like?' }] },
+  });
+  out.push(`msg-with-history: used=${r.data.used}/${r.data.limit} reply="${r.data.reply?.slice(0, 55)}..."`);
 
   r = await call('GET', '/tutor/usage', { user: 'tutor-user' });
   out.push(`usage: used=${r.data.used}/${r.data.limit} premium=${r.data.premium}`);

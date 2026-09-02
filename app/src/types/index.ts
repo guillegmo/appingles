@@ -341,11 +341,6 @@ export interface TutorReply {
   mock: boolean;
 }
 
-export interface TutorHistory {
-  mode: string;
-  messages: TutorMessage[];
-}
-
 export interface TutorUsage {
   used: number;
   limit: number;

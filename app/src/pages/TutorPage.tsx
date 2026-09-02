@@ -3,7 +3,7 @@ import { Bot, Mic, Send, Volume2, Loader2, HelpCircle, CheckCircle2 } from 'luci
 import { useAppStore } from '../store/useAppStore';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import { speak } from '../utils/speech';
-import { getTutorModes, getTutorHistory, sendTutorMessage, sendTutorStuck, getTutorUsage, trackAnalyticsEvent, apiErrorInfo } from '../services/api';
+import { getTutorModes, sendTutorMessage, sendTutorStuck, getTutorUsage, trackAnalyticsEvent, apiErrorInfo } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { SpeechSpeedControl } from '../components/SpeechSpeedControl';
@@ -50,13 +50,13 @@ export function TutorPage() {
     return () => controller.abort();
   }, []);
 
+  // Ya no hay historial que restaurar del backend (V10: la memoria vive solo
+  // en este estado del componente, se pierde al recargar) — este efecto solo
+  // trae el contador de uso diario del modo actual.
   useEffect(() => {
     const controller = new AbortController();
-    Promise.all([getTutorHistory(mode, controller.signal), getTutorUsage(controller.signal)])
-      .then(([h, u]) => {
-        setMessages(h.messages);
-        setUsage({ used: u.used, limit: u.limit });
-      })
+    getTutorUsage(controller.signal)
+      .then((u) => setUsage({ used: u.used, limit: u.limit }))
       .catch((e) => {
         if ((e as { code?: string })?.code === 'ERR_CANCELED') return;
         setError((e as Error).message);
@@ -84,13 +84,17 @@ export function TutorPage() {
   const send = async (text?: string) => {
     const value = (text ?? input).trim();
     if (!value || sendingRef.current) return;
+    // Turnos previos ya en pantalla, para que el tutor mantenga contexto sin
+    // que el backend lea/escriba en Firestore — hay que capturarlos ANTES de
+    // agregar este mensaje nuevo (que va aparte, como `message`).
+    const historyForRequest = messages.slice(-16).map(({ role, content }) => ({ role, content }));
     sendingRef.current = true;
     setSending(true);
     setError(null);
     setInput('');
     setMessages((m) => [...m, { role: 'user', content: value }]);
     try {
-      const reply = stuck ? await sendTutorStuck(value) : await sendTutorMessage(mode, value);
+      const reply = stuck ? await sendTutorStuck(value, historyForRequest) : await sendTutorMessage(mode, value, historyForRequest);
       setMessages((m) => [...m, { role: 'assistant', content: reply.reply }]);
       setUsage((u) => ({ ...u, used: reply.used, limit: reply.limit }));
       trackAnalyticsEvent('ai_session_completed', { mode: stuck ? 'stuck' : mode }).catch(() => {});
@@ -179,14 +183,13 @@ export function TutorPage() {
       voiceModeRef.current = false;
       lastSentRef.current = '';
     }
+    // Cambiar de modo empieza un chat nuevo (ya limpiado arriba) — no hay
+    // historial que restaurar del backend, solo el contador de uso.
     try {
-      // El historial por modo está cacheado (TTL 15s): cambiar de modo y
-      // volver no repite la petición; el envío de un mensaje invalida la caché.
-      const [h, u] = await Promise.all([getTutorHistory(id === 'stuck' ? 'stuck' : id), getTutorUsage()]);
-      setMessages(h.messages ?? []);
+      const u = await getTutorUsage();
       setUsage({ used: u.used, limit: u.limit });
     } catch {
-      setMessages([]);
+      // el efecto de [mode] ya reintentará el usage; no bloquea el cambio de modo
     }
   };
 

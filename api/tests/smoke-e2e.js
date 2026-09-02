@@ -313,8 +313,13 @@ async function main() {
   r = await call('POST', '/tutor/message', { user: FREE, body: { mode: 'nope', message: 'x' } });
   check('POST /tutor/message (modo inválido→400)', 400, r.status);
 
-  r = await call('GET', '/tutor/history?mode=conversation', { user: FREE });
-  check('GET /tutor/history', 200, r.status, `msgs=${r.data?.messages?.length ?? '?'}`);
+  // V10: sin GET /tutor/history (no se persiste en Firestore) — el cliente
+  // manda su propio historial en cada request.
+  r = await call('POST', '/tutor/message', {
+    user: FREE,
+    body: { mode: 'conversation', message: 'And you?', history: [{ role: 'user', content: 'Hello, how are you?' }] },
+  });
+  check('POST /tutor/message (con history del cliente)', 200, r.status, `used=${r.data?.used}/${r.data?.limit}`);
 
   r = await call('GET', '/tutor/usage', { user: FREE });
   check('GET /tutor/usage (free)', 200, r.status, `used=${r.data?.used}/${r.data?.limit} premium=${r.data?.premium}`);

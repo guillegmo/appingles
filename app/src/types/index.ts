@@ -178,6 +178,14 @@ export interface SubscriptionStatus {
   entitlements: Entitlements;
 }
 
+export interface PlanOption {
+  id: 'lifetime' | 'monthly' | 'annual';
+  label: string;
+  price: number;
+  period: 'lifetime' | 'month' | 'year';
+  pricePerMonth: number | null;
+}
+
 export interface PracticeBlock {
   block: string;
   minutes: number;

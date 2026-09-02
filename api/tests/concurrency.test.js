@@ -202,3 +202,56 @@ test('Concurrencia: revisiones simultáneas de la misma tarjeta no pierden histo
     await cleanup([U]);
   }
 });
+
+// Regresión: progress solo se leía (const progress = quality >= 3 ? ... : null)
+// cuando quality >= 3, pero el return final usaba progress.totalXp SIEMPRE —
+// con quality 0/1/2 (calificar una tarjeta como "no la sabía"/"difícil", el
+// caso más común al repasar) progress era null y explotaba con TypeError:
+// 500 real en POST /review/:id/result. Cubre las 3 calidades bajas, con y
+// sin progreso previo.
+test('Review: calificar con quality < 3 no revienta y no otorga/pierde XP', async () => {
+  const U = 'conc-review-low';
+  await cleanup([U]);
+  try {
+    const cardId = `${U}_day1_w0`;
+    await store.setDoc('reviewCards', cardId, {
+      userId: U, key: 'day1_w0', day: 1, word: 'apple', es: 'manzana',
+      repetitions: 0, qualityHistory: [], easeFactor: 2.5, dueDate: TODAY, dominant: false,
+    });
+    await store.setDoc('progress', U, { completedDays: [], practiceDays: [], totalXp: 20 });
+
+    const reviewService = require('../services/reviewService');
+    for (const quality of [0, 1, 2]) {
+      const res = await reviewService.recordResult(U, cardId, quality);
+      assert.equal(res.ok, true, `quality ${quality} no debe fallar`);
+      assert.equal(res.xpEarned, 0, `quality ${quality} no otorga XP`);
+      assert.equal(res.totalXp, 20, `quality ${quality} no debe alterar el XP existente`);
+    }
+
+    const progress = await store.getDoc('progress', U);
+    assert.equal(progress.totalXp, 20, 'el XP no cambió en Firestore tampoco');
+  } finally {
+    await cleanup([U]);
+  }
+});
+
+// Mismo caso pero SIN documento de progreso previo (usuario que nunca ganó
+// XP) — normalizeProgress(null) debe devolver totalXp: 0, no explotar.
+test('Review: quality < 3 sin progreso previo devuelve totalXp: 0', async () => {
+  const U = 'conc-review-low-new';
+  await cleanup([U]);
+  try {
+    const cardId = `${U}_day1_w0`;
+    await store.setDoc('reviewCards', cardId, {
+      userId: U, key: 'day1_w0', day: 1, word: 'apple', es: 'manzana',
+      repetitions: 0, qualityHistory: [], easeFactor: 2.5, dueDate: TODAY, dominant: false,
+    });
+
+    const reviewService = require('../services/reviewService');
+    const res = await reviewService.recordResult(U, cardId, 1);
+    assert.equal(res.ok, true);
+    assert.equal(res.totalXp, 0);
+  } finally {
+    await cleanup([U]);
+  }
+});

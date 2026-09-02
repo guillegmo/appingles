@@ -137,7 +137,12 @@ async function recordResult(userId, cardId, quality) {
     // Firestore exige ejecutar TODAS las lecturas antes de cualquier escritura.
     const card = await tx.get('reviewCards', id);
     if (!card) return { ok: false, error: 'card_not_found' };
-    const progress = quality >= 3 ? normalizeProgress(await tx.get('progress', userId)) : null;
+    // Se lee SIEMPRE (no solo si quality >= 3): la respuesta manda totalXp al
+    // frontend sin importar el resultado (applyXp lo aplica incondicional), y
+    // con quality < 3 antes quedaba en null -> TypeError al leer .totalXp más
+    // abajo (500 real al calificar una tarjeta como "no la sabía"/"difícil").
+    // Progress solo se ESCRIBE si quality >= 3 (ver más abajo).
+    const progress = normalizeProgress(await tx.get('progress', userId));
 
     // Ejecutar schedule graduado
     const next = srs.schedule(

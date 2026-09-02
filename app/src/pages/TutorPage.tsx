@@ -136,6 +136,11 @@ export function TutorPage() {
     speech.stop();
     setVoiceMode(false);
     voiceModeRef.current = false;
+    // Limpia la transcripción: al apagar voiceMode arriba, el efecto que
+    // sincroniza el input con speech.transcript (para dictado manual con
+    // voiceMode ya en false) se dispararía y volvería a poner en el input
+    // lo que ya se acaba de enviar.
+    speech.setTranscript('');
     send(value);
   };
   onFinalHandlerRef.current = handleVoiceTurn;

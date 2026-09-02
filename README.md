@@ -53,5 +53,6 @@ npm test
 - **V4 (hecho):** Hotmart vía PaymentService abstracto, webhook con firma + idempotencia, expiración de trial, analytics de producto + dashboard de negocio (MRR, churn, AI cost).
 - **V5 (hecho):** repetición espaciada (SM-2), Smart Review avanzado, generación IA de contenido con flujo draft→published, admin de contenido, objetivo semanal.
 - **V6 (hecho):** niveles en UI (Beginner→Intermediate), temporadas con retos semanales y recompensas en XP, privacidad/GDPR (export + eliminación de datos), PWA instalable con modo offline.
+- **V8 (hecho):** Premium pasa de suscripción recurrente a **pago único de por vida** ($9.99 vía Hotmart, sin expiración ni renovación); Tutor IA reducido a 30 mensajes/día con ventana de contexto y tope de tokens de salida más chicos para bajar costo; suscripciones mensual/anual previas se conservan solo para quien ya las tenía.
 
 Ver `docs/ROADMAP.md` para detalle.

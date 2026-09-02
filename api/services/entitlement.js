@@ -1,9 +1,14 @@
 // services/entitlement.js
-// ÚNICA fuente de verdad para accesos Free/Premium IA (V7).
-// Modelo: el reto de 21 días es PERMANENTE y GRATIS. Todo lo relacionado con IA
-// (Tutor IA, lecciones IA on-demand, score de pronunciación, banco de vocabulario,
-// analytics avanzados) es PREMIUM con suscripción recurrente Hotmart.
-// El free tiene 3 mensajes IA/día de muestra para probar el valor.
+// ÚNICA fuente de verdad para accesos Free/Premium IA (V9 — producto único).
+// Modelo: ya no hay upsell interno. El acceso a la app (ver routes/access.js,
+// hasAccess) y el nivel de funcionalidades son el MISMO eje: cualquier compra
+// aprobada (Reto de 21 Días, Premium de por vida, o legacy monthly/annual) deja
+// al usuario en status active/trialing/past_due, y ESO YA da acceso completo —
+// no existe un usuario "adentro pero limitado". PLAN_CONFIG.free solo aplica a
+// quien nunca compró nada (bloqueado antes de esto por el gate de acceso) o
+// como defensa en profundidad si algún endpoint se llama sin pasar por el gate.
+// premium-monthly/premium-annual (legacy) siguen dando acceso igual; no se
+// venden más desde el paywall.
 
 const PLAN_CONFIG = {
   free: {
@@ -19,7 +24,7 @@ const PLAN_CONFIG = {
   },
   premium: {
     maxChallengeDay: 21,
-    aiMessagesPerDay: 60,
+    aiMessagesPerDay: 30,
     canUseVoice: true,
     canUseRoleplay: true,
     canAccessSmartReview: true,
@@ -30,16 +35,14 @@ const PLAN_CONFIG = {
   },
 };
 
-// Los planes de pago pueden ser 'premium', 'premium-monthly' o 'premium-annual';
-// todos se resuelven al entitlement premium.
-const PREMIUM_PLANS = ['premium', 'premium-monthly', 'premium-annual'];
+// Mismo set de estados que ACCESS_STATUSES en services/hotmartProcessor.js
+// (deben mantenerse sincronizados): si el estado ya deja pasar al usuario por
+// el gate de acceso, también le da el nivel de funcionalidades completo.
+const ENTITLED_STATUSES = ['active', 'trialing', 'past_due'];
 
 function planOf(subscription = {}) {
   const status = subscription.status || 'free';
-  if (status === 'trialing' || status === 'active') {
-    return PREMIUM_PLANS.includes(subscription.plan) ? 'premium' : 'free';
-  }
-  return 'free';
+  return ENTITLED_STATUSES.includes(status) ? 'premium' : 'free';
 }
 
 function buildEntitlements(subscription = {}) {
@@ -78,4 +81,4 @@ function serializableEntitlements(subscription = {}) {
   };
 }
 
-module.exports = { PLAN_CONFIG, PREMIUM_PLANS, planOf, buildEntitlements, serializableEntitlements };
+module.exports = { PLAN_CONFIG, ENTITLED_STATUSES, planOf, buildEntitlements, serializableEntitlements };

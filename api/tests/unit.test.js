@@ -65,8 +65,18 @@ test('Entitlements: free accede a los 21 días (reto permanente), premium IA com
   assert.equal(free.canGenerateLessons, false);
   const premium = entitlement.buildEntitlements({ status: 'active', plan: 'premium' });
   assert.equal(premium.canAccessDay(21), true);
+  assert.equal(premium.aiMessagesPerDay, 30); // V8: 30 mensajes/día (antes 60)
   assert.ok(premium.canUseRoleplay);
   assert.ok(premium.canGenerateLessons);
+});
+
+test('Entitlements: premium-lifetime (pago único) resuelve igual que premium', () => {
+  const lifetime = entitlement.buildEntitlements({ status: 'active', plan: 'premium-lifetime' });
+  assert.equal(lifetime.plan, 'premium');
+  assert.equal(lifetime.aiMessagesPerDay, 30);
+  assert.ok(lifetime.canGenerateLessons);
+  assert.ok(lifetime.canScorePronunciation);
+  assert.ok(lifetime.canUseVocabularyBank);
 });
 
 test('Entitlements: trialing cuenta como premium', () => {

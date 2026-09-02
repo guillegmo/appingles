@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   BarChart3,
   Microscope,
@@ -9,10 +8,8 @@ import {
   Sparkles,
   TrendingUp,
   Target,
-  Lock,
   AlertCircle,
 } from 'lucide-react';
-import { useAppStore } from '../store/useAppStore';
 import { getAdvancedStats } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -33,12 +30,9 @@ const DAY_LABEL = (d: string) =>
   new Date(`${d}T12:00:00`).toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric' });
 
 export function StatsPage() {
-  const navigate = useNavigate();
-  const { entitlements } = useAppStore();
   const [days, setDays] = useState<7 | 30>(7);
   const [stats, setStats] = useState<AdvancedStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [blocked, setBlocked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const controllerRef = useRef<AbortController | null>(null);
@@ -53,8 +47,7 @@ export function StatsPage() {
       .then(setStats)
       .catch((e) => {
         if ((e as { code?: string })?.code === 'ERR_CANCELED') return;
-        if (e.response?.status === 403) setBlocked(true);
-        else setError(e.response?.data?.message || 'No pudimos calcular tus estadísticas.');
+        setError(e.response?.data?.message || 'No pudimos calcular tus estadísticas.');
       })
       .finally(() => setLoading(false));
   }, [days]);
@@ -63,28 +56,6 @@ export function StatsPage() {
     load();
     return () => controllerRef.current?.abort();
   }, [load]);
-
-  if (blocked || !entitlements?.canAccessAdvancedStats) {
-    return (
-      <div className="p-5">
-        <h1 className="flex items-center gap-2 text-xl font-bold">
-          <BarChart3 className="h-5 w-5 text-primary-600" /> Estadísticas
-        </h1>
-        <Card className="mt-4">
-          <div className="flex flex-col items-center py-8 text-center">
-            <Lock className="h-8 w-8 text-slate-300" />
-            <p className="mt-3 font-bold">Analytics avanzados</p>
-            <p className="mt-1 max-w-xs text-sm text-slate-500">
-              Precisión por día, puntaje de pronunciación, uso de tu tutor IA y más. Es parte de Premium IA.
-            </p>
-            <Button className="mt-4" variant="secondary" onClick={() => navigate('/premium')}>
-              DESBLOQUEAR IA
-            </Button>
-          </div>
-        </Card>
-      </div>
-    );
-  }
 
   if (error) {
     return (

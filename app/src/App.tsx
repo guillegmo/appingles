@@ -21,7 +21,6 @@ import { Post21LessonPage } from './pages/Post21LessonPage';
 import { TutorPage } from './pages/TutorPage';
 import { ProgressPage } from './pages/ProgressPage';
 import { ProfilePage } from './pages/ProfilePage';
-import { PremiumPage } from './pages/PremiumPage';
 import { SmartReviewPage } from './pages/SmartReviewPage';
 import { VocabularyPage } from './pages/VocabularyPage';
 import { LeaderboardPage } from './pages/LeaderboardPage';
@@ -235,14 +234,10 @@ export default function App() {
             </RequireAuth>
           }
         />
-        <Route
-          path="/premium"
-          element={
-            <RequireAuth>
-              <PremiumPage />
-            </RequireAuth>
-          }
-        />
+        {/* Producto único (V9): ya no hay upsell interno de Premium — cualquier
+            compra aprobada da acceso completo. Se conserva la ruta como
+            redirect por si queda algún enlace viejo guardado. */}
+        <Route path="/premium" element={<Navigate to="/home" replace />} />
         <Route
           element={
             <RequireAuth>

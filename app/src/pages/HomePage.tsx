@@ -12,7 +12,7 @@ import { DayRoute } from '../components/DayRoute';
 
 export function HomePage() {
   const navigate = useNavigate();
-  const { user, challenge, progress, entitlements, refreshAll, loading } = useAppStore();
+  const { user, challenge, progress, refreshAll, loading } = useAppStore();
   const [reviewDue, setReviewDue] = useState(0);
   const [navigating, setNavigating] = useState(false);
 
@@ -131,8 +131,8 @@ export function HomePage() {
               Práctica diaria
             </Button>
           ) : (
-            <Button className="w-full" size="lg" variant="secondary" onClick={() => navigate('/premium')}>
-              Desbloquear Premium
+            <Button className="w-full" size="lg" variant="secondary" onClick={() => navigate('/progress')}>
+              Ver mi progreso
             </Button>
           )}
         </div>
@@ -185,7 +185,7 @@ export function HomePage() {
           <Card className="p-4">
             <BarChart3 className="h-5 w-5 text-violet-600" />
             <p className="mt-2 text-sm font-semibold">Estadísticas</p>
-            <p className="text-xs text-slate-500">{entitlements?.canAccessAdvancedStats ? 'Analytics avanzados' : 'Premium IA'}</p>
+            <p className="text-xs text-slate-500">Analytics avanzados</p>
           </Card>
         </Link>
         <Link to="/practice/post21">
@@ -233,21 +233,6 @@ export function HomePage() {
         </Card>
       )}
 
-      {completed >= 7 && !entitlements?.canUseRoleplay && (
-        <Card className="mt-4 border-primary-200 bg-gradient-to-br from-primary-50 to-white">
-          <p className="font-bold text-primary-700">Has completado {completed} días.</p>
-          <p className="mt-1 text-sm text-slate-600">
-            Imagina un tutor IA que practique contigo cada día: conversación, roleplays, correcciones y puntaje de
-            pronunciación. Tu reto de 21 días es gratis para siempre; la IA se desbloquea con Premium IA.
-          </p>
-          <Link
-            to="/premium"
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-primary-700"
-          >
-            Desbloquear Premium IA
-          </Link>
-        </Card>
-      )}
     </div>
   );
 }

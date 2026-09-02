@@ -46,8 +46,11 @@ function eventName(req, res, next) {
 
 const PRICE_MONTHLY_USD = Number(process.env.PRICE_MONTHLY_USD || 4.99);
 const PRICE_ANNUAL_USD = Number(process.env.PRICE_ANNUAL_USD || 39.99);
+const PRICE_LIFETIME_USD = Number(process.env.PRICE_LIFETIME_USD || 9.99);
 
-// Precio mensual equivalente de cada plan (anual -> precio/12).
+// Precio mensual equivalente de cada plan (anual -> precio/12). premium-lifetime
+// es pago único: NO es ingreso recurrente, así que no aporta a MRR (cae al 0
+// por defecto) — se contabiliza aparte en lifetimeRevenue.
 function planPricePerMonth(plan) {
   if (plan === 'premium-annual') return +(PRICE_ANNUAL_USD / 12).toFixed(2);
   if (plan === 'premium-monthly') return PRICE_MONTHLY_USD;
@@ -60,7 +63,8 @@ async function businessDashboard() {
     const st = s.status;
     return st === 'active' || st === 'trialing';
   });
-  const paying = active.filter((s) => s.status === 'active' && (s.plan === 'premium' || s.plan === 'premium-monthly' || s.plan === 'premium-annual'));
+  const paying = active.filter((s) => s.status === 'active' && (s.plan === 'premium' || s.plan === 'premium-lifetime' || s.plan === 'premium-monthly' || s.plan === 'premium-annual'));
+  const lifetimeBuyers = paying.filter((s) => s.plan === 'premium-lifetime');
   const trialing = active.filter((s) => s.status === 'trialing');
 
   // Cancelados/vencidos en los últimos 30 días para churn aproximado.
@@ -93,10 +97,12 @@ async function businessDashboard() {
     : 0;
 
   return {
-    subscriptionCounts: { total: subs.length, active: active.length, paying: paying.length, trialing: trialing.length, canceledRecent: canceledRecent.length },
+    subscriptionCounts: { total: subs.length, active: active.length, paying: paying.length, trialing: trialing.length, canceledRecent: canceledRecent.length, lifetimeBuyers: lifetimeBuyers.length },
     mrr,
+    lifetimeRevenue: +(lifetimeBuyers.length * PRICE_LIFETIME_USD).toFixed(2),
     monthlyPrice: PRICE_MONTHLY_USD,
     annualPrice: PRICE_ANNUAL_USD,
+    lifetimePrice: PRICE_LIFETIME_USD,
     churnPct: churn,
     aiTotalCost: +aiCost.toFixed(4),
     aiCostPerUser: paying.length > 0 ? +(aiCost / paying.length).toFixed(4) : 0,
@@ -104,4 +110,4 @@ async function businessDashboard() {
   };
 }
 
-module.exports = { EVENTS, trackEvent, businessDashboard, PRICE_MONTHLY_USD, PRICE_ANNUAL_USD };
+module.exports = { EVENTS, trackEvent, businessDashboard, PRICE_MONTHLY_USD, PRICE_ANNUAL_USD, PRICE_LIFETIME_USD };

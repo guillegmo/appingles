@@ -36,6 +36,43 @@ test('Hotmart: producto anual -> premium-annual', () => {
   delete require.cache[modPath];
 });
 
+test('Hotmart: producto lifetime por HOTMART_PRODUCT_LIFETIME_ID -> premium-lifetime', () => {
+  process.env.HOTMART_PRODUCT_LIFETIME_ID = 'life-99';
+  const modPath = require.resolve('../services/payments/hotmart');
+  delete require.cache[modPath];
+  const hm = require('../services/payments/hotmart');
+  const sub = hm.mapEventToSubscription({
+    event: 'PURCHASE_APPROVED',
+    data: { product: { id: 'life-99' }, purchase: {} },
+  });
+  assert.equal(sub.plan, 'premium-lifetime');
+  delete process.env.HOTMART_PRODUCT_LIFETIME_ID;
+  delete require.cache[modPath];
+});
+
+test('Hotmart: producto lifetime por nombre ("AppIngles Premium de por vida") -> premium-lifetime', () => {
+  const sub = hotmart.mapEventToSubscription({
+    event: 'PURCHASE_APPROVED',
+    data: { product: { id: 'xyz', name: 'AppIngles Premium de por vida' }, purchase: {} },
+  });
+  assert.equal(sub.plan, 'premium-lifetime');
+});
+
+test('Hotmart: una compra lifetime nunca expira sin evento explícito (status sigue active)', () => {
+  const sub = hotmart.mapEventToSubscription({
+    event: 'PURCHASE_APPROVED',
+    data: { product: { id: 'xyz', name: 'AppIngles Premium de por vida' }, purchase: {} },
+  });
+  assert.equal(sub.status, 'active');
+  // Un reembolso SÍ debe revocar el acceso (no es lo mismo que "expiración por fecha").
+  const refunded = hotmart.mapEventToSubscription({
+    event: 'PURCHASE_REFUNDED',
+    data: { product: { id: 'xyz', name: 'AppIngles Premium de por vida' }, purchase: {} },
+  });
+  assert.equal(refunded.status, 'expired');
+  assert.equal(refunded.plan, 'premium-lifetime');
+});
+
 test('Hotmart: renovación recurrente (recurrency_number > 1)', () => {
   const renewal = hotmart.mapEventToSubscription({
     event: 'PURCHASE_APPROVED',

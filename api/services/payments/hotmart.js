@@ -25,16 +25,23 @@ function webhookToken() {
 }
 
 // Lectura dinámica de los checkouts (no cacheada al cargar el módulo): cada
-// plan apunta a SU producto Hotmart (mensual vs anual). Si el plan específico
-// no está configurado, se cae al checkout genérico HOTMART_CHECKOUT_URL.
+// plan apunta a SU producto Hotmart (mensual vs anual vs pago único de por
+// vida). Si el plan específico no está configurado, se cae al checkout
+// genérico HOTMART_CHECKOUT_URL.
 function checkoutUrl(plan = 'monthly') {
   if (plan === 'annual') {
     return process.env.HOTMART_CHECKOUT_URL_ANNUAL || process.env.HOTMART_CHECKOUT_URL || '';
+  }
+  if (plan === 'lifetime') {
+    return process.env.HOTMART_CHECKOUT_URL_LIFETIME || process.env.HOTMART_CHECKOUT_URL || '';
   }
   return process.env.HOTMART_CHECKOUT_URL_MONTHLY || process.env.HOTMART_CHECKOUT_URL || '';
 }
 function productAnnualId() {
   return process.env.HOTMART_PRODUCT_ANNUAL_ID || '';
+}
+function productLifetimeId() {
+  return process.env.HOTMART_PRODUCT_LIFETIME_ID || '';
 }
 
 function safeJsonParse(str) {
@@ -166,11 +173,16 @@ function mapEventToSubscription(event) {
     return null;
   }
 
-  // Plan: el Reto de Inglés en 21 Días es compra única (plan reto21); los
-  // productos Premium IA siguen siendo suscripción mensual/anual.
+  // Plan: el Reto de Inglés en 21 Días es compra única (plan reto21); Premium
+  // IA de por vida (V8) es TAMBIÉN compra única (plan premium-lifetime, sin
+  // eventos de suscripción); premium-monthly/premium-annual solo aplican a
+  // quien ya tenía una suscripción recurrente de antes de V8.
   let plan = 'premium-monthly';
   const annualId = productAnnualId();
+  const lifetimeId = productLifetimeId();
   if (/reto|21\s*d[ií]as/i.test(productName)) plan = 'reto21';
+  else if (lifetimeId && String(productId) === lifetimeId) plan = 'premium-lifetime';
+  else if (/lifetime|de por vida|vitalicio/i.test(productName.toLowerCase())) plan = 'premium-lifetime';
   else if (annualId && String(productId) === annualId) plan = 'premium-annual';
   else if (/annual|anual|año|ano/i.test(productName.toLowerCase())) plan = 'premium-annual';
 
@@ -214,4 +226,4 @@ function createCheckout({ email, userId, plan = 'monthly', successUrl, cancelUrl
   return { url: url.toString(), dev: false, plan };
 }
 
-module.exports = { verifyWebhook, mapEventToSubscription, createCheckout, normalizeStatus, isRenewal, safeJsonParse, checkoutUrl, productAnnualId };
+module.exports = { verifyWebhook, mapEventToSubscription, createCheckout, normalizeStatus, isRenewal, safeJsonParse, checkoutUrl, productAnnualId, productLifetimeId };

@@ -1,6 +1,8 @@
 // routes/subscription.js
 // Estado de suscripción y entitlements (backend = fuente de verdad).
 // V4: Hotmart vía PaymentService; el POST /activate es SOLO dev/seed.
+// V8: el plan vendido en el paywall es 'lifetime' (pago único, $9.99, sin
+// expiración); monthly/annual siguen soportados solo para quien ya los tenía.
 
 const express = require('express');
 const router = express.Router();
@@ -23,26 +25,32 @@ router.get('/status', async (req, res) => {
   });
 });
 
-// GET /subscription/plans -> precios de los planes (mensual/anual) para el paywall.
-// Fuente única de precios: PRICE_MONTHLY_USD / PRICE_ANNUAL_USD (default 4.99/39.99,
-// alineados con los checkouts reales de Hotmart). El frontend NUNCA hardcodea precios.
+// GET /subscription/plans -> precios de los planes para el paywall.
+// Fuente única de precios: PRICE_MONTHLY_USD / PRICE_ANNUAL_USD / PRICE_LIFETIME_USD
+// (default 4.99/39.99/9.99, alineados con los checkouts reales de Hotmart).
+// El frontend NUNCA hardcodea precios. Desde V8 el paywall solo ofrece
+// 'lifetime' (pago único); monthly/annual se conservan en la respuesta por
+// compatibilidad con quien ya tenía una suscripción recurrente activa.
 router.get('/plans', (req, res) => {
   const monthly = Number(process.env.PRICE_MONTHLY_USD || 4.99);
   const annual = Number(process.env.PRICE_ANNUAL_USD || 39.99);
+  const lifetime = Number(process.env.PRICE_LIFETIME_USD || 9.99);
   res.json({
     currency: 'USD',
     savingsPct: Math.round((1 - annual / (monthly * 12)) * 100),
     plans: [
+      { id: 'lifetime', label: 'Pago único', price: lifetime, period: 'lifetime', pricePerMonth: null },
       { id: 'monthly', label: 'Mensual', price: monthly, period: 'month', pricePerMonth: monthly },
       { id: 'annual', label: 'Anual', price: annual, period: 'year', pricePerMonth: +(annual / 12).toFixed(2) },
     ],
   });
 });
 
-// GET /subscription/checkout?plan=monthly|annual -> link de pago (Hotmart).
+// GET /subscription/checkout?plan=lifetime|monthly|annual -> link de pago (Hotmart).
 // El custom transporta el userId para resolver al usuario en el webhook.
 router.get('/checkout', (req, res) => {
-  const plan = req.query.plan === 'annual' ? 'annual' : 'monthly';
+  const raw = req.query.plan;
+  const plan = raw === 'annual' ? 'annual' : raw === 'monthly' ? 'monthly' : 'lifetime';
   const result = hotmart.createCheckout({
     email: req.user.email || '',
     userId: req.user.id,

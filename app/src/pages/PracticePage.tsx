@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Repeat, BookOpen, Sun, GraduationCap, Trophy, Headphones, Lock, ArrowRight, Brain } from 'lucide-react';
+import { Zap, Repeat, BookOpen, Sun, GraduationCap, Trophy, Headphones, ArrowRight, Brain } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { getReviewCount } from '../services/api';
 import { LoadingScreen } from '../components/ui/Spinner';
@@ -13,14 +13,13 @@ type PracticeCard = {
   title: string;
   subtitle: string;
   badge?: string;
-  locked?: boolean;
 };
 
 // Centro de práctica: atajos a las herramientas de práctica reales en vez de
 // repetir la lista de 21 días (que vive en Inicio).
 export function PracticePage() {
   const navigate = useNavigate();
-  const { challenge, progress, entitlements, refreshAll } = useAppStore();
+  const { challenge, progress, refreshAll } = useAppStore();
   const [reviewDue, setReviewDue] = useState(0);
 
   useEffect(() => {
@@ -32,7 +31,6 @@ export function PracticePage() {
 
   const isChampion = (progress?.daysCompleted ?? 0) >= 21;
   const nextDay = challenge.days.find((d) => !d.completed && !d.locked);
-  const canVocab = entitlements?.canUseVocabularyBank ?? false;
 
   const cards: PracticeCard[] = [
     {
@@ -58,8 +56,7 @@ export function PracticePage() {
       color: 'text-sky-600',
       bg: 'bg-sky-50',
       title: 'Vocabulario',
-      subtitle: canVocab ? 'Tus palabras falladas' : 'Se arma con tus errores',
-      locked: !canVocab,
+      subtitle: 'Tus palabras falladas',
     },
     {
       to: '/practice/memory/menu',
@@ -127,7 +124,7 @@ export function PracticePage() {
       )}
 
       <div className="mt-4 grid grid-cols-2 gap-3">
-        {cards.map(({ to, icon: Icon, color, bg, title, subtitle, badge, locked }) => (
+        {cards.map(({ to, icon: Icon, color, bg, title, subtitle, badge }) => (
           <button
             key={to}
             onClick={() => navigate(to)}
@@ -140,7 +137,6 @@ export function PracticePage() {
               {badge && (
                 <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-700">{badge}</span>
               )}
-              {locked && <Lock className="h-4 w-4 text-slate-300" />}
             </div>
             <p className="mt-3 text-sm font-bold">{title}</p>
             <p className="mt-0.5 text-xs text-slate-500">{subtitle}</p>

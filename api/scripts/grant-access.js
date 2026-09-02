@@ -5,7 +5,7 @@
 //
 // Uso:
 //   node scripts/grant-access.js <email> [plan]
-//   plan: reto21 (default) | premium | premium-monthly | premium-annual
+//   plan: reto21 (default) | premium-lifetime | premium | premium-monthly | premium-annual
 //
 // Requiere credenciales Firebase (STORE_MODE=firebase o GOOGLE_APPLICATION_
 // CREDENTIALS). En modo file crea/actualiza el doc local.

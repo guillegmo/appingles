@@ -255,7 +255,6 @@ const TTL = {  day: 10 * 60_000, // contenido de un día: estático salvo la ban
   challenge: 30_000, // índice del reto + entitlements
   progress: 30_000,
   subscription: 15_000,
-  plans: 30 * 60_000, // catálogo de precios: semiestático
   assessment: 30 * 60_000, // configuración de evaluación: estática
   report: 30_000,
   review: 20_000,
@@ -346,27 +345,6 @@ export async function getSubscriptionStatus(): Promise<import('../types').Subscr
     (s) => cachedGet('/subscription/status', undefined, TTL.subscription, s),
     { endpoint: '/subscription/status' },
   );
-}
-
-export async function getCheckout(): Promise<{ url: string | null; dev: boolean; plan?: string }> {
-  const { data } = await api.get('/subscription/checkout');
-  return data;
-}
-
-export async function getCheckoutForPlan(plan: 'monthly' | 'annual'): Promise<{ url: string | null; dev: boolean; plan?: string }> {
-  const { data } = await api.get('/subscription/checkout', { params: { plan } });
-  return data;
-}
-
-export async function getPlans(): Promise<{ plans: import('../types').PlanOption[] }> {
-  return cachedGet('/subscription/plans', undefined, TTL.plans);
-}
-
-export async function cancelSubscription(): Promise<{ subscription: import('../types').SubscriptionStatus['subscription']; entitlements: import('../types').Entitlements }> {
-  const { data } = await api.post('/subscription/cancel');
-  invalidateCache('/subscription');
-  invalidateCache('/challenge');
-  return data;
 }
 
 export async function activatePremiumDev(plan = 'premium', trialDays = 7) {

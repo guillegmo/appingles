@@ -37,7 +37,6 @@ const SITUATION_LABELS: Record<string, string> = {
 export function Post21LessonPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { entitlements } = useAppStore();
   const [lesson, setLesson] = useState<Post21LessonDetail | null>(null);
   const [quizIndex, setQuizIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
@@ -82,7 +81,7 @@ export function Post21LessonPage() {
       });
       return next;
     });
-    if (entitlements?.canScorePronunciation) {
+    {
       const attempted = lesson.phrases.find((p) => phraseMatches(p.en, spoken)) ?? lesson.phrases[0];
       if (attempted) {
         scorePronunciation({ transcript: spoken, target: attempted.en, day: 21 })
@@ -239,7 +238,7 @@ export function Post21LessonPage() {
                     🗣️ Lo dijiste en español. ¡Inténtalo en inglés!
                   </p>
                 )}
-                {pronScore && entitlements?.canScorePronunciation && (
+                {pronScore && (
                   <div className="mt-2 flex w-full items-center justify-between rounded-xl bg-primary-50 px-4 py-3">
                     <div className="text-left">
                       <p className="text-xs font-bold text-primary-700">Puntaje de pronunciación</p>

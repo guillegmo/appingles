@@ -44,7 +44,7 @@ export function DayViewPage() {
   const { day: dayParam } = useParams();
   const dayNumber = Number(dayParam);
   const navigate = useNavigate();
-  const { entitlements, applyXp, applyDayComplete } = useAppStore();
+  const { applyXp, applyDayComplete } = useAppStore();
 
   const [day, setDay] = useState<DayContent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -176,8 +176,8 @@ export function DayViewPage() {
       });
       return next;
     });
-    // Puntaje de pronunciación (Premium IA).
-    if (entitlements?.canScorePronunciation) {
+    // Puntaje de pronunciación.
+    {
       const attempted = phrases.slice(0, 3).find((p) => fuzzyMatches(p.en, spoken)) ?? phrases.slice(0, 3)[0];
       if (attempted) {
         scorePronunciation({ transcript: spoken, target: attempted.en, day: dayNumber })
@@ -194,20 +194,14 @@ export function DayViewPage() {
 
   if (loading) return <LoadingScreen label="Cargando día…" />;
   if (error) {
-    const isPremium = error === 'premium_required';
     return (
       <div className="p-8">
         <Button variant="ghost" onClick={() => navigate('/home')} className="mb-4">
           <ArrowLeft className="h-4 w-4" /> Volver
         </Button>
         <Card>
-          <p className="font-bold text-rose-600">{isPremium ? 'Este contenido está en Premium IA' : 'Algo salió mal'}</p>
+          <p className="font-bold text-rose-600">Algo salió mal</p>
           <p className="mt-2 text-sm text-slate-600">{error}</p>
-          {isPremium && (
-            <Button className="mt-4 w-full" variant="secondary" onClick={() => navigate('/premium')}>
-              VER PREMIUM IA
-            </Button>
-          )}
         </Card>
       </div>
     );
@@ -483,7 +477,7 @@ export function DayViewPage() {
                           🗣️ Lo dijiste en español. ¡Inténtalo en inglés! Escucha el modelo arriba y repite la frase.
                         </p>
                       )}
-                      {pronScore && entitlements?.canScorePronunciation && (
+                      {pronScore && (
                         <div className="mt-3 flex w-full items-center justify-between rounded-xl bg-primary-50 px-4 py-3">
                           <div className="text-left">
                             <p className="text-xs font-bold text-primary-700">Puntaje de pronunciación</p>
@@ -493,14 +487,6 @@ export function DayViewPage() {
                             {pronScore.score}
                           </span>
                         </div>
-                      )}
-                      {!entitlements?.canScorePronunciation && (
-                        <button
-                          onClick={() => navigate('/premium')}
-                          className="mt-3 w-full rounded-xl border border-primary-200 bg-white px-4 py-2 text-center text-xs font-semibold text-primary-700"
-                        >
-                          ✨ Con Premium IA recibes puntaje de pronunciación en cada frase
-                        </button>
                       )}
                     </>
                   )}

@@ -7,10 +7,14 @@ const images = require('../lib/images');
 const scoring = require('./scoring');
 const streakService = require('./streak');
 const { getCategory, getIconSVG } = require('./memoryUtils');
+const vocabPoolCache = require('./vocabPoolCache');
 
 async function getUserVocabulary(userId) {
+  const cached = vocabPoolCache.get(userId);
+  if (cached) return cached;
+
   const items = [];
-  
+
 // 1. Palabras de reviewCards (falladas)
   const userReview = await store.queryDocs('reviewCards', { filters: [{ field: 'userId', op: '==', value: userId }] });
   for (const c of userReview) {
@@ -65,7 +69,9 @@ async function getUserVocabulary(userId) {
       uniqueMap.set(item.en.toLowerCase(), item);
     }
   }
-  return Array.from(uniqueMap.values());
+  const result = Array.from(uniqueMap.values());
+  vocabPoolCache.set(userId, result);
+  return result;
 }
 
 function shuffle(array) {

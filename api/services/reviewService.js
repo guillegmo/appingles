@@ -7,6 +7,7 @@ const content = require('../lib/content');
 const srs = require('./srs');
 const { markDominant } = srs;
 const { normalizeProgress } = require('../lib/progress');
+const vocabPoolCache = require('./vocabPoolCache');
 
 // ---------------------------------------------------------------------------
 // Key: por día + índice de palabra, para que cada palabra tenga tarjeta propia.
@@ -61,6 +62,7 @@ async function ensureCards(userId, day) {
   // Escritura de las nuevas en un solo lote (1 round trip en Firestore).
   if (toCreate.length) {
     await store.batchWrite(toCreate.map(({ id, card }) => ({ collection: 'reviewCards', id, data: card })));
+    vocabPoolCache.invalidate(userId);
     for (const { card } of toCreate) cards.push(card);
   }
   return cards;

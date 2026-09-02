@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const store = require('../lib/store');
 const entitlement = require('../services/entitlement');
+const vocabPoolCache = require('../services/vocabPoolCache');
 const { authenticate } = require('../middleware/auth');
 
 router.use(authenticate);
@@ -33,6 +34,7 @@ router.post('/items', async (req, res) => {
     return doc.items.length;
   });
 
+  vocabPoolCache.invalidate(req.user.id);
   res.json({ ok: true, total });
 });
 

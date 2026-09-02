@@ -171,8 +171,9 @@ test('Auditoría: content/post21 filtra por status (sin listDocs)', async () => 
 });
 
 test('Auditoría: memory/board filtra reviewCards del usuario (sin listDocs)', async () => {
+  const vocabPoolCache = require('../services/vocabPoolCache');
+  vocabPoolCache.invalidate(CHAMP);
   await withServer(async (call) => {
-    await call('GET', '/api/memory/board', null, CHAMP); // warm-up
     resetCounters();
 
     const res = await call('GET', '/api/memory/board', null, CHAMP);
@@ -181,6 +182,28 @@ test('Auditoría: memory/board filtra reviewCards del usuario (sin listDocs)', a
     const q = counters.queryDocs.find((x) => x.col === 'reviewCards');
     assert.ok(q);
     assert.deepEqual(q.opts.filters, [{ field: 'userId', op: '==', value: CHAMP }]);
+  });
+});
+
+// Regresión: getUserVocabulary cachea en memoria (60s) el pool de palabras
+// origen del tablero, para no releer reviewCards+vocabulary en cada partida
+// en modo libre. Una segunda llamada dentro del TTL no debe volver a
+// consultar Firestore; el tablero en sí sigue siendo aleatorio (el layout se
+// baraja en getBoard, no en el pool cacheado).
+test('Auditoría: memory/board cachea el pool de vocabulario (segunda llamada sin re-leer Firestore)', async () => {
+  const vocabPoolCache = require('../services/vocabPoolCache');
+  vocabPoolCache.invalidate(CHAMP);
+  await withServer(async (call) => {
+    const first = await call('GET', '/api/memory/board?mode=free', null, CHAMP);
+    assert.equal(first.status, 200);
+    resetCounters();
+
+    const second = await call('GET', '/api/memory/board?mode=free', null, CHAMP);
+    assert.equal(second.status, 200);
+    assert.deepEqual(counters.queryDocs, [], 'segunda llamada no debe re-consultar reviewCards (caché en memoria)');
+    assert.ok(!counters.getDoc.includes('vocabulary'), 'segunda llamada no debe re-leer vocabulary (caché en memoria)');
+    // El tablero sigue siendo aleatorio pese al pool cacheado (seed distinto por partida en modo libre).
+    assert.notEqual(first.data.seed, second.data.seed);
   });
 });
 

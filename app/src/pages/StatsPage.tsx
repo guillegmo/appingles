@@ -203,7 +203,7 @@ export function StatsPage() {
       <Card className="mt-4">
         <p className="mb-3 flex items-center gap-2 font-semibold">
           <Sparkles className="h-4 w-4 text-violet-500" /> Tu tutor IA{' '}
-          <Tooltip text="Cuánto has usado tu tutor IA hoy y en total. Los tokens son el consumo de IA al generar contenido." />
+          <Tooltip text="Cuánto has usado tu tutor IA hoy y en total." />
         </p>
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-xl bg-violet-50 p-3">
@@ -211,8 +211,8 @@ export function StatsPage() {
             <p className="text-[10px] text-slate-500">mensajes hoy</p>
           </div>
           <div className="rounded-xl bg-violet-50 p-3">
-            <p className="num text-xl font-bold">{stats.ai.totalTokens.toLocaleString('es-CO')}</p>
-            <p className="text-[10px] text-slate-500">tokens consumidos</p>
+            <p className="num text-xl font-bold">{stats.ai.totalSessions}</p>
+            <p className="text-[10px] text-slate-500">sesiones con el tutor</p>
           </div>
         </div>
       </Card>

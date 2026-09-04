@@ -12,6 +12,29 @@
 //   'SUBSCRIPTION_SUSPENDED' (overdue), 'SUBSCRIPTION_DEBT_RECOVERY'.
 //   El body incluye: { event, data: { subscriber: { buyer: { email } }, product, purchase, subscription } }
 //   En el checkout se pasa custom=userId para poder resolver el usuario en el webhook.
+//
+// V11: eventos adicionales del catálogo de webhooks de Hotmart, para no
+// dejar en silencio notificaciones reales de la cuenta:
+//   - 'PURCHASE_COMPLETE' (alias de PURCHASE_APPROVED en algunos medios de
+//     pago/boleto) -> active.
+//   - 'PURCHASE_DELAYED' (boleto vencido, pago aún no confirmado) -> past_due.
+//   - 'PURCHASE_PROTEST' (comprador disputó el cargo con el banco) -> past_due
+//     (no se corta el acceso de inmediato; si el protesto se resuelve en
+//     contra, Hotmart manda después PURCHASE_CHARGEBACK -> expired).
+//   - 'UPDATE_SUBSCRIPTION_CHARGE_DATE' (cambió la fecha de cobro) -> refresca
+//     nextBillingDate, el status sale del subscription.status como siempre.
+//   - Nombres alternativos documentados por Hotmart para eventos que ya
+//     soportábamos con otro nombre: 'SUBSCRIPTION_CANCELLATION' (alias de
+//     SUBSCRIPTION_CANCELED) y 'SWITCH_PLAN' (alias de SUBSCRIPTION_PLAN_CHANGED).
+//     Se aceptan ambos nombres por seguridad: la documentación pública de
+//     Hotmart es inconsistente entre versiones y cuentas, y un nombre no
+//     reconocido se ignora en silencio (nunca falla, pero tampoco actualiza
+//     el acceso) — más barato aceptar un alias de más que perder uno real.
+//   - Deliberadamente IGNORADOS (no cambian el acceso, son informativos o de
+//     marketing): 'PURCHASE_BILLET_PRINTED' (boleto generado, sin pago aún),
+//     'PURCHASE_OUT_OF_SHOPPING_CART' (carrito abandonado, no hubo compra),
+//     'CLUB_FIRST_ACCESS' / 'CLUB_MODULE_COMPLETED' (solo aplican a productos
+//     alojados en el Club/LMS propio de Hotmart; AppIngles es una app externa).
 
 const crypto = require('crypto');
 
@@ -58,11 +81,15 @@ function normalizeStatus(event) {
   const map = {
     PURCHASE_APPROVED: 'active',
     PURCHASE_APPROVED_BY_CARD: 'active',
+    PURCHASE_COMPLETE: 'active',
     PURCHASE_CANCELED: 'canceled',
     PURCHASE_REFUNDED: 'expired',
     PURCHASE_EXPIRED: 'expired',
     PURCHASE_CHARGEBACK: 'expired',
+    PURCHASE_DELAYED: 'past_due',
+    PURCHASE_PROTEST: 'past_due',
     SUBSCRIPTION_CANCELED: 'canceled',
+    SUBSCRIPTION_CANCELLATION: 'canceled',
     SUBSCRIPTION_SUSPENDED: 'past_due',
     SUBSCRIPTION_DEBT_RECOVERY: 'past_due',
   };
@@ -121,16 +148,22 @@ function verifyWebhook({ headers = {}, rawBody = '' }) {
 const STATUS_EVENTS = new Set([
   'PURCHASE_APPROVED',
   'PURCHASE_APPROVED_BY_CARD',
+  'PURCHASE_COMPLETE',
   'PURCHASE_CANCELED',
   'PURCHASE_REFUNDED',
   'PURCHASE_EXPIRED',
   'PURCHASE_CHARGEBACK',
+  'PURCHASE_DELAYED',
+  'PURCHASE_PROTEST',
   'SUBSCRIPTION_CANCELED',
+  'SUBSCRIPTION_CANCELLATION',
   'SUBSCRIPTION_SUSPENDED',
   'SUBSCRIPTION_DEBT_RECOVERY',
   'SUBSCRIPTION_STATUS_UPDATE',
   'SUBSCRIPTION_REACTIVATION',
   'SUBSCRIPTION_PLAN_CHANGED',
+  'SWITCH_PLAN',
+  'UPDATE_SUBSCRIPTION_CHARGE_DATE',
 ]);
 
 // Mapea un evento Hotmart a una suscripción AppIngles.
@@ -151,7 +184,7 @@ function mapEventToSubscription(event) {
       if (pStatus === 'approved' || pStatus === 'complete' || pStatus === 'active') status = 'active';
       else if (pStatus === 'canceled' || pStatus === 'cancelled') status = 'canceled';
       else if (pStatus === 'refunded' || pStatus === 'chargeback') status = 'expired';
-      else if (pStatus === 'overdue' || pStatus === 'delayed' || pStatus === 'expired') status = 'past_due';
+      else if (pStatus === 'overdue' || pStatus === 'delayed' || pStatus === 'expired' || pStatus === 'protested' || pStatus === 'dispute') status = 'past_due';
     }
   }
   if (!status) return null;

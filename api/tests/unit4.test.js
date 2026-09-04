@@ -121,6 +121,68 @@ test('Hotmart: eventos sin efecto devuelven null', () => {
   assert.equal(hotmart.mapEventToSubscription({}), null);
 });
 
+// V11: eventos adicionales del catálogo de webhooks de Hotmart (ver comentario
+// de cabecera en services/payments/hotmart.js sobre la fuente de cada uno).
+test('Hotmart: PURCHASE_COMPLETE -> active (alias de PURCHASE_APPROVED)', () => {
+  const sub = hotmart.mapEventToSubscription({
+    event: 'PURCHASE_COMPLETE',
+    data: { subscriber: { buyer: { email: 'a@b.com' } }, product: { id: 'premium' }, purchase: {} },
+  });
+  assert.equal(sub.status, 'active');
+});
+
+test('Hotmart: PURCHASE_DELAYED -> past_due (boleto vencido, aún no expira)', () => {
+  const sub = hotmart.mapEventToSubscription({
+    event: 'PURCHASE_DELAYED',
+    data: { product: { id: 'premium' }, purchase: {} },
+  });
+  assert.equal(sub.status, 'past_due');
+});
+
+test('Hotmart: PURCHASE_PROTEST -> past_due (disputa abierta, no corta el acceso de inmediato)', () => {
+  const sub = hotmart.mapEventToSubscription({
+    event: 'PURCHASE_PROTEST',
+    data: { product: { id: 'premium' }, purchase: {} },
+  });
+  assert.equal(sub.status, 'past_due');
+});
+
+test('Hotmart: SUBSCRIPTION_CANCELLATION -> canceled (nombre alternativo de SUBSCRIPTION_CANCELED)', () => {
+  const sub = hotmart.mapEventToSubscription({
+    event: 'SUBSCRIPTION_CANCELLATION',
+    data: { product: { id: 'premium' } },
+  });
+  assert.equal(sub.status, 'canceled');
+});
+
+test('Hotmart: SWITCH_PLAN toma el estado real de subscription.status', () => {
+  const sub = hotmart.mapEventToSubscription({
+    event: 'SWITCH_PLAN',
+    data: { product: { id: 'premium' }, subscription: { status: 'active' } },
+  });
+  assert.equal(sub.status, 'active');
+});
+
+test('Hotmart: UPDATE_SUBSCRIPTION_CHARGE_DATE refresca nextBillingDate sin cambiar el status', () => {
+  const sub = hotmart.mapEventToSubscription({
+    event: 'UPDATE_SUBSCRIPTION_CHARGE_DATE',
+    data: {
+      product: { id: 'premium' },
+      subscription: { status: 'active' },
+      purchase: { next_cycle_date: '2026-10-01T00:00:00Z' },
+    },
+  });
+  assert.equal(sub.status, 'active');
+  assert.equal(sub.nextBillingDate, new Date('2026-10-01T00:00:00Z').toISOString());
+});
+
+test('Hotmart: eventos informativos/de marketing se ignoran (nunca cambian el acceso)', () => {
+  for (const event of ['PURCHASE_BILLET_PRINTED', 'PURCHASE_OUT_OF_SHOPPING_CART', 'CLUB_FIRST_ACCESS', 'CLUB_MODULE_COMPLETED']) {
+    const sub = hotmart.mapEventToSubscription({ event, data: { product: { id: 'premium' } } });
+    assert.equal(sub, null, `${event} no debe generar un cambio de estado`);
+  }
+});
+
 test('Hotmart: START_SUBSCRIPTION_CREATION se ignora aunque traiga subscription.status=started', () => {
   const sub = hotmart.mapEventToSubscription({
     event: 'START_SUBSCRIPTION_CREATION',

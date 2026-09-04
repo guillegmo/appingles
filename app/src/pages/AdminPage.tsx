@@ -1,19 +1,9 @@
 import { Fragment, useEffect, useMemo, useState } from 'react';
-import { Plus, ListFilter, Rocket, Loader2, Users, Ban, CheckCircle2, KeyRound, Search, Eye, EyeOff, Check, X } from 'lucide-react';
-import {
-  generateContentDraft,
-  listContentDrafts,
-  publishContentDraft,
-  getAdminUsers,
-  setAdminUserStatus,
-  setAdminUserPassword,
-} from '../services/api';
+import { Loader2, Ban, CheckCircle2, KeyRound, Search, Eye, EyeOff, Check, X, Trash2, UserPlus, AlertTriangle } from 'lucide-react';
+import { getAdminUsers, setAdminUserStatus, setAdminUserPassword, deleteAdminUser, createAdminUser } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
-import type { AdminDraftSummary, AdminUserSummary } from '../types';
-
-const SKILLS = ['speaking', 'listening', 'vocabulary', 'grammar', 'conversation'];
-const SITUATIONS = ['travel', 'work', 'social', 'shopping', 'restaurant', 'phone', 'interviews'];
+import type { AdminUserSummary } from '../types';
 
 const PASSWORD_RULES = [
   { label: 'Mínimo 8 caracteres', test: (p: string) => p.length >= 8 },
@@ -23,13 +13,39 @@ const PASSWORD_RULES = [
   { label: 'Un carácter especial', test: (p: string) => /[^A-Za-z0-9]/.test(p) },
 ];
 
+// Ancho fijo para que los 3 botones de acción (Activar/Inactivar, Cambiar
+// contraseña, Borrar cuenta) queden simétricos en escritorio, sin importar
+// que "Cambiar contraseña" sea más largo que "Activar". En móvil ya son
+// simétricos porque todos usan w-full (ver UserActions con stack=true).
+const ACTION_BTN_WIDTH = 'w-[210px] whitespace-nowrap';
+
+function StatusBadge({ active }: { active: boolean }) {
+  return (
+    <span
+      className={`inline-block w-[70px] rounded-full px-2 py-0.5 text-center text-[10px] font-bold ${
+        active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+      }`}
+    >
+      {active ? 'activo' : 'inactivo'}
+    </span>
+  );
+}
+
+function PasswordChecklist({ password }: { password: string }) {
+  const checks = PASSWORD_RULES.map((r) => ({ label: r.label, ok: r.test(password) }));
+  return (
+    <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+      {checks.map((c) => (
+        <li key={c.label} className={`flex items-center gap-1 text-[11px] ${c.ok ? 'text-emerald-600' : 'text-slate-400'}`}>
+          {c.ok ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+          {c.label}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function AdminPage() {
-  const [tab, setTab] = useState<'generate' | 'drafts' | 'users'>('generate');
-  const [skill, setSkill] = useState('conversation');
-  const [situation, setSituation] = useState('social');
-  const [topic, setTopic] = useState('');
-  const [generating, setGenerating] = useState(false);
-  const [items, setItems] = useState<AdminDraftSummary[]>([]);
   const [users, setUsers] = useState<AdminUserSummary[]>([]);
   const [userActionId, setUserActionId] = useState<string | null>(null);
   const [userQuery, setUserQuery] = useState('');
@@ -39,20 +55,21 @@ export function AdminPage() {
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
+  const [deleteConfirmFor, setDeleteConfirmFor] = useState<AdminUserSummary | null>(null);
+
+  const [showCreate, setShowCreate] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [createEmail, setCreateEmail] = useState('');
+  const [createName, setCreateName] = useState('');
+  const [createPlan, setCreatePlan] = useState<'reto21' | 'premium-lifetime'>('premium-lifetime');
+  const [createPassword, setCreatePassword] = useState('');
+  const [showCreatePassword, setShowCreatePassword] = useState(false);
+
   const filteredUsers = useMemo(() => {
     const q = userQuery.trim().toLowerCase();
     if (!q) return users;
     return users.filter((u) => (u.email ?? u.userId).toLowerCase().includes(q));
   }, [users, userQuery]);
-
-  const load = async (status?: string) => {
-    try {
-      const res = await listContentDrafts(status);
-      setItems(res.items);
-    } catch (e) {
-      setErr((e as Error).message);
-    }
-  };
 
   const loadUsers = async () => {
     try {
@@ -64,9 +81,8 @@ export function AdminPage() {
   };
 
   useEffect(() => {
-    if (tab === 'drafts') load();
-    if (tab === 'users') loadUsers();
-  }, [tab]);
+    loadUsers();
+  }, []);
 
   const handleToggleStatus = async (u: AdminUserSummary) => {
     setUserActionId(u.userId);
@@ -113,277 +129,364 @@ export function AdminPage() {
     }
   };
 
-  const handleGenerate = async () => {
-    if (!topic.trim() || generating) return;
-    setGenerating(true);
-    setMsg(null);
+  const confirmDeleteAccount = async () => {
+    const u = deleteConfirmFor;
+    if (!u) return;
+    const label = u.email ?? u.userId;
+    setUserActionId(u.userId);
     setErr(null);
+    setMsg(null);
     try {
-      const res = await generateContentDraft({ skill, situation, topic: topic.trim() });
-      setMsg(`Draft creado: ${res.lesson.title} (${res.lesson.mock ? 'mock dev' : 'Groq'}). Revisa y publica.`);
-      setTopic('');
+      await deleteAdminUser(u.userId);
+      setMsg(`Cuenta de ${label} borrada por completo.`);
+      setUsers((prev) => prev.filter((x) => x.userId !== u.userId));
+      setDeleteConfirmFor(null);
     } catch (e) {
       setErr((e as Error).message);
     } finally {
-      setGenerating(false);
+      setUserActionId(null);
     }
   };
 
-  const handlePublish = async (id: string) => {
+  const createChecks = PASSWORD_RULES.map((r) => ({ label: r.label, ok: r.test(createPassword) }));
+  const createPasswordValid = createChecks.every((c) => c.ok);
+  const createEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(createEmail.trim());
+
+  const resetCreateForm = () => {
+    setCreateEmail('');
+    setCreateName('');
+    setCreatePlan('premium-lifetime');
+    setCreatePassword('');
+    setShowCreatePassword(false);
+  };
+
+  const handleCreateUser = async () => {
+    if (!createEmailValid || !createPasswordValid || creating) return;
+    setCreating(true);
     setErr(null);
+    setMsg(null);
     try {
-      await publishContentDraft(id);
-      setMsg('Lección publicada. Ya aparece en Continuous Learning.');
-      load();
+      const res = await createAdminUser({
+        email: createEmail.trim(),
+        name: createName.trim() || undefined,
+        plan: createPlan,
+        password: createPassword,
+      });
+      setMsg(
+        `Cuenta creada para ${res.user.email}. Compártele la contraseña por un canal seguro — se le pedirá cambiarla al entrar.`,
+      );
+      setUsers((prev) => [res.user, ...prev]);
+      resetCreateForm();
+      setShowCreate(false);
     } catch (e) {
       setErr((e as Error).message);
+    } finally {
+      setCreating(false);
     }
   };
+
+  // Botones de acción, reutilizados en la tarjeta móvil y en la fila de la
+  // tabla de escritorio. `stack` los pone en columna a ancho completo (móvil).
+  function UserActions({ u, stack }: { u: AdminUserSummary; stack: boolean }) {
+    const busy = userActionId === u.userId;
+    const widthClass = stack ? 'w-full' : ACTION_BTN_WIDTH;
+    return (
+      <div className={stack ? 'flex flex-col gap-1.5' : 'flex flex-wrap gap-1.5'}>
+        <Button size="sm" variant={u.active ? 'danger' : 'primary'} onClick={() => handleToggleStatus(u)} disabled={busy} className={widthClass}>
+          {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : u.active ? <Ban className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
+          {u.active ? 'Inactivar' : 'Activar'}
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => openPasswordForm(u)} disabled={busy} className={widthClass}>
+          <KeyRound className="h-3.5 w-3.5" /> Cambiar contraseña
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setDeleteConfirmFor(u)}
+          disabled={busy}
+          className={`${widthClass} border-rose-200 text-rose-600 hover:bg-rose-50`}
+        >
+          <Trash2 className="h-3.5 w-3.5" /> Borrar cuenta
+        </Button>
+      </div>
+    );
+  }
+
+  function PasswordAssignForm({ u }: { u: AdminUserSummary }) {
+    const busy = userActionId === u.userId;
+    return (
+      <div className="mt-2 rounded-xl bg-slate-50 p-3">
+        <p className="mb-2 text-xs text-slate-500">
+          Asigna una contraseña temporal para <strong>{u.email ?? u.userId}</strong>. Al entrar con ella, se le
+          pedirá crear una nueva que solo esa persona conozca.
+        </p>
+        <div className="flex flex-wrap items-start gap-2">
+          <div className="relative">
+            <input
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              type={showNewPassword ? 'text' : 'password'}
+              placeholder="Nueva contraseña temporal"
+              autoComplete="new-password"
+              className="h-10 w-full min-w-0 rounded-xl border border-slate-300 bg-white px-3 pr-10 text-sm outline-none focus:border-primary-500 sm:w-56"
+            />
+            <button
+              type="button"
+              onClick={() => setShowNewPassword((v) => !v)}
+              aria-label={showNewPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-slate-400 hover:text-slate-600"
+            >
+              {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+          <Button size="sm" onClick={() => handleSetPassword(u)} disabled={!passwordValid || busy}>
+            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <KeyRound className="h-3.5 w-3.5" />}
+            Asignar
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setPasswordEditFor(null)}>
+            Cancelar
+          </Button>
+        </div>
+        <PasswordChecklist password={newPassword} />
+      </div>
+    );
+  }
+
+  function DeleteConfirmModal() {
+    if (!deleteConfirmFor) return null;
+    const u = deleteConfirmFor;
+    const label = u.email ?? u.userId;
+    const busy = userActionId === u.userId;
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
+        onClick={() => !busy && setDeleteConfirmFor(null)}
+      >
+        <div
+          className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl"
+          onClick={(e) => e.stopPropagation()}
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="delete-modal-title"
+        >
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+            <AlertTriangle className="h-6 w-6" />
+          </div>
+          <h2 id="delete-modal-title" className="mt-3 text-center text-base font-bold">
+            ¿Borrar esta cuenta?
+          </h2>
+          <p className="mt-2 text-center text-sm text-slate-600">
+            Vas a borrar <strong className="break-all">{label}</strong> permanentemente: todos sus datos (progreso,
+            XP, vocabulario, etc.) y su acceso de inicio de sesión.
+          </p>
+          <p className="mt-1 text-center text-xs font-semibold text-rose-600">Esta acción no se puede deshacer.</p>
+          <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+            <Button variant="outline" className="w-full sm:flex-1" onClick={() => setDeleteConfirmFor(null)} disabled={busy}>
+              Cancelar
+            </Button>
+            <Button
+              variant="danger"
+              className="w-full whitespace-nowrap sm:flex-1"
+              onClick={confirmDeleteAccount}
+              disabled={busy}
+            >
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+              Borrar cuenta
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-5">
-      <h1 className="text-xl font-bold">Admin · Contenido</h1>
-      <p className="text-sm text-slate-500">Generación IA con flujo draft → publicado.</p>
-
-      <div className="mt-3 flex gap-2">
-        <button
-          onClick={() => setTab('generate')}
-          className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold ${
-            tab === 'generate' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
-          }`}
-        >
-          <Plus className="h-3.5 w-3.5" /> Generar
-        </button>
-        <button
-          onClick={() => setTab('drafts')}
-          className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold ${
-            tab === 'drafts' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
-          }`}
-        >
-          <ListFilter className="h-3.5 w-3.5" /> Borradores ({items.length})
-        </button>
-        <button
-          onClick={() => setTab('users')}
-          className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold ${
-            tab === 'users' ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
-          }`}
-        >
-          <Users className="h-3.5 w-3.5" /> Usuarios ({users.length})
-        </button>
+      <DeleteConfirmModal />
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold">Admin · Usuarios</h1>
+          <p className="text-sm text-slate-500">Acceso, activación, contraseñas y borrado de cuentas.</p>
+        </div>
+        <Button size="sm" onClick={() => setShowCreate((v) => !v)}>
+          <UserPlus className="h-3.5 w-3.5" /> Crear usuario
+        </Button>
       </div>
 
       {msg && <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-700">{msg}</p>}
       {err && <p className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700">{err}</p>}
 
-      {tab === 'generate' && (
+      {showCreate && (
         <Card className="mt-4">
-          <p className="text-sm font-semibold">Nueva lección</p>
+          <p className="text-sm font-semibold">Crear cuenta nueva</p>
+          <p className="mt-0.5 text-xs text-slate-500">
+            Crea el acceso directamente (sin pasar por Hotmart). Le pedirá cambiar la contraseña al entrar.
+          </p>
           <div className="mt-3 space-y-3">
             <div>
-              <p className="mb-1 text-xs font-semibold text-slate-500">Skill</p>
+              <label htmlFor="create-email" className="mb-1 block text-xs font-semibold text-slate-500">
+                Correo *
+              </label>
+              <input
+                id="create-email"
+                value={createEmail}
+                onChange={(e) => setCreateEmail(e.target.value)}
+                type="email"
+                placeholder="persona@correo.com"
+                className="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none focus:border-primary-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="create-name" className="mb-1 block text-xs font-semibold text-slate-500">
+                Nombre (opcional)
+              </label>
+              <input
+                id="create-name"
+                value={createName}
+                onChange={(e) => setCreateName(e.target.value)}
+                placeholder="Nombre completo"
+                className="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none focus:border-primary-500"
+              />
+            </div>
+            <div>
+              <p className="mb-1 text-xs font-semibold text-slate-500">Plan</p>
               <div className="flex flex-wrap gap-1.5">
-                {SKILLS.map((s) => (
+                {(['premium-lifetime', 'reto21'] as const).map((p) => (
                   <button
-                    key={s}
-                    onClick={() => setSkill(s)}
+                    key={p}
+                    type="button"
+                    onClick={() => setCreatePlan(p)}
                     className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${
-                      skill === s ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                      createPlan === p ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
-                    {s}
+                    {p === 'premium-lifetime' ? 'Premium (de por vida)' : 'Reto 21 días'}
                   </button>
                 ))}
               </div>
             </div>
             <div>
-              <p className="mb-1 text-xs font-semibold text-slate-500">Situation</p>
-              <div className="flex flex-wrap gap-1.5">
-                {SITUATIONS.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setSituation(s)}
-                    className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${
-                      situation === s ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
+              <label htmlFor="create-password" className="mb-1 block text-xs font-semibold text-slate-500">
+                Contraseña inicial *
+              </label>
+              <div className="relative">
+                <input
+                  id="create-password"
+                  value={createPassword}
+                  onChange={(e) => setCreatePassword(e.target.value)}
+                  type={showCreatePassword ? 'text' : 'password'}
+                  placeholder="Contraseña temporal"
+                  autoComplete="new-password"
+                  className="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 pr-10 text-sm outline-none focus:border-primary-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCreatePassword((v) => !v)}
+                  aria-label={showCreatePassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-slate-400 hover:text-slate-600"
+                >
+                  {showCreatePassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
+              <PasswordChecklist password={createPassword} />
             </div>
-            <input
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              placeholder="Topic, p.ej. 'Ordering coffee'"
-              className="h-11 w-full rounded-xl border border-slate-300 px-4 text-sm outline-none focus:border-primary-500"
-            />
-            <Button className="w-full" size="lg" onClick={handleGenerate} disabled={generating || !topic.trim()}>
-              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
-              Generar borrador
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                className="flex-1"
+                onClick={handleCreateUser}
+                disabled={!createEmailValid || !createPasswordValid || creating}
+              >
+                {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
+                Crear cuenta
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setShowCreate(false);
+                  resetCreateForm();
+                }}
+              >
+                Cancelar
+              </Button>
+            </div>
           </div>
         </Card>
       )}
 
-      {tab === 'drafts' && (
-        <div className="mt-4 space-y-2">
-          {items.map((d) => (
-            <Card key={d.id} className="flex items-center gap-3">
-              <div className="flex-1">
-                <p className="text-sm font-semibold">{d.title}</p>
-                <p className="text-xs capitalize text-slate-500">
-                  {d.skill} · {d.situation}
-                  <span className={`ml-2 rounded-full px-2 py-0.5 text-[10px] font-bold ${d.status === 'published' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                    {d.status}
-                  </span>
-                </p>
-              </div>
-              {d.status === 'draft' && (
-                <Button size="sm" onClick={() => handlePublish(d.id)}>
-                  Publicar
-                </Button>
-              )}
-            </Card>
-          ))}
-          {items.length === 0 && <p className="py-6 text-center text-sm text-slate-500">Sin drafts. Genera uno.</p>}
+      <div className="mt-4">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            value={userQuery}
+            onChange={(e) => setUserQuery(e.target.value)}
+            placeholder="Buscar por correo (parte o completo)…"
+            className="h-10 w-full rounded-xl border border-slate-300 bg-white pl-9 pr-4 text-sm outline-none focus:border-primary-500"
+          />
         </div>
-      )}
 
-      {tab === 'users' && (
-        <div className="mt-4">
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input
-              value={userQuery}
-              onChange={(e) => setUserQuery(e.target.value)}
-              placeholder="Buscar por correo (parte o completo)…"
-              className="h-10 w-full rounded-xl border border-slate-300 bg-white pl-9 pr-4 text-sm outline-none focus:border-primary-500"
-            />
-          </div>
+        {/* Móvil: tarjetas apiladas — una tabla no cabe bien con 3 botones de acción. */}
+        <div className="mt-3 space-y-2 md:hidden">
+          {filteredUsers.map((u) => (
+            <div key={u.userId} className="rounded-2xl border border-slate-200 bg-white p-3">
+              <div className="flex items-start justify-between gap-2">
+                <p className="min-w-0 truncate text-sm font-semibold" title={u.email ?? u.userId}>
+                  {u.email ?? u.userId}
+                </p>
+                <StatusBadge active={u.active} />
+              </div>
+              <p className="mt-0.5 text-xs capitalize text-slate-500">{u.plan}</p>
+              <div className="mt-2">
+                <UserActions u={u} stack />
+              </div>
+              {passwordEditFor === u.userId && <PasswordAssignForm u={u} />}
+            </div>
+          ))}
+        </div>
 
-          <div className="mt-3 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                <tr>
-                  <th className="px-3 py-2">Correo</th>
-                  <th className="px-3 py-2">Plan</th>
-                  <th className="px-3 py-2">Estado</th>
-                  <th className="px-3 py-2">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredUsers.map((u) => (
-                  <Fragment key={u.userId}>
-                    <tr className="align-top hover:bg-slate-50/70">
-                      <td className="max-w-[220px] truncate px-3 py-2 font-medium" title={u.email ?? u.userId}>
-                        {u.email ?? u.userId}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-2 capitalize text-slate-500">{u.plan}</td>
-                      <td className="whitespace-nowrap px-3 py-2">
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                            u.active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
-                          }`}
-                        >
-                          {u.active ? 'activo' : 'inactivo'}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2">
-                        <div className="flex flex-wrap gap-1.5">
-                          <Button
-                            size="sm"
-                            variant={u.active ? 'danger' : 'primary'}
-                            onClick={() => handleToggleStatus(u)}
-                            disabled={userActionId === u.userId}
-                          >
-                            {userActionId === u.userId ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : u.active ? (
-                              <Ban className="h-3.5 w-3.5" />
-                            ) : (
-                              <CheckCircle2 className="h-3.5 w-3.5" />
-                            )}
-                            {u.active ? 'Inactivar' : 'Activar'}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => openPasswordForm(u)}
-                            disabled={userActionId === u.userId}
-                          >
-                            <KeyRound className="h-3.5 w-3.5" /> Cambiar contraseña
-                          </Button>
-                        </div>
+        {/* Escritorio: tabla compacta a todo el ancho disponible. */}
+        <div className="mt-3 hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white md:block">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="px-3 py-2">Correo</th>
+                <th className="px-3 py-2">Plan</th>
+                <th className="px-3 py-2">Estado</th>
+                <th className="px-3 py-2">Acciones</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredUsers.map((u) => (
+                <Fragment key={u.userId}>
+                  <tr className="align-top hover:bg-slate-50/70">
+                    <td className="max-w-[220px] truncate px-3 py-2 font-medium" title={u.email ?? u.userId}>
+                      {u.email ?? u.userId}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 capitalize text-slate-500">{u.plan}</td>
+                    <td className="whitespace-nowrap px-3 py-2">
+                      <StatusBadge active={u.active} />
+                    </td>
+                    <td className="px-3 py-2">
+                      <UserActions u={u} stack={false} />
+                    </td>
+                  </tr>
+                  {passwordEditFor === u.userId && (
+                    <tr>
+                      <td colSpan={4} className="px-3 pb-3">
+                        <PasswordAssignForm u={u} />
                       </td>
                     </tr>
-                    {passwordEditFor === u.userId && (
-                      <tr>
-                        <td colSpan={4} className="bg-slate-50 px-3 py-3">
-                          <p className="mb-2 text-xs text-slate-500">
-                            Asigna una contraseña temporal para <strong>{u.email ?? u.userId}</strong>. Al entrar con
-                            ella, se le pedirá crear una nueva que solo esa persona conozca.
-                          </p>
-                          <div className="flex flex-wrap items-start gap-2">
-                            <div className="relative">
-                              <input
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                type={showNewPassword ? 'text' : 'password'}
-                                placeholder="Nueva contraseña temporal"
-                                autoComplete="new-password"
-                                className="h-10 w-56 rounded-xl border border-slate-300 bg-white px-3 pr-10 text-sm outline-none focus:border-primary-500"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowNewPassword((v) => !v)}
-                                aria-label={showNewPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                                className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-slate-400 hover:text-slate-600"
-                              >
-                                {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                              </button>
-                            </div>
-                            <Button
-                              size="sm"
-                              onClick={() => handleSetPassword(u)}
-                              disabled={!passwordValid || userActionId === u.userId}
-                            >
-                              {userActionId === u.userId ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                              ) : (
-                                <KeyRound className="h-3.5 w-3.5" />
-                              )}
-                              Asignar
-                            </Button>
-                            <Button size="sm" variant="ghost" onClick={() => setPasswordEditFor(null)}>
-                              Cancelar
-                            </Button>
-                          </div>
-                          <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-                            {passwordChecks.map((c) => (
-                              <li
-                                key={c.label}
-                                className={`flex items-center gap-1 text-[11px] ${c.ok ? 'text-emerald-600' : 'text-slate-400'}`}
-                              >
-                                {c.ok ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                                {c.label}
-                              </li>
-                            ))}
-                          </ul>
-                        </td>
-                      </tr>
-                    )}
-                  </Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {filteredUsers.length === 0 && (
-            <p className="py-6 text-center text-sm text-slate-500">
-              {users.length === 0 ? 'Sin usuarios registrados.' : 'Ningún usuario coincide con la búsqueda.'}
-            </p>
-          )}
+                  )}
+                </Fragment>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
+
+        {filteredUsers.length === 0 && (
+          <p className="py-6 text-center text-sm text-slate-500">
+            {users.length === 0 ? 'Sin usuarios registrados.' : 'Ningún usuario coincide con la búsqueda.'}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

@@ -9,6 +9,7 @@ const contentGenerator = require('../services/contentGenerator');
 const store = require('../lib/store');
 const subscriptionService = require('../services/subscriptionService');
 const provisioning = require('../services/provisioning');
+const accountDeletion = require('../services/accountDeletion');
 const analytics = require('../services/analytics');
 const { ACCESS_STATUSES } = require('../services/hotmartProcessor');
 const { authenticate, invalidateSubscriptionCache } = require('../middleware/auth');
@@ -21,6 +22,17 @@ function requireAdmin(req, res, next) {
 }
 
 router.use(authenticate, requireAdmin);
+
+// Mismas reglas que ActivatePage.tsx (frontend) — duplicadas a propósito:
+// la validación del backend es la que de verdad importa (nunca confiar solo
+// en el cliente), la del frontend es solo para feedback inmediato.
+const PASSWORD_RULES = [
+  { test: (p) => p.length >= 8, label: 'mínimo 8 caracteres' },
+  { test: (p) => /[A-Z]/.test(p), label: 'una mayúscula' },
+  { test: (p) => /[a-z]/.test(p), label: 'una minúscula' },
+  { test: (p) => /[0-9]/.test(p), label: 'un número' },
+  { test: (p) => /[^A-Za-z0-9]/.test(p), label: 'un carácter especial' },
+];
 
 // POST /admin/content/generate — body: { skill, situation, topic }
 router.post('/content/generate', async (req, res) => {
@@ -69,6 +81,77 @@ router.get('/users', async (req, res) => {
   res.json({ items, total: items.length });
 });
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CREATABLE_PLANS = ['reto21', 'premium-lifetime'];
+
+// POST /admin/users -- body: { email, name?, plan, password }. Crea una
+// cuenta nueva completa: usuario de Firebase Auth con esa contraseña +
+// acceso activo (subscriptions), igual que si hubiera comprado. Solo para
+// correos que AÚN NO tienen cuenta (409 si ya existe — usa "Cambiar
+// contraseña" o "Activar" en la lista para gestionar una cuenta existente).
+// Como el admin asigna la contraseña, se marca mustChangePassword.
+router.post('/users', async (req, res) => {
+  const { email, name, plan, password } = req.body || {};
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  if (!EMAIL_RE.test(normalizedEmail)) {
+    return res.status(400).json({ error: 'email_invalido' });
+  }
+  const chosenPlan = CREATABLE_PLANS.includes(plan) ? plan : 'premium-lifetime';
+  const failed = PASSWORD_RULES.filter((r) => !r.test(String(password || '')));
+  if (failed.length) {
+    return res.status(400).json({ error: 'password_invalida', requirements: failed.map((r) => r.label) });
+  }
+
+  let userId;
+  let created;
+  try {
+    ({ userId, created } = await provisioning.findOrCreateAuthUser({ email: normalizedEmail, name }));
+  } catch (err) {
+    return res.status(500).json({ error: 'create_failed', message: err.message });
+  }
+  if (!created) {
+    return res.status(409).json({ error: 'usuario_ya_existe', message: 'Ya existe una cuenta con ese correo.' });
+  }
+
+  try {
+    await provisioning.setUserPassword(userId, password);
+  } catch (err) {
+    return res.status(500).json({ error: 'set_password_failed', message: err.message });
+  }
+
+  const updatedAt = new Date().toISOString();
+  const subscription = {
+    buyerEmail: normalizedEmail,
+    buyerName: name || null,
+    plan: chosenPlan,
+    status: 'active',
+    provider: 'admin-grant',
+    mustChangePassword: true,
+    updatedAt,
+  };
+  await store.setDoc('subscriptions', userId, subscription);
+  invalidateSubscriptionCache(userId);
+
+  await analytics.trackEvent({
+    userId,
+    event: 'admin_user_created',
+    meta: { by: req.user.id, plan: chosenPlan },
+  }).catch(() => {});
+
+  res.status(201).json({
+    ok: true,
+    user: {
+      userId,
+      email: normalizedEmail,
+      name: name || null,
+      plan: chosenPlan,
+      status: 'active',
+      active: true,
+      updatedAt,
+    },
+  });
+});
+
 // POST /admin/users/:userId/status -- body: { status }. Activa/inactiva el
 // acceso del usuario (no borra nada: solo cambia el estado de su suscripción,
 // igual que un evento real de Hotmart lo haría).
@@ -94,17 +177,6 @@ router.post('/users/:userId/status', async (req, res) => {
   }).catch(() => {});
   res.json({ ok: true, subscription: next });
 });
-
-// Mismas reglas que ActivatePage.tsx (frontend) — duplicadas a propósito:
-// la validación del backend es la que de verdad importa (nunca confiar solo
-// en el cliente), la del frontend es solo para feedback inmediato.
-const PASSWORD_RULES = [
-  { test: (p) => p.length >= 8, label: 'mínimo 8 caracteres' },
-  { test: (p) => /[A-Z]/.test(p), label: 'una mayúscula' },
-  { test: (p) => /[a-z]/.test(p), label: 'una minúscula' },
-  { test: (p) => /[0-9]/.test(p), label: 'un número' },
-  { test: (p) => /[^A-Za-z0-9]/.test(p), label: 'un carácter especial' },
-];
 
 // POST /admin/users/:userId/set-password -- body: { password }. El admin
 // asigna directamente una contraseña temporal (para dársela al usuario por
@@ -133,6 +205,43 @@ router.post('/users/:userId/set-password', async (req, res) => {
     meta: { by: req.user.id },
   }).catch(() => {});
   res.json({ ok: true });
+});
+
+// DELETE /admin/users/:userId -- borra la cuenta POR COMPLETO: todos sus datos
+// en Firestore (mismo alcance que el "derecho al olvido" de routes/privacy.js,
+// ver services/accountDeletion.js) Y la cuenta de Firebase Auth (ya no puede
+// iniciar sesión). Irreversible.
+router.delete('/users/:userId', async (req, res) => {
+  const { userId } = req.params;
+  if (userId === req.user.id) {
+    return res.status(400).json({ error: 'no_puedes_borrar_tu_propia_cuenta' });
+  }
+  const sub = await store.getDoc('subscriptions', userId);
+  const email = sub?.buyerEmail || null;
+
+  const deletedDocs = await accountDeletion.deleteAllUserData(userId);
+  invalidateSubscriptionCache(userId);
+
+  let authDeleted = true;
+  let authError = null;
+  try {
+    await provisioning.deleteAuthUser(userId);
+  } catch (err) {
+    // auth/user-not-found: la cuenta de Auth ya no existía (dato huérfano en
+    // Firestore) — no es un fallo real, los datos igual se borraron.
+    if (err?.code !== 'auth/user-not-found') {
+      authDeleted = false;
+      authError = err.message;
+    }
+  }
+
+  await analytics.trackEvent({
+    userId,
+    event: 'admin_user_deleted',
+    meta: { by: req.user.id, email, deletedDocs, authDeleted },
+  }).catch(() => {});
+
+  res.json({ ok: true, deletedDocs, authDeleted, authError });
 });
 
 module.exports = router;

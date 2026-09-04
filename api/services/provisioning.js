@@ -139,4 +139,16 @@ async function setUserPassword(userId, password) {
   await auth.updateUser(userId, { password });
 }
 
-module.exports = { findOrCreateAuthUser, generateActivationLink, activationUrl, setUserPassword };
+// Borra la cuenta de Firebase Auth (panel de admin: "Borrar cuenta"). No
+// borra Firestore — eso lo hace services/accountDeletion.js aparte. Irreversible.
+async function deleteAuthUser(userId) {
+  const auth = await getAdminAuth();
+  if (!auth) {
+    // Dev sin Firebase: no hay Auth real que borrar.
+    console.log(`[provisioning] delete_auth_user (dev, sin Firebase) userId=${userId}`);
+    return;
+  }
+  await auth.deleteUser(userId);
+}
+
+module.exports = { findOrCreateAuthUser, generateActivationLink, activationUrl, setUserPassword, deleteAuthUser };

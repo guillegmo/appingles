@@ -469,6 +469,17 @@ export async function getAdminUsers(): Promise<{ items: import('../types').Admin
   return data;
 }
 
+// Crea una cuenta nueva con acceso activo (solo si el correo aún no existe).
+export async function createAdminUser(payload: {
+  email: string;
+  name?: string;
+  plan: 'reto21' | 'premium-lifetime';
+  password: string;
+}): Promise<{ ok: boolean; user: import('../types').AdminUserSummary }> {
+  const { data } = await api.post('/admin/users', payload);
+  return data;
+}
+
 export async function setAdminUserStatus(userId: string, status: string): Promise<{ ok: boolean }> {
   const { data } = await api.post(`/admin/users/${userId}/status`, { status });
   return data;
@@ -476,6 +487,13 @@ export async function setAdminUserStatus(userId: string, status: string): Promis
 
 export async function setAdminUserPassword(userId: string, password: string): Promise<{ ok: boolean }> {
   const { data } = await api.post(`/admin/users/${userId}/set-password`, { password });
+  return data;
+}
+
+// Borra la cuenta POR COMPLETO (todos sus datos + el login de Firebase Auth).
+// Irreversible — el caller debe confirmar con el admin antes de llamarla.
+export async function deleteAdminUser(userId: string): Promise<{ ok: boolean; deletedDocs: number; authDeleted: boolean }> {
+  const { data } = await api.delete(`/admin/users/${userId}`);
   return data;
 }
 

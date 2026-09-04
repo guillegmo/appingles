@@ -118,27 +118,35 @@ function isRenewal(event, data) {
   return Boolean(data?.purchase?.subscription && recurrency >= 1 && data?.subscription?.created_date);
 }
 
-// Verifica firma HMAC. En Hotmart, el header puede ser 'x-hotmart-signature' o
-// 'x-hotmart-notification-secret', o el token como query param (legacy).
+// Verifica el Hottok. Hotmart lo envía de formas distintas según la versión
+// del webhook/cuenta: como header ('x-hotmart-signature', 'x-hotmart-notification-secret'
+// o 'x-hotmart-hottok'), o dentro del propio cuerpo JSON como campo `hottok`
+// (Postback clásico V1 — el más común en cuentas antiguas). Se acepta
+// cualquiera de las dos ubicaciones para no depender de adivinar cuál usa
+// cada cuenta.
 function verifyWebhook({ headers = {}, rawBody = '' }) {
   const SECRET = webhookSecret();
+  const payload = safeJsonParse(rawBody) || {};
   if (!SECRET) {
     if (process.env.NODE_ENV === 'production') {
       return { valid: false, reason: 'HOTMART_WEBHOOK_SECRET no configurado' };
     }
-    return { valid: true, payload: safeJsonParse(rawBody) || {}, dev: true };
+    return { valid: true, payload, dev: true };
   }
 
-  const signature = headers['x-hotmart-signature'] || headers['x-hotmart-notification-secret'] || '';
+  const headerSignature =
+    headers['x-hotmart-signature'] || headers['x-hotmart-notification-secret'] || headers['x-hotmart-hottok'] || '';
+  const bodyHottok = payload?.hottok || payload?.data?.hottok || '';
+  const signature = headerSignature || bodyHottok;
   if (!signature) return { valid: false, reason: 'Firma ausente' };
 
   const expected = crypto.createHmac('sha256', SECRET).update(rawBody).digest('hex');
-  const provided = signature.toLowerCase();
+  const provided = String(signature).toLowerCase();
   const TOKEN = webhookToken();
   const valid = provided === expected || (TOKEN && provided === TOKEN.toLowerCase());
   if (!valid) return { valid: false, reason: 'Firma inválida' };
 
-  return { valid: true, payload: safeJsonParse(rawBody) || {} };
+  return { valid: true, payload };
 }
 
 // Estados reales autoritativos (los eventos que sí cambian la suscripción).

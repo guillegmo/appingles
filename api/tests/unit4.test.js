@@ -216,6 +216,34 @@ test('Hotmart: firma HMAC válida/inválida', () => {
   delete require.cache[modPath];
 });
 
+// Regresión: cuentas con el Postback clásico de Hotmart (V1) mandan el
+// Hottok DENTRO del cuerpo JSON como campo `hottok`, no como header. Sin
+// este camino, esas cuentas recibían 401 "Firma ausente" en cada evento real
+// aunque HOTMART_WEBHOOK_TOKEN estuviera bien configurado.
+test('Hotmart: acepta el Hottok dentro del cuerpo JSON (Postback clásico, sin header)', () => {
+  const token = 'mi-hottok-de-verificacion';
+  process.env.HOTMART_WEBHOOK_SECRET = token;
+  process.env.HOTMART_WEBHOOK_TOKEN = token;
+  delete process.env.NODE_ENV;
+
+  const modPath = require.resolve('../services/payments/hotmart');
+  delete require.cache[modPath];
+  const hm = require('../services/payments/hotmart');
+
+  const body = JSON.stringify({ event: 'PURCHASE_APPROVED', hottok: token });
+  const ok = hm.verifyWebhook({ headers: {}, rawBody: body });
+  assert.equal(ok.valid, true);
+  assert.equal(ok.payload.event, 'PURCHASE_APPROVED');
+
+  const wrongToken = JSON.stringify({ event: 'PURCHASE_APPROVED', hottok: 'otro-valor' });
+  const bad = hm.verifyWebhook({ headers: {}, rawBody: wrongToken });
+  assert.equal(bad.valid, false);
+
+  delete process.env.HOTMART_WEBHOOK_SECRET;
+  delete process.env.HOTMART_WEBHOOK_TOKEN;
+  delete require.cache[modPath];
+});
+
 test('Subscription: estado efectivo con trial vencido', () => {
   const past = new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString();
   assert.equal(subscriptionService.effectiveStatus({ status: 'trialing', trialEnd: past }), 'expired');

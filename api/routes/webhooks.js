@@ -8,21 +8,6 @@ const router = express.Router();
 const hotmart = require('../services/payments/hotmart');
 const processor = require('../services/hotmartProcessor');
 
-// Solo NOMBRES de campos y headers presentes — nunca valores (evita loguear
-// el Hottok, la firma o datos del comprador). Ver comentario de uso abajo.
-function safeShapeForDebug(headers, rawBody) {
-  const relevantHeaders = Object.keys(headers || {}).filter((h) => /hotmart|hottok|signature/i.test(h));
-  const payload = hotmart.safeJsonParse(rawBody) || {};
-  return {
-    event: payload.event || null,
-    topLevelKeys: Object.keys(payload),
-    dataKeys: payload.data ? Object.keys(payload.data) : null,
-    hasTopLevelHottok: 'hottok' in payload,
-    hasDataHottok: !!(payload.data && 'hottok' in payload.data),
-    relevantHeaders,
-  };
-}
-
 // GET /webhooks/hotmart — el panel de Hotmart valida la URL con una petición
 // GET al guardarla (antes de que exista ningún evento real que enviar); sin
 // este handler, esa validación recibía el 404 genérico de Express (la ruta
@@ -42,14 +27,7 @@ router.post('/hotmart', async (req, res) => {
       rawBody,
     });
     if (!valid && !dev) {
-      // Diagnóstico temporal (V11.1): distintos tipos de evento de prueba de
-      // Hotmart están mandando el Hottok en formas distintas ("Firma ausente"
-      // en unos, 200 OK en otros) — se registra la FORMA del payload (nombres
-      // de campos, nunca valores de buyer/hottok/firma) para ubicar dónde
-      // viene realmente en el evento que está fallando, sin exponer datos
-      // sensibles en los logs.
-      const shape = safeShapeForDebug(req.headers, rawBody);
-      console.warn(`[hotmart] webhook_rejected reason=${reason} shape=${JSON.stringify(shape)}`);
+      console.warn(`[hotmart] webhook_rejected reason=${reason}`);
       return res.status(401).json({ error: 'invalid_signature', reason });
     }
 

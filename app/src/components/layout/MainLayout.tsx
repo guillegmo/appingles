@@ -52,7 +52,7 @@ export function MainLayout() {
       <div className="mx-auto flex min-h-screen max-w-lg flex-col md:ml-56 md:max-w-none md:flex-1">
         <Banner />
         <main className="flex-1 pb-28 md:pb-8">
-          <div className={cn('mx-auto w-full', !isAdminRoute && 'max-w-lg')}>
+          <div className={cn('mx-auto w-full', !isAdminRoute && 'max-w-lg md:max-w-3xl')}>
             <Outlet />
           </div>
         </main>

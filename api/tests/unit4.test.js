@@ -362,3 +362,48 @@ test('Provisioning: generateActivationLink funciona en producción con una URL r
   delete process.env.ACTIVATION_URL;
   delete require.cache[modPath];
 });
+
+// Regresión: si falla la AUTENTICACIÓN SMTP (credenciales inválidas/vencidas),
+// sendActivationEmail no lanza — cae a dry-run para no perder el enlace. Antes
+// del fix, ese fallback seguía devolviendo transport:'smtp', y
+// processHotmartEvent (mail.transport === 'smtp') reportaba
+// activationEmailSent:true pese a que el correo NUNCA llegó al cliente:
+// un falso positivo silencioso en el flujo de pago más crítico de la app.
+test('Mailer: fallo de autenticación SMTP cae a dry-run y se reporta como NO enviado', async () => {
+  process.env.MAIL_HOST = 'smtp.test.invalid';
+  process.env.MAIL_USER = 'user@test.invalid';
+  process.env.MAIL_PASSWORD = 'wrong-password';
+
+  const nodemailerPath = require.resolve('nodemailer');
+  const realNodemailer = require.cache[nodemailerPath];
+  require.cache[nodemailerPath] = {
+    id: nodemailerPath,
+    filename: nodemailerPath,
+    loaded: true,
+    exports: {
+      createTransport: () => ({
+        sendMail: async () => {
+          throw new Error('Invalid login: 535 5.7.8 Error: authentication failed');
+        },
+      }),
+    },
+  };
+
+  const mailerPath = require.resolve('../services/mailer');
+  delete require.cache[mailerPath];
+  const mailer = require('../services/mailer');
+
+  try {
+    const result = await mailer.sendActivationEmail({ to: 'cliente@example.com', link: 'https://x.test/activar' });
+    assert.equal(result.sent, false, 'un fallo de SMTP nunca debe reportarse como enviado');
+    assert.equal(result.transport, 'dryrun', 'debe caer a dryrun, no quedarse marcado como smtp');
+    assert.match(result.error, /authentication failed/);
+  } finally {
+    if (realNodemailer) require.cache[nodemailerPath] = realNodemailer;
+    else delete require.cache[nodemailerPath];
+    delete process.env.MAIL_HOST;
+    delete process.env.MAIL_USER;
+    delete process.env.MAIL_PASSWORD;
+    delete require.cache[mailerPath];
+  }
+});

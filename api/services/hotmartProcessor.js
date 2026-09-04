@@ -106,12 +106,21 @@ async function processHotmartEvent(payload) {
         name: mapped.buyerName,
         link,
       });
-      activationEmailSent = mail.transport === 'smtp';
+      // mail.sent (no mail.transport === 'smtp'): sendActivationEmail nunca
+      // lanza, incluso si falla la autenticación SMTP — cae a dry-run
+      // internamente y devuelve sent:false. Sin este chequeo explícito, un
+      // fallo real de SMTP en producción se reportaba como "enviado" (falso
+      // positivo) y el evento de analítica quedaba mal etiquetado como
+      // activation_email_sent en vez de _failed, sin ninguna alerta visible.
+      activationEmailSent = mail.sent === true;
       await analytics.trackEvent({
         userId,
-        event: 'activation_email_sent',
-        meta: { plan: result.subscription.plan, transport: mail.transport },
-      });
+        event: activationEmailSent ? 'activation_email_sent' : 'activation_email_failed',
+        meta: { plan: result.subscription.plan, transport: mail.transport, error: mail.error || null },
+      }).catch(() => {});
+      if (!activationEmailSent) {
+        console.error(`[hotmart] activation_email_not_delivered userId=${userId} transport=${mail.transport} error=${mail.error || 'sin detalle'}`);
+      }
     } catch (err) {
       console.error(`[hotmart] activation_email_failed userId=${userId} error=${err.message}`);
       await analytics.trackEvent({
@@ -165,7 +174,9 @@ async function resendActivationForEmail(email) {
   const mail = await mailer.sendActivationEmail({ to: normalized, link });
   await store.setDoc('activationRequests', normalized, { lastSentAt: new Date().toISOString() });
   await analytics.trackEvent({ userId, event: 'resend_requested', meta: {} }).catch(() => {});
-  return { sent: mail.transport === 'smtp', transport: mail.transport };
+  // mail.sent (no mail.transport === 'smtp'): mismo motivo que en processHotmartEvent
+  // — un fallo de autenticación SMTP cae a dry-run y no debe reportarse como enviado.
+  return { sent: mail.sent === true, transport: mail.transport };
 }
 
 module.exports = { processHotmartEvent, resendActivationForEmail, ACCESS_STATUSES };

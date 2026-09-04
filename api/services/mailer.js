@@ -114,9 +114,12 @@ async function sendActivationEmail({ to, name, link }) {
       return { sent: true, transport: 'smtp' };
     } catch (err) {
       console.error(`[mailer] activation_email_failed to=${to} error=${err.message}`);
-      // Fallback: registrar igualmente para que el enlace no se pierda.
+      // Fallback: registrar igualmente para que el enlace no se pierda. transport
+      // queda en 'dryrun' (no 'smtp') porque NO se entregó de verdad — de lo
+      // contrario el caller (activationEmailSent = mail.transport === 'smtp')
+      // reportaba un falso "enviado" cuando en realidad falló la autenticación.
       await recordDryRun({ to, link, note: 'smtp_fallback' });
-      return { sent: false, transport: 'smtp', error: err.message };
+      return { sent: false, transport: 'dryrun', error: err.message };
     }
   }
 

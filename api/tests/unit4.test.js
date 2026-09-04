@@ -274,3 +274,26 @@ test('Analytics: trackEvent falla con evento desconocido', async () => {
   const result = await analytics.trackEvent({ userId: 'u', event: 'nope' });
   assert.equal(result.ok, false);
 });
+
+// Regresión: el panel de Hotmart valida la URL del webhook con un GET al
+// guardarla. Sin GET /webhooks/hotmart, esa validación recibía el 404
+// genérico de Express (la ruta solo estaba registrada para POST) y Hotmart
+// reportaba la URL como inválida aunque el POST real funcionara bien.
+test('Webhook Hotmart: GET responde 200 (validación de URL del panel de Hotmart)', async () => {
+  process.env.AUTH_MODE = 'dev';
+  const express = require('express');
+  const webhooksRouter = require('../routes/webhooks');
+  const app = express();
+  app.use(express.json({ verify: (req, _res, buf) => { req.rawBody = buf.toString('utf8'); } }));
+  app.use('/webhooks', webhooksRouter);
+  const server = app.listen(0);
+  const port = server.address().port;
+  try {
+    const res = await fetch(`http://127.0.0.1:${port}/webhooks/hotmart`);
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.ok, true);
+  } finally {
+    server.close();
+  }
+});

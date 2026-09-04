@@ -8,6 +8,12 @@ const router = express.Router();
 const hotmart = require('../services/payments/hotmart');
 const processor = require('../services/hotmartProcessor');
 
+// GET /webhooks/hotmart — el panel de Hotmart valida la URL con una petición
+// GET al guardarla (antes de que exista ningún evento real que enviar); sin
+// este handler, esa validación recibía el 404 genérico de Express (la ruta
+// solo estaba registrada para POST) y Hotmart reportaba la URL como inválida.
+router.get('/hotmart', (req, res) => res.status(200).json({ ok: true }));
+
 // POST /webhooks/hotmart
 // Cuerpo firmado por Hotmart. Puede NO tener email si el evento no incluye buyer.
 // En dev (sin HOTMART_WEBHOOK_SECRET y NODE_ENV!=production) acepta sin firma

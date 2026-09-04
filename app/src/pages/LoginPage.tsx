@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { signInEmail, getToken } from '../services/firebase';
 import { trackAnalyticsEvent, registerSession } from '../services/api';
@@ -19,6 +19,7 @@ export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const finish = async (user: { uid: string; email: string | null; displayName: string | null }) => {
     authLog('AUTH_SUCCESS', { provider: 'email' });
@@ -83,15 +84,25 @@ export function LoginPage() {
           className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm outline-none focus:border-primary-500"
           required
         />
-        <input
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
-          placeholder="Contraseña"
-          className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm outline-none focus:border-primary-500"
-          required
-          minLength={6}
-        />
+        <div className="relative">
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Contraseña"
+            className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 pr-11 text-sm outline-none focus:border-primary-500"
+            required
+            minLength={6}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-400 hover:text-slate-600"
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
         <Button type="submit" className="w-full" size="lg" disabled={loading}>
           {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Entrando…</> : 'Iniciar mi reto'}
         </Button>

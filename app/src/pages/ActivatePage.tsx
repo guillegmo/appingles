@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { AlertCircle, Check, KeyRound, ShieldQuestion, X } from 'lucide-react';
+import { AlertCircle, Check, Eye, EyeOff, KeyRound, Loader2, ShieldQuestion, X } from 'lucide-react';
 import {
   confirmPasswordReset,
   signInWithEmailAndPassword,
@@ -42,6 +42,8 @@ export function ActivatePage() {
   const [localError, setLocalError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [phase, setPhase] = useState<Phase>(oobCode ? 'loading' : 'invalid-code');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const checks = PASSWORD_RULES.map((r) => ({ label: r.label, ok: r.test(password) }));
   const allValid = checks.every((c) => c.ok);
@@ -159,16 +161,26 @@ export function ActivatePage() {
           <label htmlFor="new-password" className="block text-xs font-semibold text-slate-600">
             Nueva contraseña
           </label>
-          <input
-            id="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            placeholder="Tu contraseña segura"
-            autoComplete="new-password"
-            className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm outline-none focus:border-primary-500"
-            required
-          />
+          <div className="relative">
+            <input
+              id="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Tu contraseña segura"
+              autoComplete="new-password"
+              className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 pr-11 text-sm outline-none focus:border-primary-500"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-400 hover:text-slate-600"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           <ul className="space-y-1 rounded-xl bg-slate-50 p-3">
             {checks.map((c) => (
               <li
@@ -183,19 +195,31 @@ export function ActivatePage() {
           <label htmlFor="confirm-password" className="block text-xs font-semibold text-slate-600">
             Confirmar contraseña
           </label>
-          <input
-            id="confirm-password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            type="password"
-            placeholder="Repite tu contraseña"
-            autoComplete="new-password"
-            className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm outline-none focus:border-primary-500"
-            required
-          />
+          <div className="relative">
+            <input
+              id="confirm-password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              type={showConfirm ? 'text' : 'password'}
+              placeholder="Repite tu contraseña"
+              autoComplete="new-password"
+              className="h-11 w-full rounded-xl border border-slate-300 bg-white px-4 pr-11 text-sm outline-none focus:border-primary-500"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm((v) => !v)}
+              aria-label={showConfirm ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-400 hover:text-slate-600"
+            >
+              {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           <Button type="submit" size="lg" disabled={loading || !allValid} className="w-full">
             {loading ? (
-              'Activando tu cuenta…'
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Activando tu cuenta…
+              </>
             ) : (
               <>
                 <KeyRound className="h-4 w-4" /> Crear mi contraseña y entrar

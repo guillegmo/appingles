@@ -99,6 +99,15 @@ async function findOrCreateAuthUser({ email, name }) {
 // confirmPasswordReset (SDK cliente).
 async function generateActivationLink(email) {
   const url = activationUrl();
+  // Red de seguridad: en producción, un ACTIVATION_URL mal configurado (o un
+  // script/prueba manual que herede una variable de entorno local por error)
+  // nunca debe terminar mandándole a un cliente real un enlace a localhost —
+  // mejor que falle aquí (se registra como activation_email_failed y el
+  // cliente puede pedir el reenvío) a que reciba un enlace que no lleva a
+  // ningún lado.
+  if (process.env.NODE_ENV === 'production' && /localhost|127\.0\.0\.1/i.test(url)) {
+    throw new Error(`activation_url_invalido_en_produccion: ${url}`);
+  }
   const auth = await getAdminAuth();
   if (!auth) {
     // Dev sin Firebase: enlace simulado apuntando a la misma página.

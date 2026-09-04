@@ -325,3 +325,40 @@ test('Webhook Hotmart: GET responde 200 (validación de URL del panel de Hotmart
     server.close();
   }
 });
+
+// Regresión: un ACTIVATION_URL apuntando a localhost (config errónea, o una
+// variable de entorno local heredada por error) nunca debe terminar
+// mandándole a un cliente real un enlace de activación roto en producción.
+test('Provisioning: generateActivationLink falla en producción si ACTIVATION_URL apunta a localhost', async () => {
+  process.env.NODE_ENV = 'production';
+  process.env.ACTIVATION_URL = 'http://localhost:5173/appingles/activar';
+  const modPath = require.resolve('../services/provisioning');
+  delete require.cache[modPath];
+  const provisioning = require('../services/provisioning');
+
+  await assert.rejects(
+    () => provisioning.generateActivationLink('cliente@example.com'),
+    /activation_url_invalido_en_produccion/,
+  );
+
+  delete process.env.NODE_ENV;
+  delete process.env.ACTIVATION_URL;
+  delete require.cache[modPath];
+});
+
+test('Provisioning: generateActivationLink funciona en producción con una URL real', async () => {
+  process.env.NODE_ENV = 'production';
+  process.env.ACTIVATION_URL = 'https://www.ingresosdigitalesit.com/appingles/activar';
+  const modPath = require.resolve('../services/provisioning');
+  delete require.cache[modPath];
+  const provisioning = require('../services/provisioning');
+
+  // Sin credenciales de Firebase Admin en este entorno de test -> cae al
+  // enlace simulado, pero debe pasar el resguardo y no lanzar.
+  const link = await provisioning.generateActivationLink('cliente@example.com');
+  assert.ok(link.startsWith('https://www.ingresosdigitalesit.com/appingles/activar'));
+
+  delete process.env.NODE_ENV;
+  delete process.env.ACTIVATION_URL;
+  delete require.cache[modPath];
+});

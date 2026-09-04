@@ -35,6 +35,7 @@ import { MemoryGamePage } from './pages/MemoryGamePage';
 import { ActivatePage } from './pages/ActivatePage';
 import { ResendActivationPage } from './pages/ResendActivationPage';
 import { NoAccessPage } from './pages/NoAccessPage';
+import { ChangePasswordPage } from './pages/ChangePasswordPage';
 import { hasProductAccess } from './utils/access';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -49,6 +50,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 // fuente de verdad es subscriptions/{uid} leída por refreshAll.
 function AccessGate({ children }: { children: React.ReactNode }) {
   const subscription = useAppStore((s) => s.subscription);
+  const mustChangePassword = useAppStore((s) => s.mustChangePassword);
   const error = useAppStore((s) => s.error);
   const refreshAll = useAppStore((s) => s.refreshAll);
   if (!subscription) {
@@ -68,6 +70,10 @@ function AccessGate({ children }: { children: React.ReactNode }) {
     return <LoadingScreen label="Verificando tu acceso…" />;
   }
   if (!hasProductAccess(subscription)) return <Navigate to="/sin-acceso" replace />;
+  // Contraseña asignada por un admin: se obliga a reemplazarla antes de
+  // dejar pasar a cualquier otra pantalla (el admin la conoce, así que no
+  // puede quedar como la contraseña definitiva de la cuenta).
+  if (mustChangePassword) return <Navigate to="/cambiar-contrasena" replace />;
   return <>{children}</>;
 }
 
@@ -218,6 +224,14 @@ export default function App() {
         <Route path="/login" element={user ? <Navigate to="/home" replace /> : <LoginPage />} />
         <Route path="/activar" element={<ActivatePage />} />
         <Route path="/activar-acceso" element={<ResendActivationPage />} />
+        <Route
+          path="/cambiar-contrasena"
+          element={
+            <RequireAuth>
+              <ChangePasswordPage />
+            </RequireAuth>
+          }
+        />
         <Route
           path="/sin-acceso"
           element={

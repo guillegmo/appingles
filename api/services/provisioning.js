@@ -124,4 +124,19 @@ async function generateActivationLink(email) {
   return fbLink;
 }
 
-module.exports = { findOrCreateAuthUser, generateActivationLink, activationUrl };
+// Asigna directamente una contraseña (panel de admin: "Cambiar contraseña").
+// A diferencia de generateActivationLink, aquí el backend SÍ conoce la
+// contraseña temporalmente (la escribió el admin) — por eso el caller debe
+// marcar mustChangePassword para forzar que el usuario la reemplace por una
+// que solo él conozca en cuanto entre.
+async function setUserPassword(userId, password) {
+  const auth = await getAdminAuth();
+  if (!auth) {
+    // Dev sin Firebase: no hay Auth real que actualizar.
+    console.log(`[provisioning] set_password (dev, sin Firebase) userId=${userId}`);
+    return;
+  }
+  await auth.updateUser(userId, { password });
+}
+
+module.exports = { findOrCreateAuthUser, generateActivationLink, activationUrl, setUserPassword };

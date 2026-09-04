@@ -1,17 +1,25 @@
-import { NavLink, Outlet } from 'react-router-dom';
-import { Home, Dumbbell, Bot, TrendingUp, User } from 'lucide-react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Home, Dumbbell, Bot, TrendingUp, User, ShieldCheck } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { Banner } from '../ui/Banner';
+import { useAppStore } from '../../store/useAppStore';
 
-const items = [
+const BASE_ITEMS = [
   { to: '/home', label: 'Inicio', icon: Home },
   { to: '/practice', label: 'Practicar', icon: Dumbbell },
   { to: '/tutor', label: 'Tutor IA', icon: Bot },
   { to: '/progress', label: 'Progreso', icon: TrendingUp },
   { to: '/profile', label: 'Perfil', icon: User },
 ];
+const ADMIN_ITEM = { to: '/admin', label: 'Admin', icon: ShieldCheck };
 
 export function MainLayout() {
+  const isAdmin = useAppStore((s) => s.isAdmin);
+  const items = isAdmin ? [...BASE_ITEMS, ADMIN_ITEM] : BASE_ITEMS;
+  // El panel de admin (lista de usuarios) necesita más ancho que el resto de
+  // la app (diseñada como un carrusel móvil de max-w-lg incluso en escritorio):
+  // ahí se deja usar todo el ancho disponible junto al sidebar.
+  const isAdminRoute = useLocation().pathname.startsWith('/admin');
   return (
     <div className="min-h-screen bg-slate-50 md:flex">
       {/* Panel lateral: solo en pantallas md+ (versión de PC). En móvil el
@@ -44,12 +52,17 @@ export function MainLayout() {
       <div className="mx-auto flex min-h-screen max-w-lg flex-col md:ml-56 md:max-w-none md:flex-1">
         <Banner />
         <main className="flex-1 pb-28 md:pb-8">
-          <div className="mx-auto w-full max-w-lg">
+          <div className={cn('mx-auto w-full', !isAdminRoute && 'max-w-lg')}>
             <Outlet />
           </div>
         </main>
         <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-slate-200/80 bg-white/90 backdrop-blur md:hidden">
-          <div className="mx-auto grid max-w-lg grid-cols-5 pb-[max(env(safe-area-inset-bottom),0.375rem)] pt-1.5">
+          <div
+            className={cn(
+              'mx-auto grid max-w-lg pb-[max(env(safe-area-inset-bottom),0.375rem)] pt-1.5',
+              isAdmin ? 'grid-cols-6' : 'grid-cols-5',
+            )}
+          >
             {items.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}

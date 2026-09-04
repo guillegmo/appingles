@@ -26,6 +26,8 @@ const EVENTS = [
   'account_activated',
   'resend_requested',
   'stats_viewed',
+  'admin_user_status_changed',
+  'admin_password_set',
 ];
 
 // Registra un evento de usuario. at es opcional (permite rejugar en tests).

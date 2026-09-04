@@ -176,6 +176,8 @@ export interface SubscriptionStatus {
     nextBillingDate?: string;
   };
   entitlements: Entitlements;
+  mustChangePassword: boolean;
+  isAdmin: boolean;
 }
 
 export interface PlanOption {
@@ -301,6 +303,16 @@ export interface AdminDraftSummary {
   status: string;
   createdAt?: string;
   mock?: boolean;
+}
+
+export interface AdminUserSummary {
+  userId: string;
+  email: string | null;
+  name: string | null;
+  plan: string;
+  status: string;
+  active: boolean;
+  updatedAt: string | null;
 }
 
 export interface SeasonRetico {

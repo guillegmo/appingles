@@ -462,6 +462,31 @@ export async function publishContentDraft(id: string): Promise<{ ok: boolean; le
   return data;
 }
 
+// ---------- Admin: usuarios (listar, activar/inactivar, reset de contraseña) ----------
+
+export async function getAdminUsers(): Promise<{ items: import('../types').AdminUserSummary[]; total: number }> {
+  const { data } = await api.get('/admin/users');
+  return data;
+}
+
+export async function setAdminUserStatus(userId: string, status: string): Promise<{ ok: boolean }> {
+  const { data } = await api.post(`/admin/users/${userId}/status`, { status });
+  return data;
+}
+
+export async function setAdminUserPassword(userId: string, password: string): Promise<{ ok: boolean }> {
+  const { data } = await api.post(`/admin/users/${userId}/set-password`, { password });
+  return data;
+}
+
+// Limpia mustChangePassword tras un cambio forzado (contraseña asignada por
+// un admin) — se llama después de que el usuario ya creó su propia
+// contraseña con el SDK cliente de Firebase.
+export async function markPasswordChanged(): Promise<{ ok: boolean }> {
+  const { data } = await api.post('/auth/password-changed');
+  return data;
+}
+
 export async function getCurrentSeason(signal?: AbortSignal): Promise<import('../types').SeasonResponse> {
   return cachedGet('/seasons/current', undefined, TTL.seasons, signal);
 }

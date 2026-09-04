@@ -3,7 +3,7 @@
 // También guarda el nombre (para leaderboard) si es la primera vez.
 
 const express = require('express');
-const { verifyToken } = require('../middleware/auth');
+const { verifyToken, invalidateSubscriptionCache } = require('../middleware/auth');
 const store = require('../lib/store');
 
 const router = express.Router();
@@ -52,6 +52,23 @@ router.delete('/session', verifyToken, async (req, res) => {
 router.get('/session', verifyToken, async (req, res) => {
   const existing = await store.getDoc('sessions', req.user.id);
   res.json({ activeSessionId: existing?.activeSessionId || null });
+});
+
+// Limpia el flag mustChangePassword tras un cambio forzado (contraseña
+// asignada por un admin — ver POST /admin/users/:id/set-password). El
+// usuario ya debe estar autenticado con la nueva contraseña que él mismo
+// acaba de crear (updatePassword en el SDK cliente, antes de esta llamada).
+router.post('/password-changed', verifyToken, async (req, res) => {
+  const current = (await store.getDoc('subscriptions', req.user.id)) || {};
+  if (current.mustChangePassword) {
+    await store.setDoc('subscriptions', req.user.id, {
+      ...current,
+      mustChangePassword: false,
+      updatedAt: new Date().toISOString(),
+    });
+    invalidateSubscriptionCache(req.user.id);
+  }
+  res.json({ ok: true });
 });
 
 module.exports = router;

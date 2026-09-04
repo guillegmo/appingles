@@ -19,9 +19,16 @@ router.use(authenticate);
 router.get('/status', async (req, res) => {
   const status = subscriptionService.effectiveStatus(req.subscription);
   const subscription = { ...req.subscription, status };
+  const isDev = process.env.AUTH_MODE !== 'firebase';
+  const isAdmin = req.user.id === process.env.ADMIN_USER_ID || (isDev && req.header('X-Dev-Admin') === '1');
   res.json({
     subscription,
     entitlements: entitlement.serializableEntitlements(subscription),
+    // mustChangePassword viaja en el propio doc de subscriptions (ya se lee en
+    // CADA request autenticado vía el caché de middleware/auth.js): así no
+    // hace falta una lectura extra a Firestore solo para este flag.
+    mustChangePassword: !!req.subscription?.mustChangePassword,
+    isAdmin,
   });
 });
 

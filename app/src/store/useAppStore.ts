@@ -10,6 +10,8 @@ interface AppState {
   progress: ProgressResponse | null;
   entitlements: Entitlements | null;
   subscription: SubscriptionStatus['subscription'] | null;
+  mustChangePassword: boolean;
+  isAdmin: boolean;
   loading: boolean;
   error: string | null;
   notice: string | null;
@@ -27,6 +29,7 @@ interface AppState {
   applyXp: (totalXp: number, completedDay?: number) => void;
   applyDayComplete: (res: { dayCompleted: number; totalXp: number; currentStreak: number; longestStreak: number; streakFreezes: number; badges: string[] }) => void;
   setSubscription: (subscription: SubscriptionStatus['subscription'], entitlements: Entitlements) => void;
+  clearMustChangePassword: () => void;
 }
 
 // Evita lanzar refreshAll en paralelo (StrictMode en dev + varios callers en
@@ -47,6 +50,8 @@ export const useAppStore = create<AppState>()(
       progress: null,
       entitlements: null,
       subscription: null,
+      mustChangePassword: false,
+      isAdmin: false,
       loading: false,
       error: null,
       notice: null,
@@ -63,7 +68,7 @@ export const useAppStore = create<AppState>()(
         // el bootstrap normal (token + registerSession + refreshAll).
         clearFreshTab();
         lastRefreshAt = 0;
-        set({ user: { id, name }, error: null, challenge: null, progress: null, entitlements: null, subscription: null });
+        set({ user: { id, name }, error: null, challenge: null, progress: null, entitlements: null, subscription: null, mustChangePassword: false, isAdmin: false });
       },
 
       logout: () => {
@@ -75,7 +80,7 @@ export const useAppStore = create<AppState>()(
         sessionStorage.removeItem('appingles-store');
         clearApiCache();
         lastRefreshAt = 0;
-        set({ user: null, challenge: null, progress: null, entitlements: null, subscription: null, notice: null });
+        set({ user: null, challenge: null, progress: null, entitlements: null, subscription: null, mustChangePassword: false, isAdmin: false, notice: null });
       },
 
       loadChallenge: async () => {
@@ -102,7 +107,12 @@ export const useAppStore = create<AppState>()(
       loadSubscription: async () => {
         try {
           const status = await getSubscriptionStatus();
-          set({ subscription: status.subscription, entitlements: status.entitlements });
+          set({
+            subscription: status.subscription,
+            entitlements: status.entitlements,
+            mustChangePassword: status.mustChangePassword,
+            isAdmin: status.isAdmin,
+          });
         } catch (e) {
           set({ error: (e as Error).message });
         }
@@ -131,6 +141,8 @@ export const useAppStore = create<AppState>()(
       },
 
       setSubscription: (subscription, entitlements) => set({ subscription, entitlements }),
+
+      clearMustChangePassword: () => set({ mustChangePassword: false }),
 
       applyXp: (totalXp, completedDay) => {
         const { progress, challenge } = get();
